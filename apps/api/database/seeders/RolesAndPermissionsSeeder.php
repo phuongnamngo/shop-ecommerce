@@ -20,6 +20,14 @@ class RolesAndPermissionsSeeder extends Seeder
             'admin_users.manage',
             'customers.view',
             'customers.manage',
+            'catalog.brands.view',
+            'catalog.brands.manage',
+            'catalog.categories.view',
+            'catalog.categories.manage',
+            'catalog.products.view',
+            'catalog.products.manage',
+            'catalog.attributes.view',
+            'catalog.attributes.manage',
         ];
 
         foreach ($permissions as $name) {
@@ -31,13 +39,27 @@ class RolesAndPermissionsSeeder extends Seeder
         $staff = Role::findOrCreate('staff', $guard);
 
         $superAdmin->syncPermissions(Permission::where('guard_name', $guard)->get());
+
         $admin->syncPermissions([
             'admin_users.view',
             'customers.view',
             'customers.manage',
+            'catalog.brands.view',
+            'catalog.brands.manage',
+            'catalog.categories.view',
+            'catalog.categories.manage',
+            'catalog.products.view',
+            'catalog.products.manage',
+            'catalog.attributes.view',
+            'catalog.attributes.manage',
         ]);
+
         $staff->syncPermissions([
             'customers.view',
+            'catalog.brands.view',
+            'catalog.categories.view',
+            'catalog.products.view',
+            'catalog.attributes.view',
         ]);
     }
 }
