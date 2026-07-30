@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             $this->call([
                 IdentityDemoSeeder::class,
                 CatalogDemoSeeder::class,
+                CommerceFulfillmentDemoSeeder::class,
             ]);
         }
     }
