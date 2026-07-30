@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
                 IdentityDemoSeeder::class,
                 CatalogDemoSeeder::class,
                 CommerceFulfillmentDemoSeeder::class,
+                PlatformRemainderDemoSeeder::class,
             ]);
         }
     }

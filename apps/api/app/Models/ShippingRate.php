@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['shipping_method_id', 'min_order_amount', 'max_order_amount', 'region_code', 'price'])]
+#[Fillable(['shipping_method_id', 'shipping_zone_id', 'min_order_amount', 'max_order_amount', 'region_code', 'price'])]
 class ShippingRate extends Model
 {
     protected function casts(): array
@@ -21,5 +21,10 @@ class ShippingRate extends Model
     public function method(): BelongsTo
     {
         return $this->belongsTo(ShippingMethod::class, 'shipping_method_id');
+    }
+
+    public function zone(): BelongsTo
+    {
+        return $this->belongsTo(ShippingZone::class, 'shipping_zone_id');
     }
 }
