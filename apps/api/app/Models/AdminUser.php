@@ -2,7 +2,10 @@
 
 namespace App\Models;
 
+use App\Notifications\AdminResetPassword;
 use Database\Factories\AdminUserFactory;
+use Illuminate\Auth\Passwords\CanResetPassword;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -24,10 +27,10 @@ use Spatie\Permission\Traits\HasRoles;
     'last_login_at',
 ])]
 #[Hidden(['password', 'remember_token'])]
-class AdminUser extends Authenticatable
+class AdminUser extends Authenticatable implements CanResetPasswordContract
 {
     /** @use HasFactory<AdminUserFactory> */
-    use HasApiTokens, HasFactory, HasRoles, Notifiable, SoftDeletes;
+    use CanResetPassword, HasApiTokens, HasFactory, HasRoles, Notifiable, SoftDeletes;
 
     public const STATUS_ACTIVE = 'active';
 
@@ -40,6 +43,11 @@ class AdminUser extends Authenticatable
     public function isActive(): bool
     {
         return $this->status === self::STATUS_ACTIVE;
+    }
+
+    public function sendPasswordResetNotification(#[\SensitiveParameter] $token): void
+    {
+        $this->notify(new AdminResetPassword($token));
     }
 
     /**

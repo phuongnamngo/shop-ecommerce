@@ -2,7 +2,10 @@
 
 namespace App\Models;
 
+use App\Notifications\CustomerResetPassword;
 use Database\Factories\CustomerFactory;
+use Illuminate\Auth\Passwords\CanResetPassword;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -24,10 +27,10 @@ use Laravel\Sanctum\HasApiTokens;
     'last_login_at',
 ])]
 #[Hidden(['password', 'remember_token'])]
-class Customer extends Authenticatable
+class Customer extends Authenticatable implements CanResetPasswordContract
 {
     /** @use HasFactory<CustomerFactory> */
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
+    use CanResetPassword, HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     public const STATUS_ACTIVE = 'active';
 
@@ -43,6 +46,11 @@ class Customer extends Authenticatable
     public function addresses(): HasMany
     {
         return $this->hasMany(CustomerAddress::class);
+    }
+
+    public function sendPasswordResetNotification(#[\SensitiveParameter] $token): void
+    {
+        $this->notify(new CustomerResetPassword($token));
     }
 
     /**

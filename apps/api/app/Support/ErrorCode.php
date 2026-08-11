@@ -1,0 +1,24 @@
+<?php
+
+namespace App\Support;
+
+final class ErrorCode
+{
+    public const AUTH_INVALID_CREDENTIALS = 'AUTH_INVALID_CREDENTIALS';
+
+    public const AUTH_ACCOUNT_INACTIVE = 'AUTH_ACCOUNT_INACTIVE';
+
+    public const AUTH_ACCOUNT_BANNED = 'AUTH_ACCOUNT_BANNED';
+
+    public const AUTH_UNAUTHENTICATED = 'AUTH_UNAUTHENTICATED';
+
+    public const AUTH_THROTTLED = 'AUTH_THROTTLED';
+
+    public const AUTH_RESET_TOKEN_INVALID = 'AUTH_RESET_TOKEN_INVALID';
+
+    public const AUTH_FORBIDDEN = 'AUTH_FORBIDDEN';
+
+    public const VALIDATION_FAILED = 'VALIDATION_FAILED';
+
+    public const CSRF_TOKEN_MISMATCH = 'CSRF_TOKEN_MISMATCH';
+}

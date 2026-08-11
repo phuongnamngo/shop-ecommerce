@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Customer;
+use App\Support\ErrorCode;
 use Database\Seeders\RolesAndPermissionsSeeder;
 
 beforeEach(function () {
@@ -14,7 +15,8 @@ it('allows active customer to access me', function () {
 
     $this->getJson('/api/v1/customer/me')
         ->assertOk()
-        ->assertJsonPath('data.email', $customer->email);
+        ->assertJsonPath('data.email', $customer->email)
+        ->assertJsonMissing(['errors']);
 });
 
 it('blocks banned customer from me', function () {
@@ -23,5 +25,6 @@ it('blocks banned customer from me', function () {
     $this->actingAs($customer, 'customer');
 
     $this->getJson('/api/v1/customer/me')
-        ->assertForbidden();
+        ->assertForbidden()
+        ->assertJsonFragment(['code' => ErrorCode::AUTH_ACCOUNT_BANNED]);
 });
