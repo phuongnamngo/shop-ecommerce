@@ -13,7 +13,14 @@ use App\Http\Controllers\Api\V1\Admin\Catalog\ProductController as AdminProductC
 use App\Http\Controllers\Api\V1\Admin\Catalog\ProductImageController as AdminProductImageController;
 use App\Http\Controllers\Api\V1\Admin\Catalog\ProductVariantController as AdminProductVariantController;
 use App\Http\Controllers\Api\V1\Admin\Catalog\ProductVariantImageController as AdminProductVariantImageController;
+use App\Http\Controllers\Api\V1\Admin\Inventory\StockItemController as AdminStockItemController;
+use App\Http\Controllers\Api\V1\Admin\Inventory\StockMovementController as AdminStockMovementController;
+use App\Http\Controllers\Api\V1\Admin\Inventory\WarehouseController as AdminWarehouseController;
 use App\Http\Controllers\Api\V1\Admin\MeController as AdminMeController;
+use App\Http\Controllers\Api\V1\Cart\CartController;
+use App\Http\Controllers\Api\V1\Checkout\CheckoutController;
+use App\Http\Controllers\Api\V1\Customer\OrderController as CustomerOrderController;
+use App\Http\Controllers\Api\V1\Admin\Order\OrderController as AdminOrderController;
 use App\Http\Controllers\Api\V1\Catalog\BrandController as PublicBrandController;
 use App\Http\Controllers\Api\V1\Catalog\CategoryController as PublicCategoryController;
 use App\Http\Controllers\Api\V1\Catalog\ProductController as PublicProductController;
@@ -26,6 +33,12 @@ use App\Http\Controllers\Api\V1\Customer\MeController as CustomerMeController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
+    Route::post('cart', [CartController::class, 'createGuest']);
+    Route::get('cart', [CartController::class, 'show']);
+    Route::post('cart/items', [CartController::class, 'storeItem']);
+    Route::patch('cart/items/{itemId}', [CartController::class, 'updateItem']);
+    Route::delete('cart/items/{itemId}', [CartController::class, 'destroyItem']);
+    Route::post('checkout', [CheckoutController::class, 'store']);
     Route::get('catalog/products', [PublicProductController::class, 'index']);
     Route::get('catalog/products/{slug}', [PublicProductController::class, 'show']);
     Route::get('catalog/brands', [PublicBrandController::class, 'index']);
@@ -46,6 +59,13 @@ Route::prefix('v1')->group(function () {
         ->prefix('customer')
         ->group(function () {
             Route::get('me', CustomerMeController::class);
+            Route::get('cart', [CartController::class, 'customerShow']);
+            Route::post('cart/items', [CartController::class, 'customerStoreItem']);
+            Route::patch('cart/items/{itemId}', [CartController::class, 'customerUpdateItem']);
+            Route::delete('cart/items/{itemId}', [CartController::class, 'customerDestroyItem']);
+            Route::post('cart/merge', [CartController::class, 'merge']);
+            Route::get('orders', [CustomerOrderController::class, 'index']);
+            Route::get('orders/{id}', [CustomerOrderController::class, 'show']);
         });
 
     Route::prefix('admin/auth')->group(function () {
@@ -66,6 +86,17 @@ Route::prefix('v1')->group(function () {
         ->prefix('admin')
         ->group(function () {
             Route::get('me', AdminMeController::class);
+
+            Route::middleware('permission:inventory.view,admin')->prefix('inventory')->group(function () {
+                Route::get('warehouses', [AdminWarehouseController::class, 'index']);
+                Route::get('stock-items', [AdminStockItemController::class, 'index']);
+            });
+            Route::post('inventory/movements', [AdminStockMovementController::class, 'store'])->middleware('permission:inventory.manage,admin');
+            Route::middleware('permission:orders.view,admin')->group(function () {
+                Route::get('orders', [AdminOrderController::class, 'index']);
+                Route::get('orders/{id}', [AdminOrderController::class, 'show']);
+            });
+            Route::patch('orders/{id}/status', [AdminOrderController::class, 'updateStatus'])->middleware('permission:orders.manage,admin');
 
             Route::middleware('permission:customers.view,admin')
                 ->get('customers-check', function () {

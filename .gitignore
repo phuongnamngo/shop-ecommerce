@@ -33,6 +33,7 @@ Thumbs.db
 *.log
 
 .cursor/
+.codex/
 openspec/
 
 .codegraph/

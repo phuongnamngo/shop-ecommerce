@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use App\Support\ApiResponse;
+use App\Support\CommerceException;
 use App\Support\ErrorCode;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
@@ -27,6 +28,10 @@ final class ApiExceptionRenderer
 
         if ($e instanceof ValidationException) {
             return ApiResponse::validationErrors($e->errors());
+        }
+
+        if ($e instanceof CommerceException) {
+            return ApiResponse::error($e->errorCode, $e->getMessage(), $e->field, $e->status);
         }
 
         if ($e instanceof AuthenticationException) {

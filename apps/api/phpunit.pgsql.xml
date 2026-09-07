@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="vendor/autoload.php" colors="true">
+    <testsuites><testsuite name="PostgreSQL"><file>tests/Feature/Checkout/CheckoutConcurrencyTest.php</file></testsuite></testsuites>
+    <source><include><directory>app</directory></include></source>
+    <php>
+        <env name="APP_ENV" value="testing" force="true"/>
+        <env name="APP_MAINTENANCE_DRIVER" value="file"/>
+        <env name="BCRYPT_ROUNDS" value="4"/>
+        <env name="CACHE_STORE" value="array"/>
+        <env name="DB_CONNECTION" value="pgsql" force="true"/>
+        <env name="DB_HOST" value="postgres" force="true"/>
+        <env name="DB_PORT" value="5432" force="true"/>
+        <env name="DB_DATABASE" value="watch_app_test" force="true"/>
+        <env name="DB_USERNAME" value="watch" force="true"/>
+        <env name="DB_PASSWORD" value="watch_secret" force="true"/>
+        <env name="QUEUE_CONNECTION" value="sync"/>
+        <env name="SESSION_DRIVER" value="array"/>
+    </php>
+</phpunit>

@@ -46,3 +46,23 @@ it('maps CSRF HttpException 419 to CSRF_TOKEN_MISMATCH envelope', function () {
         ->and($response->getStatusCode())->toBe(419)
         ->and($response->getData(true)['errors'][0]['code'])->toBe(ErrorCode::CSRF_TOKEN_MISMATCH);
 });
+
+it('defines stable error codes for commerce domains', function () {
+    expect([
+        ErrorCode::INVENTORY_NOT_FOUND,
+        ErrorCode::INVENTORY_INSUFFICIENT_STOCK,
+        ErrorCode::CART_NOT_FOUND,
+        ErrorCode::CART_INVALID_TOKEN,
+        ErrorCode::CHECKOUT_INVALID_CART,
+        ErrorCode::ORDER_INVALID_TRANSITION,
+        ErrorCode::COUPON_INVALID,
+    ])->toBe([
+        'INVENTORY_NOT_FOUND',
+        'INVENTORY_INSUFFICIENT_STOCK',
+        'CART_NOT_FOUND',
+        'CART_INVALID_TOKEN',
+        'CHECKOUT_INVALID_CART',
+        'ORDER_INVALID_TRANSITION',
+        'COUPON_INVALID',
+    ]);
+});

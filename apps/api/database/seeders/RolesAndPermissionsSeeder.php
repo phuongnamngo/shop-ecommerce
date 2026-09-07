@@ -28,6 +28,10 @@ class RolesAndPermissionsSeeder extends Seeder
             'catalog.products.manage',
             'catalog.attributes.view',
             'catalog.attributes.manage',
+            'inventory.view',
+            'inventory.manage',
+            'orders.view',
+            'orders.manage',
         ];
 
         foreach ($permissions as $name) {
@@ -52,6 +56,10 @@ class RolesAndPermissionsSeeder extends Seeder
             'catalog.products.manage',
             'catalog.attributes.view',
             'catalog.attributes.manage',
+            'inventory.view',
+            'inventory.manage',
+            'orders.view',
+            'orders.manage',
         ]);
 
         $staff->syncPermissions([
@@ -60,6 +68,8 @@ class RolesAndPermissionsSeeder extends Seeder
             'catalog.categories.view',
             'catalog.products.view',
             'catalog.attributes.view',
+            'inventory.view',
+            'orders.view',
         ]);
     }
 }
