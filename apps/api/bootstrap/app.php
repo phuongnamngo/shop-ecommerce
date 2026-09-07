@@ -20,7 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
         apiPrefix: 'api',
         then: function (): void {
-            if (! app()->environment('testing')) {
+            if (! app()->environment(['local', 'testing'])) {
                 return;
             }
 

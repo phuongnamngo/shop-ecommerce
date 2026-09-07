@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Fillable([
-    'code', 'brand_id', 'name', 'slug', 'status', 'published_at', 'created_by', 'updated_by',
+    'code', 'brand_id', 'name', 'slug', 'status', 'published_at', 'description', 'meta_title', 'meta_description', 'created_by', 'updated_by',
 ])]
 class Product extends Model
 {

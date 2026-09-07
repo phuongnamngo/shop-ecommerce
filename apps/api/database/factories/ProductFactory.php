@@ -25,6 +25,9 @@ class ProductFactory extends Factory
             'slug' => Str::slug($name).'-'.Str::lower(Str::random(4)),
             'status' => Product::STATUS_DRAFT,
             'published_at' => null,
+            'description' => null,
+            'meta_title' => null,
+            'meta_description' => null,
         ];
     }
 

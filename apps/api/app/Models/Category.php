@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Fillable([
-    'code', 'parent_id', 'name', 'slug', 'position', 'status', 'created_by', 'updated_by',
+    'code', 'parent_id', 'name', 'slug', 'position', 'status', 'description', 'meta_title', 'meta_description', 'created_by', 'updated_by',
 ])]
 class Category extends Model
 {

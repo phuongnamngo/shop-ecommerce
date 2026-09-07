@@ -4,8 +4,18 @@ use App\Http\Controllers\Api\V1\Admin\Auth\ForgotPasswordController as AdminForg
 use App\Http\Controllers\Api\V1\Admin\Auth\LoginController as AdminLoginController;
 use App\Http\Controllers\Api\V1\Admin\Auth\LogoutController as AdminLogoutController;
 use App\Http\Controllers\Api\V1\Admin\Auth\ResetPasswordController as AdminResetPasswordController;
+use App\Http\Controllers\Api\V1\Admin\Catalog\AttributeController as AdminAttributeController;
+use App\Http\Controllers\Api\V1\Admin\Catalog\AttributeOptionController as AdminAttributeOptionController;
+use App\Http\Controllers\Api\V1\Admin\Catalog\BrandController as AdminBrandController;
+use App\Http\Controllers\Api\V1\Admin\Catalog\CategoryController as AdminCategoryController;
+use App\Http\Controllers\Api\V1\Admin\Catalog\ImageUploadController as AdminImageUploadController;
 use App\Http\Controllers\Api\V1\Admin\Catalog\ProductController as AdminProductController;
+use App\Http\Controllers\Api\V1\Admin\Catalog\ProductImageController as AdminProductImageController;
+use App\Http\Controllers\Api\V1\Admin\Catalog\ProductVariantController as AdminProductVariantController;
+use App\Http\Controllers\Api\V1\Admin\Catalog\ProductVariantImageController as AdminProductVariantImageController;
 use App\Http\Controllers\Api\V1\Admin\MeController as AdminMeController;
+use App\Http\Controllers\Api\V1\Catalog\BrandController as PublicBrandController;
+use App\Http\Controllers\Api\V1\Catalog\CategoryController as PublicCategoryController;
 use App\Http\Controllers\Api\V1\Catalog\ProductController as PublicProductController;
 use App\Http\Controllers\Api\V1\Customer\Auth\ForgotPasswordController as CustomerForgotPasswordController;
 use App\Http\Controllers\Api\V1\Customer\Auth\LoginController as CustomerLoginController;
@@ -17,6 +27,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
     Route::get('catalog/products', [PublicProductController::class, 'index']);
+    Route::get('catalog/products/{slug}', [PublicProductController::class, 'show']);
+    Route::get('catalog/brands', [PublicBrandController::class, 'index']);
+    Route::get('catalog/categories', [PublicCategoryController::class, 'index']);
 
     Route::prefix('customer/auth')->group(function () {
         Route::post('register', CustomerRegisterController::class);
@@ -59,7 +72,61 @@ Route::prefix('v1')->group(function () {
                     return response()->json(['ok' => true]);
                 });
 
-            Route::middleware('permission:catalog.products.view,admin')
-                ->get('catalog/products', [AdminProductController::class, 'index']);
+            Route::middleware('permission:catalog.products.view,admin')->group(function () {
+                Route::get('catalog/products', [AdminProductController::class, 'index']);
+                Route::get('catalog/products/{id}', [AdminProductController::class, 'show']);
+            });
+
+            Route::middleware('permission:catalog.products.manage,admin')->group(function () {
+                Route::post('catalog/uploads/images', [AdminImageUploadController::class, 'store']);
+                Route::post('catalog/products', [AdminProductController::class, 'store']);
+                Route::patch('catalog/products/{id}', [AdminProductController::class, 'update']);
+                Route::delete('catalog/products/{id}', [AdminProductController::class, 'destroy']);
+                Route::post('catalog/products/{id}/variants', [AdminProductVariantController::class, 'store']);
+                Route::patch('catalog/products/{id}/variants/{variantId}', [AdminProductVariantController::class, 'update']);
+                Route::delete('catalog/products/{id}/variants/{variantId}', [AdminProductVariantController::class, 'destroy']);
+                Route::post('catalog/products/{id}/images', [AdminProductImageController::class, 'store']);
+                Route::patch('catalog/products/{id}/images/{imageId}', [AdminProductImageController::class, 'update']);
+                Route::delete('catalog/products/{id}/images/{imageId}', [AdminProductImageController::class, 'destroy']);
+                Route::post('catalog/products/{id}/variants/{variantId}/images', [AdminProductVariantImageController::class, 'store']);
+                Route::patch('catalog/products/{id}/variants/{variantId}/images/{imageId}', [AdminProductVariantImageController::class, 'update']);
+                Route::delete('catalog/products/{id}/variants/{variantId}/images/{imageId}', [AdminProductVariantImageController::class, 'destroy']);
+            });
+
+            Route::middleware('permission:catalog.brands.view,admin')->group(function () {
+                Route::get('catalog/brands', [AdminBrandController::class, 'index']);
+                Route::get('catalog/brands/{id}', [AdminBrandController::class, 'show']);
+            });
+
+            Route::middleware('permission:catalog.brands.manage,admin')->group(function () {
+                Route::post('catalog/brands', [AdminBrandController::class, 'store']);
+                Route::patch('catalog/brands/{id}', [AdminBrandController::class, 'update']);
+                Route::delete('catalog/brands/{id}', [AdminBrandController::class, 'destroy']);
+            });
+
+            Route::middleware('permission:catalog.categories.view,admin')->group(function () {
+                Route::get('catalog/categories', [AdminCategoryController::class, 'index']);
+                Route::get('catalog/categories/{id}', [AdminCategoryController::class, 'show']);
+            });
+
+            Route::middleware('permission:catalog.categories.manage,admin')->group(function () {
+                Route::post('catalog/categories', [AdminCategoryController::class, 'store']);
+                Route::patch('catalog/categories/{id}', [AdminCategoryController::class, 'update']);
+                Route::delete('catalog/categories/{id}', [AdminCategoryController::class, 'destroy']);
+            });
+
+            Route::middleware('permission:catalog.attributes.view,admin')->group(function () {
+                Route::get('catalog/attributes', [AdminAttributeController::class, 'index']);
+                Route::get('catalog/attributes/{id}', [AdminAttributeController::class, 'show']);
+            });
+
+            Route::middleware('permission:catalog.attributes.manage,admin')->group(function () {
+                Route::post('catalog/attributes', [AdminAttributeController::class, 'store']);
+                Route::patch('catalog/attributes/{id}', [AdminAttributeController::class, 'update']);
+                Route::delete('catalog/attributes/{id}', [AdminAttributeController::class, 'destroy']);
+                Route::post('catalog/attributes/{id}/options', [AdminAttributeOptionController::class, 'store']);
+                Route::patch('catalog/attributes/{id}/options/{optionId}', [AdminAttributeOptionController::class, 'update']);
+                Route::delete('catalog/attributes/{id}/options/{optionId}', [AdminAttributeOptionController::class, 'destroy']);
+            });
         });
 });

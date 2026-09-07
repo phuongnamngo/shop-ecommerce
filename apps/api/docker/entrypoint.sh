@@ -12,4 +12,8 @@ if [ -z "${APP_KEY}" ]; then
   echo "entrypoint: generated ephemeral APP_KEY (persist into root .env for stable sessions)"
 fi
 
+if [ ! -L public/storage ]; then
+  php artisan storage:link --no-interaction
+fi
+
 exec "$@"

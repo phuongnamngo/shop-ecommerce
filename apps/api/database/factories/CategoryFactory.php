@@ -24,6 +24,9 @@ class CategoryFactory extends Factory
             'slug' => Str::slug($name).'-'.Str::lower(Str::random(4)),
             'position' => 0,
             'status' => Category::STATUS_ACTIVE,
+            'description' => null,
+            'meta_title' => null,
+            'meta_description' => null,
         ];
     }
 }
