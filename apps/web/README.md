@@ -1,36 +1,26 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Watch — apps/web (Next.js)
 
-## Getting Started
+Admin shell (`/admin`) dùng Laravel Sanctum SPA cookie tới `NEXT_PUBLIC_API_URL`.
 
-First, run the development server:
+## Dev
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+cp .env.example .env.local
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Mở [http://localhost:3000/admin/login](http://localhost:3000/admin/login).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Seed admin (API): `super_admin@example.com` / `password`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Cookie Sanctum
 
-## Learn More
+- Dùng **một** hostname cho tab web và API (`localhost` hoặc `127.0.0.1`), khớp `apps/api` `CORS_ALLOWED_ORIGINS`, `SANCTUM_STATEFUL_DOMAINS`, `SESSION_DOMAIN`, `FRONTEND_URL`.
+- Browser gọi thẳng API với `credentials: 'include'` (không BFF trong MVP shell).
 
-To learn more about Next.js, take a look at the following resources:
+Nếu thư mục `.next/` bị Docker để `nobody`/root-owned, project dùng `.next-local` làm `distDir` mặc định. Xóa cache Docker cũ (cần sudo):
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+sudo rm -rf .next
+```
