@@ -21,6 +21,17 @@ function resolveCommerceSchema(array $document, array $schema): array
         return resolveCommerceSchema($document, $resolved);
     }
 
+    if (isset($schema['allOf'])) {
+        $merged = ['type' => 'object', 'properties' => [], 'required' => []];
+        foreach ($schema['allOf'] as $part) {
+            $part = resolveCommerceSchema($document, $part);
+            $merged['properties'] = array_merge($merged['properties'], $part['properties'] ?? []);
+            $merged['required'] = array_values(array_unique(array_merge($merged['required'], $part['required'] ?? [])));
+        }
+
+        return $merged;
+    }
+
     return $schema;
 }
 
@@ -54,6 +65,21 @@ function commerceHeaderParameters(array $document, string $method, string $path)
         ->where('in', 'header')
         ->keyBy('name')
         ->all();
+}
+
+function commerceSchemaContainsKeyword(array $schema, string $keyword): bool
+{
+    if (array_key_exists($keyword, $schema)) {
+        return true;
+    }
+
+    foreach ($schema as $value) {
+        if (is_array($value) && commerceSchemaContainsKeyword($value, $keyword)) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 it('discovers every inventory cart checkout and order operation', function () {
@@ -155,7 +181,8 @@ it('documents order snapshots and conditional nested detail fields', function ()
     $addressTypes = (array) $customerOrder['properties']['shipping_address']['type'];
     expect($addressTypes)->toContain('object', 'null')
         ->and(array_keys($customerOrder['properties']['shipping_address']['properties']))
-        ->toContain('recipient_name', 'phone', 'province_code', 'district_code', 'ward_code', 'address_line', 'postal_code');
+        ->toContain('recipient_name', 'phone', 'province_code', 'district_code', 'ward_code', 'address_line', 'postal_code')
+        ->and($customerOrder['properties']['shipping_address']['required'])->not->toContain('postal_code');
 
     $adminList = commerceSuccessDataSchema($document, 'get', '/api/v1/admin/orders');
     $adminListItem = resolveCommerceSchema($document, $adminList['items']);
@@ -182,4 +209,28 @@ it('documents empty success metadata as an object', function () {
         $envelope = commerceSuccessEnvelopeSchema($document, $method, $path, $status);
         expect(resolveCommerceSchema($document, $envelope['properties']['meta'])['type'])->toBe('object');
     }
+});
+
+it('documents checkout address alternatives and nonzero stock quantity', function () {
+    $document = commerceOpenApiDocument();
+    $checkoutRef = $document['paths']['/api/v1/checkout']['post']['requestBody']['content']['application/json']['schema'];
+    $checkout = resolveCommerceSchema($document, $checkoutRef);
+    $shippingAddress = $checkout['properties']['shipping_address'];
+
+    expect((array) $shippingAddress['type'])->toContain('object', 'null')
+        ->and($shippingAddress['required'])->toEqualCanonicalizing([
+            'recipient_name', 'phone', 'province_code', 'district_code', 'ward_code', 'address_line',
+        ])
+        ->and(strtolower($shippingAddress['description']))->toContain('exactly one')
+        ->and(strtolower($checkout['properties']['customer_address_id']['description']))->toContain('exactly one');
+    expect(commerceSchemaContainsKeyword($checkoutRef, 'oneOf'))->toBeTrue();
+
+    $movementRef = $document['paths']['/api/v1/admin/inventory/movements']['post']['requestBody']['content']['application/json']['schema'];
+    $movement = resolveCommerceSchema($document, $movementRef);
+    $qty = $movement['properties']['qty'];
+    $ranges = collect($qty['anyOf'] ?? []);
+
+    expect(strtolower($qty['description']))->toContain('non-zero')
+        ->and($ranges->contains(fn (array $range) => ($range['maximum'] ?? null) === -1))->toBeTrue()
+        ->and($ranges->contains(fn (array $range) => ($range['minimum'] ?? null) === 1))->toBeTrue();
 });

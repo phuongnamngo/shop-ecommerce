@@ -22,6 +22,26 @@ it('requires a shipping address and shipping selection for checkout', function (
         ->assertUnprocessable();
 });
 
+it('rejects checkout with both customer and inline address sources', function () {
+    $customer = Customer::factory()->create(['status' => 'active']);
+    $address = CustomerAddress::query()->create([
+        'customer_id' => $customer->id,
+        'recipient_name' => 'Customer',
+        'phone' => '0900000000',
+        'province_code' => 'P',
+        'district_code' => 'D',
+        'ward_code' => 'W',
+        'address_line' => 'Road',
+    ]);
+
+    $this->actingAs($customer, 'customer')->postJson('/api/v1/checkout', [
+        'customer_address_id' => $address->id,
+        'shipping_address' => ['recipient_name' => 'Other', 'phone' => '0900000001', 'province_code' => 'P', 'district_code' => 'D', 'ward_code' => 'W', 'address_line' => 'Other road'],
+        'shipping_method_id' => 1,
+        'shipping_rate_id' => 1,
+    ])->assertUnprocessable()->assertJsonFragment(['field' => 'customer_address_id']);
+});
+
 it('requires an active guest cart token', function () {
     $province = GeoProvince::query()->create(['code' => 'PX', 'name' => 'Province']);
     $district = GeoDistrict::query()->create(['geo_province_id' => $province->id, 'code' => 'DX', 'name' => 'District']);

@@ -2307,11 +2307,61 @@
                     }
                 ],
                 "requestBody": {
-                    "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/CheckoutRequest"
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/CheckoutRequest"
+                                    },
+                                    {
+                                        "type": "object",
+                                        "properties": {
+                                            "customer_address_id": {
+                                                "type": [
+                                                    "integer",
+                                                    "null"
+                                                ],
+                                                "description": "Provide exactly one address source: this owned customer address ID or shipping_address."
+                                            },
+                                            "shipping_address": {
+                                                "type": [
+                                                    "object",
+                                                    "null"
+                                                ],
+                                                "description": "Provide exactly one address source: this inline address or customer_address_id.",
+                                                "properties": {
+                                                    "recipient_name": {
+                                                        "type": "string"
+                                                    },
+                                                    "phone": {
+                                                        "type": "string"
+                                                    },
+                                                    "province_code": {
+                                                        "type": "string"
+                                                    },
+                                                    "district_code": {
+                                                        "type": "string"
+                                                    },
+                                                    "ward_code": {
+                                                        "type": "string"
+                                                    },
+                                                    "address_line": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "recipient_name",
+                                                    "phone",
+                                                    "province_code",
+                                                    "district_code",
+                                                    "ward_code",
+                                                    "address_line"
+                                                ]
+                                            }
+                                        }
+                                    }
+                                ]
                             }
                         }
                     }
@@ -5265,11 +5315,35 @@
                     "StockMovement"
                 ],
                 "requestBody": {
-                    "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/StoreStockMovementRequest"
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/StoreStockMovementRequest"
+                                    },
+                                    {
+                                        "type": "object",
+                                        "properties": {
+                                            "qty": {
+                                                "description": "Non-zero signed quantity. Receipt and issue use a positive value; adjustment may be positive or negative.",
+                                                "anyOf": [
+                                                    {
+                                                        "type": "integer",
+                                                        "minimum": 1
+                                                    },
+                                                    {
+                                                        "type": "integer",
+                                                        "maximum": -1
+                                                    }
+                                                ]
+                                            }
+                                        },
+                                        "required": [
+                                            "qty"
+                                        ]
+                                    }
+                                ]
                             }
                         }
                     }

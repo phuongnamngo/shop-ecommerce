@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 final class AdminOrderResource extends OrderResource
 {
     /**
-     * @return array{customer_id: int|null, id: int, number: string, status: string, currency: string, subtotal: string, discount_total: string, shipping_total: string, tax_total: string, grand_total: string, shipping_address: array{recipient_name: string, phone: string, province_code: string, district_code: string, ward_code: string, address_line: string, postal_code: string|null}|null, items?: list<OrderItem>, status_history?: list<OrderStatusHistory>, created_at: string|null}
+     * @return array{customer_id: int|null, id: int, number: string, status: string, currency: string, subtotal: string, discount_total: string, shipping_total: string, tax_total: string, grand_total: string, shipping_address: array{recipient_name: string, phone: string, province_code: string, district_code: string, ward_code: string, address_line: string, postal_code?: string|null}|null, items?: list<OrderItem>, status_history?: list<OrderStatusHistory>, created_at: string|null}
      */
     public function toArray(Request $request): array
     {

@@ -10,12 +10,14 @@ use App\Models\StockMovement;
 use App\Support\ApiResponse;
 use App\Support\CommerceException;
 use App\Support\ErrorCode;
+use Dedoc\Scramble\Attributes\BodyParameter;
 use Dedoc\Scramble\Attributes\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
 final class StockMovementController extends Controller
 {
+    #[BodyParameter('qty', description: 'Non-zero signed quantity. Receipt and issue use a positive value; adjustment may be positive or negative.', type: 'positive-int|negative-int', required: true)]
     #[Response(201, 'Updated stock item.', type: 'array{data: StockItemResource, meta: object}')]
     public function store(StoreStockMovementRequest $request): JsonResponse
     {
