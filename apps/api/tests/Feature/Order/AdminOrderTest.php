@@ -18,6 +18,12 @@ it('guards admin order routes with order permissions and filters status', functi
     $admin->assignRole('staff');
     Order::factory()->create(['status' => 'pending']);
     Order::factory()->create(['status' => 'completed']);
+    $this->actingAs($admin, 'admin')->getJson('/api/v1/admin/orders?per_page=1&page=2')
+        ->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('meta.current_page', 2)
+        ->assertJsonPath('meta.per_page', 1)
+        ->assertJsonPath('meta.total', 2);
     $this->actingAs($admin, 'admin')->getJson('/api/v1/admin/orders?status=pending')
         ->assertOk()
         ->assertJsonCount(1, 'data')

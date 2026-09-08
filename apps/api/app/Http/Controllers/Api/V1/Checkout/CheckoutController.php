@@ -13,12 +13,16 @@ use App\Services\Checkout\CheckoutService;
 use App\Support\ApiResponse;
 use App\Support\CommerceException;
 use App\Support\ErrorCode;
+use Dedoc\Scramble\Attributes\HeaderParameter;
+use Dedoc\Scramble\Attributes\Response;
 use Illuminate\Http\JsonResponse;
 
 final class CheckoutController extends Controller
 {
     public function __construct(private readonly CartService $carts, private readonly CheckoutService $checkout) {}
 
+    #[HeaderParameter('X-Cart-Token', description: 'Opaque guest cart token; omit for authenticated customer checkout.', type: 'string', format: 'uuid')]
+    #[Response(201, 'Created pending order.', type: 'array{data: array{id: int, number: string, status: string, subtotal: string, discount_total: string, shipping_total: string, tax_total: string, grand_total: string, items: list<\App\Models\OrderItem>, next_action: string}, meta: object}')]
     public function store(CheckoutRequest $request): JsonResponse
     {
         $data = $request->validated();

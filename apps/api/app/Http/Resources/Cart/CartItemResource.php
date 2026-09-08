@@ -9,6 +9,9 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /** @mixin CartItem */
 final class CartItemResource extends JsonResource
 {
+    /**
+     * @return array{id: int, product_variant_id: int, qty: int, unit_price: string, line_total: string}
+     */
     public function toArray(Request $request): array
     {
         return [

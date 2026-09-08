@@ -34,6 +34,23 @@ it('lists warehouses and filters stock items for an authorized admin', function 
         ->assertJsonStructure(['data', 'meta' => ['current_page', 'last_page', 'per_page', 'total']]);
 });
 
+it('paginates inventory lists and clamps per page', function () {
+    Warehouse::factory()->count(2)->create();
+
+    $this->actingAs(catalogAdmin(), 'admin')
+        ->getJson('/api/v1/admin/inventory/warehouses?per_page=1&page=2')
+        ->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('meta.current_page', 2)
+        ->assertJsonPath('meta.per_page', 1)
+        ->assertJsonPath('meta.total', 2);
+
+    $this->actingAs(catalogAdmin(), 'admin')
+        ->getJson('/api/v1/admin/inventory/warehouses?per_page=999')
+        ->assertOk()
+        ->assertJsonPath('meta.per_page', 100);
+});
+
 it('forbids an admin without inventory view permission', function () {
     Role::findByName('staff', 'admin')->revokePermissionTo('inventory.view');
     $admin = catalogAdmin('staff');
