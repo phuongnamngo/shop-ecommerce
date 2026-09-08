@@ -34,6 +34,7 @@ Thumbs.db
 
 .cursor/
 .codex/
+.pnpm-store/
 openspec/
 
 .codegraph/
