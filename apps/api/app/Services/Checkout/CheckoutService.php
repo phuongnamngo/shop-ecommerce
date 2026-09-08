@@ -2,11 +2,14 @@
 
 namespace App\Services\Checkout;
 
+use App\Contracts\PaymentGateway;
 use App\Models\Cart;
 use App\Models\Coupon;
 use App\Models\Customer;
 use App\Models\CustomerAddress;
 use App\Models\Order;
+use App\Models\PaymentMethod;
+use App\Models\PaymentTransaction;
 use App\Models\ShippingRate;
 use App\Models\StockItem;
 use App\Models\Warehouse;
@@ -17,12 +20,24 @@ use Illuminate\Support\Str;
 
 final class CheckoutService
 {
-    public function checkout(Cart $cart, ?Customer $customer, array $payload): Order
+    public function __construct(private readonly PaymentGateway $payments) {}
+
+    /**
+     * @param  array<string, mixed>  $payload
+     * @return array{order: Order, payment: array{provider: string, status: string, redirect_url?: string}}
+     */
+    public function checkout(Cart $cart, ?Customer $customer, array $payload): array
     {
-        return DB::transaction(function () use ($cart, $customer, $payload): Order {
+        return DB::transaction(function () use ($cart, $customer, $payload): array {
             $cart = Cart::query()->whereKey($cart->id)->where('status', 'active')->lockForUpdate()->first();
             if ($cart === null) {
                 throw new CommerceException(ErrorCode::CHECKOUT_INVALID_CART, 'Cart is no longer active.');
+            }
+
+            $methodCode = (string) $payload['payment_method_code'];
+            $paymentMethod = PaymentMethod::query()->where('code', $methodCode)->where('is_active', true)->first();
+            if ($paymentMethod === null || ! in_array($methodCode, ['cod', 'vnpay'], true)) {
+                throw new CommerceException(ErrorCode::PAYMENT_METHOD_INVALID, 'Payment method is unavailable.', 'payment_method_code');
             }
 
             $lines = $cart->items()->with('variant.product')->orderBy('product_variant_id')->get();
@@ -74,21 +89,54 @@ final class CheckoutService
                 'billing_address_snapshot' => $address, 'shipping_method_id' => $payload['shipping_method_id'], 'coupon_id' => $coupon?->id,
             ]);
 
+            $expiresAt = now()->addMinutes((int) config('commerce.reservation_ttl_minutes', 30));
             foreach ($lines as $line) {
                 $variant = $line->variant;
                 $order->items()->create(['product_variant_id' => $variant->id, 'sku' => $variant->sku, 'name' => $variant->product->name, 'qty' => $line->qty, 'unit_price' => $variant->price, 'line_total' => (int) $variant->price * $line->qty]);
                 $stock = $stocks->get($variant->id);
                 $stock->increment('qty_reserved', $line->qty);
-                $order->reservations()->create(['warehouse_id' => $warehouse->id, 'product_variant_id' => $variant->id, 'cart_id' => $cart->id, 'qty' => $line->qty, 'status' => 'active']);
+                $order->reservations()->create([
+                    'warehouse_id' => $warehouse->id,
+                    'product_variant_id' => $variant->id,
+                    'cart_id' => $cart->id,
+                    'qty' => $line->qty,
+                    'status' => 'active',
+                    'expires_at' => $expiresAt,
+                ]);
             }
             $order->statusHistories()->create(['from_status' => null, 'to_status' => 'pending', 'changed_by_customer_id' => $customer?->id]);
             if ($coupon !== null) {
                 $coupon->increment('used_count');
                 $coupon->redemptions()->create(['customer_id' => $customer?->id, 'order_id' => $order->id, 'redeemed_at' => now()]);
             }
+
+            $txn = PaymentTransaction::query()->create([
+                'order_id' => $order->id,
+                'payment_method_id' => $paymentMethod->id,
+                'provider' => $methodCode,
+                'idempotency_key' => (string) Str::uuid(),
+                'amount' => $order->grand_total,
+                'status' => 'pending',
+            ]);
+            $initiation = $this->payments->initiate($order, $txn);
+            if (($initiation['redirect_url'] ?? null) !== null) {
+                $txn->update(['payload' => ['redirect_url' => $initiation['redirect_url']]]);
+            }
+
             $cart->update(['status' => 'converted']);
 
-            return $order->load('items', 'statusHistories');
+            $payment = [
+                'provider' => $methodCode,
+                'status' => 'pending',
+            ];
+            if ($methodCode === 'vnpay') {
+                $payment['redirect_url'] = $initiation['redirect_url'];
+            }
+
+            return [
+                'order' => $order->load('items', 'statusHistories'),
+                'payment' => $payment,
+            ];
         }, 3);
     }
 

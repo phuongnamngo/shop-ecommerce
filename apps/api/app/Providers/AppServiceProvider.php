@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Contracts\PaymentGateway;
+use App\Services\Payment\FakePaymentGateway;
+use App\Services\Payment\VnPayGateway;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
@@ -14,7 +17,13 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        //
+        $this->app->bind(PaymentGateway::class, function ($app) {
+            if ($app->environment('testing')) {
+                return $app->make(FakePaymentGateway::class);
+            }
+
+            return $app->make(VnPayGateway::class);
+        });
     }
 
     public function boot(): void

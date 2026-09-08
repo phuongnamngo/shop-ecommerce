@@ -23,15 +23,16 @@ class CommerceFulfillmentDemoSeeder extends Seeder
         );
 
         foreach ([
-            ['cod', 'COD'],
-            ['vnpay', 'VNPay'],
-            ['momo', 'MoMo'],
-        ] as [$code, $name]) {
-            PaymentMethod::query()->firstOrCreate(
+            ['cod', 'COD', true],
+            ['vnpay', 'VNPay', true],
+            ['momo', 'MoMo', false],
+        ] as [$code, $name, $active]) {
+            PaymentMethod::query()->updateOrCreate(
                 ['code' => $code],
-                ['name' => $name, 'is_active' => true],
+                ['name' => $name, 'is_active' => $active],
             );
         }
+        PaymentMethod::query()->where('code', 'momo')->update(['is_active' => false]);
 
         $method = ShippingMethod::query()->firstOrCreate(
             ['code' => 'standard'],

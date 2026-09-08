@@ -4,6 +4,7 @@ use App\Models\Cart;
 use App\Models\GeoDistrict;
 use App\Models\GeoProvince;
 use App\Models\GeoWard;
+use App\Models\PaymentMethod;
 use App\Models\Product;
 use App\Models\ShippingMethod;
 use App\Models\ShippingRate;
@@ -47,6 +48,7 @@ it('allows only one checkout to reserve the last unit', function () {
     GeoWard::query()->create(['geo_district_id' => $district->id, 'code' => 'CON-W', 'name' => 'Ward']);
     $method = ShippingMethod::query()->create(['code' => 'concurrent', 'name' => 'Concurrent', 'status' => 'active']);
     $rate = ShippingRate::query()->create(['shipping_method_id' => $method->id, 'price' => 0]);
+    PaymentMethod::query()->updateOrCreate(['code' => 'cod'], ['name' => 'COD', 'is_active' => true]);
     $warehouse = Warehouse::query()->create(['code' => 'CON', 'name' => 'Default', 'is_default' => true, 'status' => 'active']);
     $product = Product::factory()->published()->create();
     $variant = $product->variants()->firstOrFail();
@@ -57,7 +59,7 @@ it('allows only one checkout to reserve the last unit', function () {
 
         return $cart;
     });
-    $payload = base64_encode(json_encode(['shipping_address' => ['recipient_name' => 'A', 'phone' => '0', 'province_code' => 'CON-P', 'district_code' => 'CON-D', 'ward_code' => 'CON-W', 'address_line' => 'Road'], 'shipping_method_id' => $method->id, 'shipping_rate_id' => $rate->id]));
+    $payload = base64_encode(json_encode(['shipping_address' => ['recipient_name' => 'A', 'phone' => '0', 'province_code' => 'CON-P', 'district_code' => 'CON-D', 'ward_code' => 'CON-W', 'address_line' => 'Road'], 'shipping_method_id' => $method->id, 'shipping_rate_id' => $rate->id, 'payment_method_code' => 'cod']));
     $barrier = sys_get_temp_dir().'/checkout-'.uniqid();
     mkdir($barrier);
     $workerEnv = ['APP_ENV' => 'testing', 'DB_CONNECTION' => 'pgsql', 'DB_HOST' => 'postgres', 'DB_PORT' => '5432', 'DB_DATABASE' => 'watch_app_test', 'DB_USERNAME' => 'watch', 'DB_PASSWORD' => 'watch_secret'];

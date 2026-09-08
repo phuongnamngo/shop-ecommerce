@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\V1\Admin\Inventory\StockMovementController as Admin
 use App\Http\Controllers\Api\V1\Admin\Inventory\WarehouseController as AdminWarehouseController;
 use App\Http\Controllers\Api\V1\Admin\MeController as AdminMeController;
 use App\Http\Controllers\Api\V1\Admin\Order\OrderController as AdminOrderController;
+use App\Http\Controllers\Api\V1\Admin\Order\ShipmentController as AdminShipmentController;
 use App\Http\Controllers\Api\V1\Cart\CartController;
 use App\Http\Controllers\Api\V1\Catalog\BrandController as PublicBrandController;
 use App\Http\Controllers\Api\V1\Catalog\CategoryController as PublicCategoryController;
@@ -30,6 +31,7 @@ use App\Http\Controllers\Api\V1\Customer\Auth\RegisterController as CustomerRegi
 use App\Http\Controllers\Api\V1\Customer\Auth\ResetPasswordController as CustomerResetPasswordController;
 use App\Http\Controllers\Api\V1\Customer\MeController as CustomerMeController;
 use App\Http\Controllers\Api\V1\Customer\OrderController as CustomerOrderController;
+use App\Http\Controllers\Api\V1\Payment\VnPayController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -39,6 +41,8 @@ Route::prefix('v1')->group(function () {
     Route::patch('cart/items/{itemId}', [CartController::class, 'updateItem']);
     Route::delete('cart/items/{itemId}', [CartController::class, 'destroyItem']);
     Route::post('checkout', [CheckoutController::class, 'store']);
+    Route::get('payments/vnpay/ipn', [VnPayController::class, 'ipn']);
+    Route::get('payments/vnpay/return', [VnPayController::class, 'returnUrl']);
     Route::get('catalog/products', [PublicProductController::class, 'index']);
     Route::get('catalog/products/{slug}', [PublicProductController::class, 'show']);
     Route::get('catalog/brands', [PublicBrandController::class, 'index']);
@@ -97,6 +101,7 @@ Route::prefix('v1')->group(function () {
                 Route::get('orders/{id}', [AdminOrderController::class, 'show']);
             });
             Route::patch('orders/{id}/status', [AdminOrderController::class, 'updateStatus'])->middleware('permission:orders.manage,admin');
+            Route::post('orders/{id}/shipments', [AdminShipmentController::class, 'store'])->middleware('permission:orders.manage,admin');
 
             Route::middleware('permission:customers.view,admin')
                 ->get('customers-check', function () {

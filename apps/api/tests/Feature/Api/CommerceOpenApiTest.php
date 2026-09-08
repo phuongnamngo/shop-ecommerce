@@ -96,11 +96,14 @@ it('discovers every inventory cart checkout and order operation', function () {
         '/api/v1/customer/cart/items/{itemId}' => ['delete', 'patch'],
         '/api/v1/customer/cart/merge' => ['post'],
         '/api/v1/checkout' => ['post'],
+        '/api/v1/payments/vnpay/ipn' => ['get'],
+        '/api/v1/payments/vnpay/return' => ['get'],
         '/api/v1/customer/orders' => ['get'],
         '/api/v1/customer/orders/{id}' => ['get'],
         '/api/v1/admin/orders' => ['get'],
         '/api/v1/admin/orders/{id}' => ['get'],
         '/api/v1/admin/orders/{id}/status' => ['patch'],
+        '/api/v1/admin/orders/{id}/shipments' => ['post'],
     ];
 
     foreach ($expected as $path => $methods) {
@@ -222,7 +225,8 @@ it('documents checkout address alternatives and nonzero stock quantity', functio
             'recipient_name', 'phone', 'province_code', 'district_code', 'ward_code', 'address_line',
         ])
         ->and(strtolower($shippingAddress['description']))->toContain('exactly one')
-        ->and(strtolower($checkout['properties']['customer_address_id']['description']))->toContain('exactly one');
+        ->and(strtolower($checkout['properties']['customer_address_id']['description']))->toContain('exactly one')
+        ->and($checkout['properties'])->toHaveKey('payment_method_code');
     expect(commerceSchemaContainsKeyword($checkoutRef, 'allOf'))->toBeTrue();
 
     $movementRef = $document['paths']['/api/v1/admin/inventory/movements']['post']['requestBody']['content']['application/json']['schema'];

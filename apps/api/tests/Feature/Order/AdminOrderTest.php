@@ -2,11 +2,14 @@
 
 use App\Models\AdminUser;
 use App\Models\Order;
+use App\Models\PaymentMethod;
+use App\Models\PaymentTransaction;
 use App\Models\Product;
 use App\Models\StockItem;
 use App\Models\StockReservation;
 use App\Models\Warehouse;
 use Database\Seeders\RolesAndPermissionsSeeder;
+use Illuminate\Support\Str;
 use Spatie\Permission\Models\Permission;
 
 beforeEach(function () {
@@ -53,11 +56,37 @@ it('records allowed transitions and releases cancellation reservations once', fu
     expect($stock->refresh()->qty_reserved)->toBe(0);
 });
 
+it('rejects shipped via PATCH status with validation error', function () {
+    $admin = AdminUser::factory()->create(['status' => 'active']);
+    $admin->assignRole('admin');
+    $order = Order::factory()->create(['status' => 'fulfilling']);
+    $this->actingAs($admin, 'admin')->patchJson('/api/v1/admin/orders/'.$order->id.'/status', ['status' => 'shipped'])
+        ->assertUnprocessable();
+});
+
+it('settles a pending payment transaction when admin marks paid', function () {
+    $admin = AdminUser::factory()->create(['status' => 'active']);
+    $admin->assignRole('admin');
+    $method = PaymentMethod::query()->create(['code' => 'cod', 'name' => 'COD', 'is_active' => true]);
+    $order = Order::factory()->create(['status' => 'pending', 'grand_total' => 100000]);
+    $txn = PaymentTransaction::query()->create([
+        'order_id' => $order->id,
+        'payment_method_id' => $method->id,
+        'provider' => 'cod',
+        'idempotency_key' => (string) Str::uuid(),
+        'amount' => $order->grand_total,
+        'status' => 'pending',
+    ]);
+
+    $this->actingAs($admin, 'admin')->patchJson('/api/v1/admin/orders/'.$order->id.'/status', ['status' => 'paid'])->assertOk();
+    expect($txn->refresh()->status)->toBe('succeeded');
+});
+
 it('rejects forbidden state transitions', function () {
     $admin = AdminUser::factory()->create(['status' => 'active']);
     $admin->assignRole('admin');
     $order = Order::factory()->create(['status' => 'pending']);
-    $this->actingAs($admin, 'admin')->patchJson('/api/v1/admin/orders/'.$order->id.'/status', ['status' => 'shipped'])->assertConflict()->assertJsonPath('errors.0.code', 'ORDER_INVALID_TRANSITION');
+    $this->actingAs($admin, 'admin')->patchJson('/api/v1/admin/orders/'.$order->id.'/status', ['status' => 'completed'])->assertConflict()->assertJsonPath('errors.0.code', 'ORDER_INVALID_TRANSITION');
 });
 
 it('accepts each documented order state transition', function (string $from, string $to) {
@@ -67,5 +96,5 @@ it('accepts each documented order state transition', function (string $from, str
     $this->actingAs($admin, 'admin')->patchJson('/api/v1/admin/orders/'.$order->id.'/status', ['status' => $to])->assertOk()->assertJsonPath('data.status', $to);
 })->with([
     ['pending', 'paid'], ['pending', 'cancelled'], ['paid', 'fulfilling'], ['paid', 'cancelled'],
-    ['fulfilling', 'shipped'], ['fulfilling', 'cancelled'], ['shipped', 'completed'],
+    ['fulfilling', 'cancelled'], ['shipped', 'completed'],
 ]);

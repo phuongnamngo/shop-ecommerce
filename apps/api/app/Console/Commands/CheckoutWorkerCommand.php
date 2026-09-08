@@ -35,8 +35,8 @@ final class CheckoutWorkerCommand extends Command
         }
 
         try {
-            $order = $checkout->checkout(Cart::query()->findOrFail((int) $this->argument('cart')), null, json_decode(base64_decode($this->argument('payload')), true, flags: JSON_THROW_ON_ERROR));
-            $this->line(json_encode(['ok' => true, 'order_id' => $order->id]));
+            $result = $checkout->checkout(Cart::query()->findOrFail((int) $this->argument('cart')), null, json_decode(base64_decode($this->argument('payload')), true, flags: JSON_THROW_ON_ERROR));
+            $this->line(json_encode(['ok' => true, 'order_id' => $result['order']->id]));
         } catch (CommerceException $e) {
             $this->line(json_encode(['ok' => false, 'code' => $e->errorCode]));
         }

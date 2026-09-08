@@ -26,7 +26,8 @@ final class CheckoutController extends Controller
     #[BodyParameter('customer_address_id', description: 'Provide exactly one address source: this owned customer address ID or shipping_address.', type: 'int|null')]
     #[BodyParameter('shipping_address', description: 'Provide exactly one address source: this inline address or customer_address_id.', type: 'array{recipient_name: string, phone: string, province_code: string, district_code: string, ward_code: string, address_line: string}|null')]
     #[HeaderParameter('X-Cart-Token', description: 'Opaque guest cart token; omit for authenticated customer checkout.', type: 'string', format: 'uuid')]
-    #[Response(201, 'Created pending order.', type: 'array{data: array{id: int, number: string, status: string, subtotal: string, discount_total: string, shipping_total: string, tax_total: string, grand_total: string, items: list<\App\Models\OrderItem>, next_action: string}, meta: object}')]
+    #[BodyParameter('payment_method_code', description: 'Active payment method code: cod or vnpay.', type: 'string', required: true, example: 'cod')]
+    #[Response(201, 'Created pending order.', type: 'array{data: array{id: int, number: string, status: string, subtotal: string, discount_total: string, shipping_total: string, tax_total: string, grand_total: string, items: list<\App\Models\OrderItem>, next_action: string, payment: array{provider: string, status: string, redirect_url?: string}}, meta: object}')]
     public function store(CheckoutRequest $request): JsonResponse
     {
         $data = $request->validated();
@@ -68,7 +69,10 @@ final class CheckoutController extends Controller
             throw new CommerceException(ErrorCode::CHECKOUT_INVALID_CART, 'Shipping method or rate is unavailable.', 'shipping_rate_id');
         }
 
-        $order = $this->checkout->checkout($cart, $customer, $data);
+        $result = $this->checkout->checkout($cart, $customer, $data);
+        $order = $result['order'];
+        $payment = $result['payment'];
+        $nextAction = ($payment['provider'] ?? '') === 'vnpay' ? 'redirect_payment' : 'payment_pending';
 
         return ApiResponse::success([
             'id' => $order->id,
@@ -80,7 +84,8 @@ final class CheckoutController extends Controller
             'tax_total' => $order->tax_total,
             'grand_total' => $order->grand_total,
             'items' => $order->items,
-            'next_action' => 'payment_pending',
+            'next_action' => $nextAction,
+            'payment' => $payment,
         ], status: 201);
     }
 }

@@ -2358,8 +2358,18 @@
                                                     "ward_code",
                                                     "address_line"
                                                 ]
+                                            },
+                                            "payment_method_code": {
+                                                "type": "string",
+                                                "description": "Active payment method code: cod or vnpay.",
+                                                "examples": [
+                                                    "cod"
+                                                ]
                                             }
-                                        }
+                                        },
+                                        "required": [
+                                            "payment_method_code"
+                                        ]
                                     }
                                 ]
                             }
@@ -2409,6 +2419,24 @@
                                                 },
                                                 "next_action": {
                                                     "type": "string"
+                                                },
+                                                "payment": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "provider": {
+                                                            "type": "string"
+                                                        },
+                                                        "status": {
+                                                            "type": "string"
+                                                        },
+                                                        "redirect_url": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "provider",
+                                                        "status"
+                                                    ]
                                                 }
                                             },
                                             "required": [
@@ -2421,7 +2449,8 @@
                                                 "tax_total",
                                                 "grand_total",
                                                 "items",
-                                                "next_action"
+                                                "next_action",
+                                                "payment"
                                             ]
                                         },
                                         "meta": {
@@ -5313,6 +5342,105 @@
                 "security": []
             }
         },
+        "/api/v1/admin/orders/{id}/shipments": {
+            "post": {
+                "operationId": "shipment.store",
+                "tags": [
+                    "Shipment"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/StoreShipmentRequest"
+                                    },
+                                    {
+                                        "type": "object",
+                                        "properties": {
+                                            "tracking_number": {
+                                                "type": "string",
+                                                "description": "Manual carrier tracking number."
+                                            },
+                                            "carrier_code": {
+                                                "type": [
+                                                    "string",
+                                                    "null"
+                                                ],
+                                                "description": "Optional carrier code."
+                                            }
+                                        },
+                                        "required": [
+                                            "tracking_number"
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created shipment and marked order shipped.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer"
+                                                },
+                                                "tracking_number": {
+                                                    "type": "string"
+                                                },
+                                                "status": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": [
+                                                "id",
+                                                "tracking_number",
+                                                "status"
+                                            ]
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
         "/api/v1/admin/inventory/stock-items": {
             "get": {
                 "operationId": "stockItem.index",
@@ -5479,6 +5607,61 @@
                         "$ref": "#/components/responses/ValidationException"
                     }
                 }
+            }
+        },
+        "/api/v1/payments/vnpay/ipn": {
+            "get": {
+                "operationId": "vnPay.ipn",
+                "tags": [
+                    "VnPay"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "VNPay IPN acknowledgement.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "anyOf": [
+                                        {
+                                            "type": "string",
+                                            "const": "{\"RspCode\":\"99\",\"Message\":\"Unknown error\"}"
+                                        },
+                                        {
+                                            "type": "string",
+                                            "const": "{\"RspCode\":\"97\",\"Message\":\"Invalid Signature\"}"
+                                        },
+                                        {
+                                            "type": "string",
+                                            "const": "{\"RspCode\":\"00\",\"Message\":\"Confirm Success\"}"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": []
+            }
+        },
+        "/api/v1/payments/vnpay/return": {
+            "get": {
+                "operationId": "vnPay.returnUrl",
+                "tags": [
+                    "VnPay"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": []
             }
         },
         "/api/v1/admin/inventory/warehouses": {
@@ -5849,11 +6032,19 @@
                             "null"
                         ],
                         "maxLength": 64
+                    },
+                    "payment_method_code": {
+                        "type": "string",
+                        "enum": [
+                            "cod",
+                            "vnpay"
+                        ]
                     }
                 },
                 "required": [
                     "shipping_method_id",
-                    "shipping_rate_id"
+                    "shipping_rate_id",
+                    "payment_method_code"
                 ],
                 "title": "CheckoutRequest"
             },
@@ -6602,6 +6793,26 @@
                 ],
                 "title": "StoreProductVariantRequest"
             },
+            "StoreShipmentRequest": {
+                "type": "object",
+                "properties": {
+                    "tracking_number": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "carrier_code": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 64
+                    }
+                },
+                "required": [
+                    "tracking_number"
+                ],
+                "title": "StoreShipmentRequest"
+            },
             "StoreStockMovementRequest": {
                 "type": "object",
                 "properties": {
@@ -6793,7 +7004,6 @@
                         "enum": [
                             "paid",
                             "fulfilling",
-                            "shipped",
                             "completed",
                             "cancelled"
                         ]

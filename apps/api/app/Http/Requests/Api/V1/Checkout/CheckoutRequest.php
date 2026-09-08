@@ -26,6 +26,7 @@ final class CheckoutRequest extends FormRequest
             'shipping_method_id' => ['required', 'integer', 'exists:shipping_methods,id'],
             'shipping_rate_id' => ['required', 'integer', 'exists:shipping_rates,id'],
             'coupon_code' => ['nullable', 'string', 'max:64'],
+            'payment_method_code' => ['required', 'string', 'in:cod,vnpay'],
         ];
     }
 
