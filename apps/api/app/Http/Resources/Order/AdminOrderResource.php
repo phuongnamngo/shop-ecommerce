@@ -15,6 +15,9 @@ final class AdminOrderResource extends OrderResource
      */
     public function toArray(Request $request): array
     {
-        return ['customer_id' => $this->customer_id] + parent::toArray($request);
+        return array_merge(parent::toArray($request), [
+            'customer_id' => $this->customer_id,
+            'status_history' => $this->whenLoaded('statusHistories'),
+        ]);
     }
 }

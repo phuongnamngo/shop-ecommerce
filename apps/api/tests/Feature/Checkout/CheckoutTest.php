@@ -158,3 +158,33 @@ it('checks out the authenticated customer cart with an owned address', function 
     $this->actingAs($customer, 'customer')->postJson('/api/v1/checkout', ['customer_address_id' => $address->id, 'shipping_method_id' => $method->id, 'shipping_rate_id' => $rate->id])->assertCreated()->assertJsonPath('data.status', 'pending');
     $this->assertDatabaseHas('orders', ['customer_id' => $customer->id]);
 });
+
+it('rejects checkout for banned or inactive authenticated customers', function () {
+    $method = ShippingMethod::query()->create(['code' => 'banned-checkout', 'name' => 'Banned', 'status' => 'active']);
+    $rate = ShippingRate::query()->create(['shipping_method_id' => $method->id, 'price' => 0]);
+    $warehouse = Warehouse::query()->create(['code' => 'BANNED', 'name' => 'Default', 'is_default' => true, 'status' => 'active']);
+    $product = Product::factory()->published()->create();
+    $variant = $product->variants()->firstOrFail();
+    StockItem::query()->create(['warehouse_id' => $warehouse->id, 'product_variant_id' => $variant->id, 'qty_on_hand' => 2, 'qty_reserved' => 0]);
+    $banned = Customer::factory()->create(['status' => 'banned']);
+    $inactive = Customer::factory()->create(['status' => 'inactive']);
+    $payload = [
+        'shipping_address' => [
+            'recipient_name' => 'A',
+            'phone' => '0900000000',
+            'province_code' => 'P',
+            'district_code' => 'D',
+            'ward_code' => 'W',
+            'address_line' => 'Road',
+        ],
+        'shipping_method_id' => $method->id,
+        'shipping_rate_id' => $rate->id,
+    ];
+
+    $this->actingAs($banned, 'customer')->postJson('/api/v1/checkout', $payload)
+        ->assertForbidden()
+        ->assertJsonPath('errors.0.code', 'AUTH_ACCOUNT_BANNED');
+    $this->actingAs($inactive, 'customer')->postJson('/api/v1/checkout', $payload)
+        ->assertForbidden()
+        ->assertJsonPath('errors.0.code', 'AUTH_ACCOUNT_INACTIVE');
+});

@@ -223,7 +223,7 @@ it('documents checkout address alternatives and nonzero stock quantity', functio
         ])
         ->and(strtolower($shippingAddress['description']))->toContain('exactly one')
         ->and(strtolower($checkout['properties']['customer_address_id']['description']))->toContain('exactly one');
-    expect(commerceSchemaContainsKeyword($checkoutRef, 'oneOf'))->toBeTrue();
+    expect(commerceSchemaContainsKeyword($checkoutRef, 'allOf'))->toBeTrue();
 
     $movementRef = $document['paths']['/api/v1/admin/inventory/movements']['post']['requestBody']['content']['application/json']['schema'];
     $movement = resolveCommerceSchema($document, $movementRef);

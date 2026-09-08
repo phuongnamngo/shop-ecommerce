@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Checkout;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Checkout\CheckoutRequest;
+use App\Models\Customer;
 use App\Models\CustomerAddress;
 use App\Models\GeoWard;
 use App\Models\ShippingMethod;
@@ -30,6 +31,15 @@ final class CheckoutController extends Controller
     {
         $data = $request->validated();
         $customer = $request->user('customer');
+        if ($customer !== null) {
+            if ($customer->status === Customer::STATUS_BANNED) {
+                return ApiResponse::error(ErrorCode::AUTH_ACCOUNT_BANNED, 'Account is banned.', status: 403);
+            }
+            if (! $customer->isActive()) {
+                return ApiResponse::error(ErrorCode::AUTH_ACCOUNT_INACTIVE, 'Account is not active.', status: 403);
+            }
+        }
+
         if ($customer === null) {
             $cart = $this->carts->guest($request->header('X-Cart-Token'));
         } else {

@@ -1,7 +1,7 @@
 {
     "openapi": "3.1.0",
     "info": {
-        "title": "Watch",
+        "title": "Laravel",
         "version": "0.0.1"
     },
     "servers": [
@@ -2431,6 +2431,107 @@
                                     "required": [
                                         "data",
                                         "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "anyOf": [
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "type": "null"
+                                                },
+                                                "meta": {
+                                                    "type": "string"
+                                                },
+                                                "errors": {
+                                                    "type": "array",
+                                                    "prefixItems": [
+                                                        {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "code": {
+                                                                    "type": "string",
+                                                                    "const": "AUTH_ACCOUNT_INACTIVE"
+                                                                },
+                                                                "message": {
+                                                                    "type": "string",
+                                                                    "const": "Account is not active."
+                                                                },
+                                                                "field": {
+                                                                    "type": "null"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "code",
+                                                                "message",
+                                                                "field"
+                                                            ]
+                                                        }
+                                                    ],
+                                                    "minItems": 1,
+                                                    "maxItems": 1,
+                                                    "additionalItems": false
+                                                }
+                                            },
+                                            "required": [
+                                                "data",
+                                                "meta",
+                                                "errors"
+                                            ]
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "type": "null"
+                                                },
+                                                "meta": {
+                                                    "type": "string"
+                                                },
+                                                "errors": {
+                                                    "type": "array",
+                                                    "prefixItems": [
+                                                        {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "code": {
+                                                                    "type": "string",
+                                                                    "const": "AUTH_ACCOUNT_BANNED"
+                                                                },
+                                                                "message": {
+                                                                    "type": "string",
+                                                                    "const": "Account is banned."
+                                                                },
+                                                                "field": {
+                                                                    "type": "null"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "code",
+                                                                "message",
+                                                                "field"
+                                                            ]
+                                                        }
+                                                    ],
+                                                    "minItems": 1,
+                                                    "maxItems": 1,
+                                                    "additionalItems": false
+                                                }
+                                            },
+                                            "required": [
+                                                "data",
+                                                "meta",
+                                                "errors"
+                                            ]
+                                        }
                                     ]
                                 }
                             }
@@ -5480,12 +5581,6 @@
             "AdminOrderResource": {
                 "type": "object",
                 "properties": {
-                    "customer_id": {
-                        "type": [
-                            "integer",
-                            "null"
-                        ]
-                    },
                     "id": {
                         "type": "integer"
                     },
@@ -5570,10 +5665,15 @@
                             "string",
                             "null"
                         ]
+                    },
+                    "customer_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
                     }
                 },
                 "required": [
-                    "customer_id",
                     "id",
                     "number",
                     "status",
@@ -5584,7 +5684,8 @@
                     "tax_total",
                     "grand_total",
                     "shipping_address",
-                    "created_at"
+                    "created_at",
+                    "customer_id"
                 ],
                 "title": "AdminOrderResource"
             },
@@ -5924,7 +6025,29 @@
                     "status_history": {
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/OrderStatusHistory"
+                            "type": "object",
+                            "properties": {
+                                "from_status": {
+                                    "type": [
+                                        "string",
+                                        "null"
+                                    ]
+                                },
+                                "to_status": {
+                                    "type": "string"
+                                },
+                                "created_at": {
+                                    "type": [
+                                        "string",
+                                        "null"
+                                    ]
+                                }
+                            },
+                            "required": [
+                                "from_status",
+                                "to_status",
+                                "created_at"
+                            ]
                         }
                     },
                     "created_at": {

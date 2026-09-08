@@ -13,13 +13,17 @@ use Illuminate\Support\Facades\DB;
 use Symfony\Component\Process\Process;
 
 it('allows only one checkout to reserve the last unit', function () {
+    if (env('DB_CONNECTION') !== 'pgsql') {
+        $this->markTestSkipped('Requires PostgreSQL via phpunit.pgsql.xml');
+    }
+
     config([
         'database.default' => 'pgsql',
-        'database.connections.pgsql.host' => 'postgres',
-        'database.connections.pgsql.port' => '5432',
-        'database.connections.pgsql.database' => 'watch_app_test',
-        'database.connections.pgsql.username' => 'watch',
-        'database.connections.pgsql.password' => 'watch_secret',
+        'database.connections.pgsql.host' => env('DB_HOST', 'postgres'),
+        'database.connections.pgsql.port' => env('DB_PORT', '5432'),
+        'database.connections.pgsql.database' => env('DB_DATABASE', 'watch_app_test'),
+        'database.connections.pgsql.username' => env('DB_USERNAME', 'watch'),
+        'database.connections.pgsql.password' => env('DB_PASSWORD', 'watch_secret'),
     ]);
     DB::purge('pgsql');
     DB::setDefaultConnection('pgsql');

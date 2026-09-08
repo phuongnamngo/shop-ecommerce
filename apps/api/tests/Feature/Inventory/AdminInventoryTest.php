@@ -96,3 +96,23 @@ it('records a signed adjustment without dropping below reserved stock', function
         ->assertCreated()->assertJsonPath('data.qty_on_hand', 3);
     expect($stock->refresh()->qty_on_hand)->toBe(3);
 });
+
+it('rejects negative receipt and issue quantities', function () {
+    $warehouse = Warehouse::factory()->create();
+    $variant = ProductVariant::factory()->create();
+    StockItem::query()->create(['warehouse_id' => $warehouse->id, 'product_variant_id' => $variant->id, 'qty_on_hand' => 5, 'qty_reserved' => 0]);
+
+    $this->actingAs(catalogAdmin(), 'admin')->postJson('/api/v1/admin/inventory/movements', [
+        'warehouse_id' => $warehouse->id,
+        'product_variant_id' => $variant->id,
+        'type' => 'receipt',
+        'qty' => -1,
+    ])->assertUnprocessable();
+
+    $this->actingAs(catalogAdmin(), 'admin')->postJson('/api/v1/admin/inventory/movements', [
+        'warehouse_id' => $warehouse->id,
+        'product_variant_id' => $variant->id,
+        'type' => 'issue',
+        'qty' => -1,
+    ])->assertUnprocessable();
+});

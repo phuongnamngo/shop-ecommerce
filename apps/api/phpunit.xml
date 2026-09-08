@@ -10,6 +10,8 @@
         </testsuite>
         <testsuite name="Feature">
             <directory>tests/Feature</directory>
+            <!-- PostgreSQL row-lock suite; run via phpunit.pgsql.xml -->
+            <exclude>tests/Feature/Checkout/CheckoutConcurrencyTest.php</exclude>
         </testsuite>
     </testsuites>
     <source>
