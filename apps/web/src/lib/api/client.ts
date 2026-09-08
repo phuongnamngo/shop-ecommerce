@@ -66,9 +66,10 @@ export async function apiFetch<T>(
     await ensureCsrfCookie();
   }
 
-  const headers = new Headers(init.headers);
+  const { json, retryOn419, ...fetchInit } = init;
+  const headers = new Headers(fetchInit.headers);
   headers.set("Accept", "application/json");
-  if (init.json !== undefined) {
+  if (json !== undefined) {
     headers.set("Content-Type", "application/json");
   }
 
@@ -77,13 +78,12 @@ export async function apiFetch<T>(
     headers.set("X-XSRF-TOKEN", xsrf);
   }
 
-  const { json, retryOn419, ...rest } = init;
   const res = await fetch(`${base}${path}`, {
-    ...rest,
+    ...fetchInit,
     method,
     headers,
     credentials: "include",
-    body: json !== undefined ? JSON.stringify(json) : rest.body,
+    body: json !== undefined ? JSON.stringify(json) : fetchInit.body,
   });
 
   if (res.status === 419 && retryOn419 !== false) {
