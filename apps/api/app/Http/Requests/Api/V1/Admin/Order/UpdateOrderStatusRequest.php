@@ -7,6 +7,13 @@ use Illuminate\Validation\Rule;
 
 final class UpdateOrderStatusRequest extends FormRequest
 {
-    public function authorize(): bool { return true; }
-    public function rules(): array { return ['status' => ['required', Rule::in(['paid', 'fulfilling', 'shipped', 'completed', 'cancelled'])], 'note' => ['nullable', 'string', 'max:1000']]; }
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    public function rules(): array
+    {
+        return ['status' => ['required', Rule::in(['paid', 'fulfilling', 'shipped', 'completed', 'cancelled'])], 'note' => ['nullable', 'string', 'max:1000']];
+    }
 }

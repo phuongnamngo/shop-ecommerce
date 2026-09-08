@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Inventory\StockItemResource;
 use App\Models\StockItem;
 use App\Support\ApiResponse;
+use App\Support\CatalogPaginator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -14,8 +15,17 @@ final class StockItemController extends Controller
     public function index(Request $request): JsonResponse
     {
         $query = StockItem::query()->orderBy('id');
-        if ($request->filled('warehouse_id')) $query->where('warehouse_id', $request->integer('warehouse_id'));
-        if ($request->filled('product_variant_id')) $query->where('product_variant_id', $request->integer('product_variant_id'));
-        return ApiResponse::success(StockItemResource::collection($query->get())->resolve());
+        if ($request->filled('warehouse_id')) {
+            $query->where('warehouse_id', $request->integer('warehouse_id'));
+        }
+        if ($request->filled('product_variant_id')) {
+            $query->where('product_variant_id', $request->integer('product_variant_id'));
+        }
+        $paginator = $query->paginate(CatalogPaginator::perPage($request));
+
+        return ApiResponse::success(
+            StockItemResource::collection($paginator->getCollection())->resolve(),
+            CatalogPaginator::meta($paginator),
+        );
     }
 }

@@ -17,19 +17,19 @@ use App\Http\Controllers\Api\V1\Admin\Inventory\StockItemController as AdminStoc
 use App\Http\Controllers\Api\V1\Admin\Inventory\StockMovementController as AdminStockMovementController;
 use App\Http\Controllers\Api\V1\Admin\Inventory\WarehouseController as AdminWarehouseController;
 use App\Http\Controllers\Api\V1\Admin\MeController as AdminMeController;
-use App\Http\Controllers\Api\V1\Cart\CartController;
-use App\Http\Controllers\Api\V1\Checkout\CheckoutController;
-use App\Http\Controllers\Api\V1\Customer\OrderController as CustomerOrderController;
 use App\Http\Controllers\Api\V1\Admin\Order\OrderController as AdminOrderController;
+use App\Http\Controllers\Api\V1\Cart\CartController;
 use App\Http\Controllers\Api\V1\Catalog\BrandController as PublicBrandController;
 use App\Http\Controllers\Api\V1\Catalog\CategoryController as PublicCategoryController;
 use App\Http\Controllers\Api\V1\Catalog\ProductController as PublicProductController;
+use App\Http\Controllers\Api\V1\Checkout\CheckoutController;
 use App\Http\Controllers\Api\V1\Customer\Auth\ForgotPasswordController as CustomerForgotPasswordController;
 use App\Http\Controllers\Api\V1\Customer\Auth\LoginController as CustomerLoginController;
 use App\Http\Controllers\Api\V1\Customer\Auth\LogoutController as CustomerLogoutController;
 use App\Http\Controllers\Api\V1\Customer\Auth\RegisterController as CustomerRegisterController;
 use App\Http\Controllers\Api\V1\Customer\Auth\ResetPasswordController as CustomerResetPasswordController;
 use App\Http\Controllers\Api\V1\Customer\MeController as CustomerMeController;
+use App\Http\Controllers\Api\V1\Customer\OrderController as CustomerOrderController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {

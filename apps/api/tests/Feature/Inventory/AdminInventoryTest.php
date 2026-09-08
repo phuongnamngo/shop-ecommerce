@@ -22,14 +22,16 @@ it('lists warehouses and filters stock items for an authorized admin', function 
     $this->actingAs(catalogAdmin(), 'admin')
         ->getJson('/api/v1/admin/inventory/warehouses')
         ->assertOk()
-        ->assertJsonPath('data.0.id', $warehouse->id);
+        ->assertJsonPath('data.0.id', $warehouse->id)
+        ->assertJsonStructure(['data', 'meta' => ['current_page', 'last_page', 'per_page', 'total']]);
 
     $this->actingAs(catalogAdmin(), 'admin')
         ->getJson('/api/v1/admin/inventory/stock-items?warehouse_id='.$warehouse->id.'&product_variant_id='.$variant->id)
         ->assertOk()
         ->assertJsonPath('data.0.qty_on_hand', 12)
         ->assertJsonPath('data.0.qty_reserved', 2)
-        ->assertJsonPath('data.0.available_qty', 10);
+        ->assertJsonPath('data.0.available_qty', 10)
+        ->assertJsonStructure(['data', 'meta' => ['current_page', 'last_page', 'per_page', 'total']]);
 });
 
 it('forbids an admin without inventory view permission', function () {
@@ -65,14 +67,15 @@ it('rejects an issue larger than available stock', function () {
     $warehouse = Warehouse::factory()->create();
     $variant = ProductVariant::factory()->create();
     StockItem::query()->create(['warehouse_id' => $warehouse->id, 'product_variant_id' => $variant->id, 'qty_on_hand' => 4, 'qty_reserved' => 2]);
-    $this->actingAs(catalogAdmin(), 'admin')->postJson('/api/v1/admin/inventory/movements', ['warehouse_id'=>$warehouse->id,'product_variant_id'=>$variant->id,'type'=>'issue','qty'=>3])
+    $this->actingAs(catalogAdmin(), 'admin')->postJson('/api/v1/admin/inventory/movements', ['warehouse_id' => $warehouse->id, 'product_variant_id' => $variant->id, 'type' => 'issue', 'qty' => 3])
         ->assertUnprocessable()->assertJsonFragment(['code' => 'INVENTORY_INSUFFICIENT_STOCK']);
 });
 
 it('records a signed adjustment without dropping below reserved stock', function () {
-    $warehouse = Warehouse::factory()->create(); $variant = ProductVariant::factory()->create();
-    $stock = StockItem::query()->create(['warehouse_id'=>$warehouse->id,'product_variant_id'=>$variant->id,'qty_on_hand'=>5,'qty_reserved'=>2]);
-    $this->actingAs(catalogAdmin(), 'admin')->postJson('/api/v1/admin/inventory/movements', ['warehouse_id'=>$warehouse->id,'product_variant_id'=>$variant->id,'type'=>'adjustment','qty'=>-2])
+    $warehouse = Warehouse::factory()->create();
+    $variant = ProductVariant::factory()->create();
+    $stock = StockItem::query()->create(['warehouse_id' => $warehouse->id, 'product_variant_id' => $variant->id, 'qty_on_hand' => 5, 'qty_reserved' => 2]);
+    $this->actingAs(catalogAdmin(), 'admin')->postJson('/api/v1/admin/inventory/movements', ['warehouse_id' => $warehouse->id, 'product_variant_id' => $variant->id, 'type' => 'adjustment', 'qty' => -2])
         ->assertCreated()->assertJsonPath('data.qty_on_hand', 3);
     expect($stock->refresh()->qty_on_hand)->toBe(3);
 });

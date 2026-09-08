@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 final class CheckoutWorkerCommand extends Command
 {
     protected $signature = 'commerce:checkout-worker {cart} {payload} {barrier} {worker}';
+
     protected $description = 'Internal PostgreSQL checkout concurrency test worker';
 
     public function handle(CheckoutService $checkout): int
@@ -29,7 +30,9 @@ final class CheckoutWorkerCommand extends Command
         $barrier = rtrim($this->argument('barrier'), '/');
         file_put_contents($barrier.'/ready-'.$this->argument('worker'), 'ready');
         $deadline = microtime(true) + 15;
-        while (! file_exists($barrier.'/release') && microtime(true) < $deadline) usleep(10000);
+        while (! file_exists($barrier.'/release') && microtime(true) < $deadline) {
+            usleep(10000);
+        }
 
         try {
             $order = $checkout->checkout(Cart::query()->findOrFail((int) $this->argument('cart')), null, json_decode(base64_decode($this->argument('payload')), true, flags: JSON_THROW_ON_ERROR));
@@ -37,6 +40,7 @@ final class CheckoutWorkerCommand extends Command
         } catch (CommerceException $e) {
             $this->line(json_encode(['ok' => false, 'code' => $e->errorCode]));
         }
+
         return self::SUCCESS;
     }
 }

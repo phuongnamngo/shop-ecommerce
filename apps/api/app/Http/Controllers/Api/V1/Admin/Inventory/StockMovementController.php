@@ -21,12 +21,18 @@ final class StockMovementController extends Controller
         $stock = DB::transaction(function () use ($data) {
             $stock = StockItem::query()->where('warehouse_id', $data['warehouse_id'])->where('product_variant_id', $data['product_variant_id'])->lockForUpdate()->firstOrFail();
             $delta = $data['type'] === 'issue' ? -$data['qty'] : $data['qty'];
-            if ($data['type'] === 'issue' && ($data['qty'] <= 0 || $stock->qty_on_hand - $stock->qty_reserved < $data['qty'])) throw new CommerceException(ErrorCode::INVENTORY_INSUFFICIENT_STOCK, 'Insufficient stock.');
-            if ($stock->qty_on_hand + $delta < $stock->qty_reserved) throw new CommerceException(ErrorCode::INVENTORY_INSUFFICIENT_STOCK, 'Insufficient stock.');
+            if ($data['type'] === 'issue' && ($data['qty'] <= 0 || $stock->qty_on_hand - $stock->qty_reserved < $data['qty'])) {
+                throw new CommerceException(ErrorCode::INVENTORY_INSUFFICIENT_STOCK, 'Insufficient stock.');
+            }
+            if ($stock->qty_on_hand + $delta < $stock->qty_reserved) {
+                throw new CommerceException(ErrorCode::INVENTORY_INSUFFICIENT_STOCK, 'Insufficient stock.');
+            }
             $stock->increment('qty_on_hand', $delta);
             StockMovement::query()->create(['warehouse_id' => $stock->warehouse_id, 'product_variant_id' => $stock->product_variant_id, 'type' => $data['type'], 'qty' => $delta, 'note' => $data['note'] ?? null]);
+
             return $stock->refresh();
         });
+
         return ApiResponse::success(StockItemResource::make($stock)->resolve(), status: 201);
     }
 }

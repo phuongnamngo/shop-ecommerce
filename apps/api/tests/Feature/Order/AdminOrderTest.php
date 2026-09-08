@@ -9,21 +9,31 @@ use App\Models\Warehouse;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Spatie\Permission\Models\Permission;
 
-beforeEach(function () { $this->seed(RolesAndPermissionsSeeder::class); });
+beforeEach(function () {
+    $this->seed(RolesAndPermissionsSeeder::class);
+});
 
 it('guards admin order routes with order permissions and filters status', function () {
-    $admin = AdminUser::factory()->create(['status' => 'active']); $admin->assignRole('staff');
-    Order::factory()->create(['status' => 'pending']); Order::factory()->create(['status' => 'completed']);
-    $this->actingAs($admin, 'admin')->getJson('/api/v1/admin/orders?status=pending')->assertOk()->assertJsonCount(1, 'data')->assertJsonPath('data.0.status', 'pending');
+    $admin = AdminUser::factory()->create(['status' => 'active']);
+    $admin->assignRole('staff');
+    Order::factory()->create(['status' => 'pending']);
+    Order::factory()->create(['status' => 'completed']);
+    $this->actingAs($admin, 'admin')->getJson('/api/v1/admin/orders?status=pending')
+        ->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.status', 'pending')
+        ->assertJsonStructure(['data', 'meta' => ['current_page', 'last_page', 'per_page', 'total']]);
     Permission::findByName('orders.view', 'admin')->removeRole('staff');
     $admin->forgetCachedPermissions();
     $this->actingAs($admin, 'admin')->getJson('/api/v1/admin/orders')->assertForbidden();
 });
 
 it('records allowed transitions and releases cancellation reservations once', function () {
-    $admin = AdminUser::factory()->create(['status' => 'active']); $admin->assignRole('admin');
+    $admin = AdminUser::factory()->create(['status' => 'active']);
+    $admin->assignRole('admin');
     $warehouse = Warehouse::factory()->create(['status' => 'active']);
-    $product = Product::factory()->published()->create(); $variant = $product->variants()->firstOrFail();
+    $product = Product::factory()->published()->create();
+    $variant = $product->variants()->firstOrFail();
     $stock = StockItem::query()->create(['warehouse_id' => $warehouse->id, 'product_variant_id' => $variant->id, 'qty_on_hand' => 5, 'qty_reserved' => 2]);
     $order = Order::factory()->create(['status' => 'pending']);
     StockReservation::query()->create(['warehouse_id' => $warehouse->id, 'product_variant_id' => $variant->id, 'order_id' => $order->id, 'qty' => 2, 'status' => 'active']);
@@ -38,13 +48,15 @@ it('records allowed transitions and releases cancellation reservations once', fu
 });
 
 it('rejects forbidden state transitions', function () {
-    $admin = AdminUser::factory()->create(['status' => 'active']); $admin->assignRole('admin');
+    $admin = AdminUser::factory()->create(['status' => 'active']);
+    $admin->assignRole('admin');
     $order = Order::factory()->create(['status' => 'pending']);
     $this->actingAs($admin, 'admin')->patchJson('/api/v1/admin/orders/'.$order->id.'/status', ['status' => 'shipped'])->assertConflict()->assertJsonPath('errors.0.code', 'ORDER_INVALID_TRANSITION');
 });
 
 it('accepts each documented order state transition', function (string $from, string $to) {
-    $admin = AdminUser::factory()->create(['status' => 'active']); $admin->assignRole('admin');
+    $admin = AdminUser::factory()->create(['status' => 'active']);
+    $admin->assignRole('admin');
     $order = Order::factory()->create(['status' => $from]);
     $this->actingAs($admin, 'admin')->patchJson('/api/v1/admin/orders/'.$order->id.'/status', ['status' => $to])->assertOk()->assertJsonPath('data.status', $to);
 })->with([

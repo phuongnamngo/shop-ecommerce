@@ -94,23 +94,36 @@ final class CheckoutService
 
     private function coupon(?string $code, ?Customer $customer, int $subtotal): array
     {
-        if ($code === null || $code === '') return [null, 0];
+        if ($code === null || $code === '') {
+            return [null, 0];
+        }
         $coupon = Coupon::query()->where('code', $code)->where('status', 'active')->lockForUpdate()->first();
         if ($coupon === null || ($coupon->starts_at && $coupon->starts_at->isFuture()) || ($coupon->ends_at && $coupon->ends_at->isPast()) || ($coupon->max_uses !== null && $coupon->used_count >= $coupon->max_uses)) {
             throw new CommerceException(ErrorCode::COUPON_INVALID, 'Coupon is unavailable.', 'coupon_code');
         }
         if ($coupon->max_uses_per_customer !== null) {
-            if ($customer === null || $coupon->redemptions()->where('customer_id', $customer->id)->count() >= $coupon->max_uses_per_customer) throw new CommerceException(ErrorCode::COUPON_INVALID, 'Coupon customer limit reached.', 'coupon_code');
+            if ($customer === null || $coupon->redemptions()->where('customer_id', $customer->id)->count() >= $coupon->max_uses_per_customer) {
+                throw new CommerceException(ErrorCode::COUPON_INVALID, 'Coupon customer limit reached.', 'coupon_code');
+            }
         }
         $discount = $coupon->discount()->where('status', 'active')->first();
-        if ($discount === null || ($discount->starts_at && $discount->starts_at->isFuture()) || ($discount->ends_at && $discount->ends_at->isPast())) throw new CommerceException(ErrorCode::COUPON_INVALID, 'Discount is unavailable.', 'coupon_code');
+        if ($discount === null || ($discount->starts_at && $discount->starts_at->isFuture()) || ($discount->ends_at && $discount->ends_at->isPast())) {
+            throw new CommerceException(ErrorCode::COUPON_INVALID, 'Discount is unavailable.', 'coupon_code');
+        }
         $rules = $discount->rules()->get();
-        if ($rules->count() > 1) throw new CommerceException(ErrorCode::COUPON_INVALID, 'Coupon rules are unsupported.', 'coupon_code');
+        if ($rules->count() > 1) {
+            throw new CommerceException(ErrorCode::COUPON_INVALID, 'Coupon rules are unsupported.', 'coupon_code');
+        }
         $conditions = $rules->first()?->conditions ?? [];
-        if (array_diff(array_keys($conditions), ['min_subtotal']) !== [] || (($conditions['min_subtotal'] ?? 0) > $subtotal)) throw new CommerceException(ErrorCode::COUPON_INVALID, 'Coupon conditions are not met.', 'coupon_code');
+        if (array_diff(array_keys($conditions), ['min_subtotal']) !== [] || (($conditions['min_subtotal'] ?? 0) > $subtotal)) {
+            throw new CommerceException(ErrorCode::COUPON_INVALID, 'Coupon conditions are not met.', 'coupon_code');
+        }
         $value = (float) $discount->value;
         $amount = $discount->type === 'fixed' ? min((int) $value, $subtotal) : ($discount->type === 'percentage' && $value > 0 && $value <= 100 ? (int) floor($subtotal * $value / 100) : null);
-        if ($amount === null || $amount <= 0) throw new CommerceException(ErrorCode::COUPON_INVALID, 'Coupon discount is invalid.', 'coupon_code');
+        if ($amount === null || $amount <= 0) {
+            throw new CommerceException(ErrorCode::COUPON_INVALID, 'Coupon discount is invalid.', 'coupon_code');
+        }
+
         return [$coupon, $amount];
     }
 }

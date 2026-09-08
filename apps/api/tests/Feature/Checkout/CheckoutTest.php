@@ -1,18 +1,18 @@
 <?php
 
+use App\Models\Coupon;
+use App\Models\Customer;
+use App\Models\CustomerAddress;
+use App\Models\Discount;
 use App\Models\GeoDistrict;
 use App\Models\GeoProvince;
 use App\Models\GeoWard;
+use App\Models\Product;
 use App\Models\ShippingMethod;
 use App\Models\ShippingRate;
-use App\Models\Product;
 use App\Models\StockItem;
 use App\Models\Warehouse;
-use App\Models\Coupon;
-use App\Models\Discount;
 use Illuminate\Support\Str;
-use App\Models\Customer;
-use App\Models\CustomerAddress;
 
 it('requires a shipping address and shipping selection for checkout', function () {
     $token = $this->postJson('/api/v1/cart')->assertCreated()->json('meta.cart_token');
@@ -106,7 +106,8 @@ it('applies the documented percentage coupon contract', function () {
     $method = ShippingMethod::query()->create(['code' => 'coupon', 'name' => 'Coupon', 'status' => 'active']);
     $rate = ShippingRate::query()->create(['shipping_method_id' => $method->id, 'price' => 10000]);
     $warehouse = Warehouse::query()->create(['code' => 'COUPON', 'name' => 'Default', 'is_default' => true, 'status' => 'active']);
-    $product = Product::factory()->published()->create(); $variant = $product->variants()->firstOrFail();
+    $product = Product::factory()->published()->create();
+    $variant = $product->variants()->firstOrFail();
     StockItem::query()->create(['warehouse_id' => $warehouse->id, 'product_variant_id' => $variant->id, 'qty_on_hand' => 3, 'qty_reserved' => 0]);
     $discount = Discount::query()->create(['code' => (string) Str::ulid(), 'name' => 'Ten percent', 'type' => 'percentage', 'value' => 10, 'status' => 'active']);
     $discount->rules()->create(['conditions' => ['min_subtotal' => 50000]]);
@@ -127,7 +128,8 @@ it('checks out the authenticated customer cart with an owned address', function 
     $method = ShippingMethod::query()->create(['code' => 'customer-checkout', 'name' => 'Customer', 'status' => 'active']);
     $rate = ShippingRate::query()->create(['shipping_method_id' => $method->id, 'price' => 10000]);
     $warehouse = Warehouse::query()->create(['code' => 'CUSTOMER', 'name' => 'Default', 'is_default' => true, 'status' => 'active']);
-    $product = Product::factory()->published()->create(); $variant = $product->variants()->firstOrFail();
+    $product = Product::factory()->published()->create();
+    $variant = $product->variants()->firstOrFail();
     StockItem::query()->create(['warehouse_id' => $warehouse->id, 'product_variant_id' => $variant->id, 'qty_on_hand' => 2, 'qty_reserved' => 0]);
     $customer = Customer::factory()->create(['status' => 'active']);
     $address = CustomerAddress::query()->create(['customer_id' => $customer->id, 'recipient_name' => 'Customer', 'phone' => '0900000000', 'province_code' => 'P', 'district_code' => 'D', 'ward_code' => 'W', 'address_line' => 'Road', 'is_default' => true]);

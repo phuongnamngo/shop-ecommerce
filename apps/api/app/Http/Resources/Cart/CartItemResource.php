@@ -2,10 +2,11 @@
 
 namespace App\Http\Resources\Cart;
 
+use App\Models\CartItem;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/** @mixin \App\Models\CartItem */
+/** @mixin CartItem */
 final class CartItemResource extends JsonResource
 {
     public function toArray(Request $request): array
