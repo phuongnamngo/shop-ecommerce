@@ -19,7 +19,9 @@ final class StockItemController extends Controller
     #[Response(200, 'Paginated stock items.', type: 'array{data: list<StockItemResource>, meta: array{current_page: int, last_page: int, per_page: int, total: int}}')]
     public function index(Request $request): JsonResponse
     {
-        $query = StockItem::query()->orderBy('id');
+        $query = StockItem::query()
+            ->with(['warehouse', 'variant.product'])
+            ->orderBy('id');
         if ($request->filled('warehouse_id')) {
             $query->where('warehouse_id', $request->integer('warehouse_id'));
         }

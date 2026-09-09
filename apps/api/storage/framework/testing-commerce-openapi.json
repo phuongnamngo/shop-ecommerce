@@ -2573,6 +2573,124 @@
                 "security": []
             }
         },
+        "/api/v1/admin/customers": {
+            "get": {
+                "operationId": "customer.index",
+                "tags": [
+                    "Customer"
+                ],
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {}
+                                        },
+                                        "meta": {
+                                            "anyOf": [
+                                                {
+                                                    "type": "string"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "current_page": {
+                                                            "type": "integer"
+                                                        },
+                                                        "per_page": {
+                                                            "type": "integer"
+                                                        },
+                                                        "total": {
+                                                            "type": "integer"
+                                                        },
+                                                        "last_page": {
+                                                            "type": "integer"
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "current_page",
+                                                        "per_page",
+                                                        "total",
+                                                        "last_page"
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/customers/{id}": {
+            "get": {
+                "operationId": "customer.show",
+                "tags": [
+                    "Customer"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {}
+                                        },
+                                        "meta": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
         "/api/v1/customer/auth/forgot-password": {
             "post": {
                 "operationId": "v1.customer.auth.forgotPassword",
@@ -5840,7 +5958,29 @@
                     "status_history": {
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/OrderStatusHistory"
+                            "type": "object",
+                            "properties": {
+                                "from_status": {
+                                    "type": [
+                                        "string",
+                                        "null"
+                                    ]
+                                },
+                                "to_status": {
+                                    "type": "string"
+                                },
+                                "created_at": {
+                                    "type": [
+                                        "string",
+                                        "null"
+                                    ]
+                                }
+                            },
+                            "required": [
+                                "from_status",
+                                "to_status",
+                                "created_at"
+                            ]
                         }
                     },
                     "created_at": {
@@ -5854,6 +5994,38 @@
                             "integer",
                             "null"
                         ]
+                    },
+                    "shipments": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "integer"
+                                },
+                                "tracking_number": {
+                                    "type": [
+                                        "string",
+                                        "null"
+                                    ]
+                                },
+                                "carrier_code": {
+                                    "type": [
+                                        "string",
+                                        "null"
+                                    ]
+                                },
+                                "status": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "id",
+                                "tracking_number",
+                                "carrier_code",
+                                "status"
+                            ]
+                        }
                     }
                 },
                 "required": [
@@ -6263,70 +6435,6 @@
                 ],
                 "title": "OrderResource"
             },
-            "OrderStatusHistory": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "integer"
-                    },
-                    "order_id": {
-                        "type": "integer"
-                    },
-                    "from_status": {
-                        "type": [
-                            "string",
-                            "null"
-                        ]
-                    },
-                    "to_status": {
-                        "type": "string"
-                    },
-                    "changed_by_admin_id": {
-                        "type": [
-                            "integer",
-                            "null"
-                        ]
-                    },
-                    "changed_by_customer_id": {
-                        "type": [
-                            "integer",
-                            "null"
-                        ]
-                    },
-                    "note": {
-                        "type": [
-                            "string",
-                            "null"
-                        ]
-                    },
-                    "created_at": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
-                        "format": "date-time"
-                    },
-                    "updated_at": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
-                        "format": "date-time"
-                    }
-                },
-                "required": [
-                    "id",
-                    "order_id",
-                    "from_status",
-                    "to_status",
-                    "changed_by_admin_id",
-                    "changed_by_customer_id",
-                    "note",
-                    "created_at",
-                    "updated_at"
-                ],
-                "title": "OrderStatusHistory"
-            },
             "RegisterRequest": {
                 "type": "object",
                 "properties": {
@@ -6406,6 +6514,48 @@
                     },
                     "available_qty": {
                         "type": "integer"
+                    },
+                    "warehouse": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "integer"
+                            },
+                            "code": {
+                                "type": "string"
+                            },
+                            "name": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "id",
+                            "code",
+                            "name"
+                        ]
+                    },
+                    "variant": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "integer"
+                            },
+                            "sku": {
+                                "type": "string"
+                            },
+                            "product_id": {
+                                "type": "integer"
+                            },
+                            "product_name": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "id",
+                            "sku",
+                            "product_id",
+                            "product_name"
+                        ]
                     }
                 },
                 "required": [
@@ -6414,7 +6564,9 @@
                     "product_variant_id",
                     "qty_on_hand",
                     "qty_reserved",
-                    "available_qty"
+                    "available_qty",
+                    "warehouse",
+                    "variant"
                 ],
                 "title": "StockItemResource"
             },

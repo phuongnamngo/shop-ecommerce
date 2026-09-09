@@ -37,6 +37,8 @@ final class StockMovementController extends Controller
             return $stock->refresh();
         });
 
+        $stock->loadMissing(['warehouse', 'variant.product']);
+
         return ApiResponse::success(StockItemResource::make($stock)->resolve(), status: 201);
     }
 }

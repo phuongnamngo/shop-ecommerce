@@ -1,21 +1,5 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { InventoryPage } from "@/components/admin/inventory/inventory-page";
 
-export default function AdminInventoryStubPage() {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Inventory</CardTitle>
-        <CardDescription>Tồn kho tối thiểu — sắp có.</CardDescription>
-      </CardHeader>
-      <CardContent className="text-sm text-muted-foreground">
-        Coming soon
-      </CardContent>
-    </Card>
-  );
+export default function AdminInventoryPage() {
+  return <InventoryPage />;
 }

@@ -31,6 +31,13 @@ it('lists warehouses and filters stock items for an authorized admin', function 
         ->assertJsonPath('data.0.qty_on_hand', 12)
         ->assertJsonPath('data.0.qty_reserved', 2)
         ->assertJsonPath('data.0.available_qty', 10)
+        ->assertJsonPath('data.0.warehouse.id', $warehouse->id)
+        ->assertJsonPath('data.0.warehouse.code', $warehouse->code)
+        ->assertJsonPath('data.0.warehouse.name', $warehouse->name)
+        ->assertJsonPath('data.0.variant.id', $variant->id)
+        ->assertJsonPath('data.0.variant.sku', $variant->sku)
+        ->assertJsonPath('data.0.variant.product_id', $variant->product_id)
+        ->assertJsonPath('data.0.variant.product_name', $variant->product->name)
         ->assertJsonStructure(['data', 'meta' => ['current_page', 'last_page', 'per_page', 'total']]);
 });
 
@@ -74,7 +81,10 @@ it('records a receipt and increases stock on hand', function () {
             'note' => 'Initial receipt',
         ])
         ->assertCreated()
-        ->assertJsonPath('data.qty_on_hand', 5);
+        ->assertJsonPath('data.qty_on_hand', 5)
+        ->assertJsonPath('data.warehouse.id', $warehouse->id)
+        ->assertJsonPath('data.variant.sku', $variant->sku)
+        ->assertJsonPath('data.variant.product_name', $variant->product->name);
 
     expect($stock->refresh()->qty_on_hand)->toBe(5)
         ->and(StockMovement::query()->where('warehouse_id', $warehouse->id)->where('product_variant_id', $variant->id)->value('qty'))->toBe(5);
