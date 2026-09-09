@@ -20,6 +20,7 @@ export function listOrders(params?: {
   page?: number;
   per_page?: number;
   status?: string;
+  customer_id?: number;
 }): Promise<ApiSuccess<AdminOrder[]> & { meta: PageMeta }> {
   return apiFetch(`/api/v1/admin/orders${qs(params ?? {})}`) as Promise<
     ApiSuccess<AdminOrder[]> & { meta: PageMeta }

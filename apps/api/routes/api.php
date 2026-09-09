@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\V1\Admin\Inventory\StockItemController as AdminStoc
 use App\Http\Controllers\Api\V1\Admin\Inventory\StockMovementController as AdminStockMovementController;
 use App\Http\Controllers\Api\V1\Admin\Inventory\WarehouseController as AdminWarehouseController;
 use App\Http\Controllers\Api\V1\Admin\MeController as AdminMeController;
+use App\Http\Controllers\Api\V1\Admin\Customer\CustomerController as AdminCustomerController;
 use App\Http\Controllers\Api\V1\Admin\Order\OrderController as AdminOrderController;
 use App\Http\Controllers\Api\V1\Admin\Order\ShipmentController as AdminShipmentController;
 use App\Http\Controllers\Api\V1\Cart\CartController;
@@ -103,10 +104,10 @@ Route::prefix('v1')->group(function () {
             Route::patch('orders/{id}/status', [AdminOrderController::class, 'updateStatus'])->middleware('permission:orders.manage,admin');
             Route::post('orders/{id}/shipments', [AdminShipmentController::class, 'store'])->middleware('permission:orders.manage,admin');
 
-            Route::middleware('permission:customers.view,admin')
-                ->get('customers-check', function () {
-                    return response()->json(['ok' => true]);
-                });
+            Route::middleware('permission:customers.view,admin')->group(function () {
+                Route::get('customers', [AdminCustomerController::class, 'index']);
+                Route::get('customers/{id}', [AdminCustomerController::class, 'show']);
+            });
 
             Route::middleware('permission:catalog.products.view,admin')->group(function () {
                 Route::get('catalog/products', [AdminProductController::class, 'index']);

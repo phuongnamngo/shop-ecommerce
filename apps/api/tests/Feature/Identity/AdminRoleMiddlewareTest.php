@@ -38,7 +38,7 @@ it('forbids admin without backoffice role on me', function () {
         ->assertForbidden();
 });
 
-it('forbids staff without customers.view on customers-check', function () {
+it('forbids staff without customers.view on customers', function () {
     $staffRole = Role::findByName('staff', 'admin');
     $staffRole->revokePermissionTo('customers.view');
 
@@ -47,16 +47,16 @@ it('forbids staff without customers.view on customers-check', function () {
 
     $this->actingAs($admin, 'admin');
 
-    $this->getJson('/api/v1/admin/customers-check')
+    $this->getJson('/api/v1/admin/customers')
         ->assertForbidden();
 });
 
-it('allows staff with customers.view on customers-check', function () {
+it('allows staff with customers.view on customers', function () {
     $admin = AdminUser::factory()->create();
     $admin->assignRole('staff');
 
     $this->actingAs($admin, 'admin');
 
-    $this->getJson('/api/v1/admin/customers-check')
+    $this->getJson('/api/v1/admin/customers')
         ->assertOk();
 });

@@ -23,7 +23,6 @@ return [
     'api_path' => [
         'include' => 'api/v1*',
         'exclude' => [
-            'api/v1/admin/customers-check',
             'api/__test',
             'api/__test*',
         ],
