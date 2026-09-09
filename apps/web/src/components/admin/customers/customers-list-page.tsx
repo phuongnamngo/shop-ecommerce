@@ -3,27 +3,30 @@
 import { FormEvent, useState } from "react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
+import { UserRound } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
+  AdminPagination,
+  DataTableShell,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/components/admin/layout/data-table";
+import { EmptyState, LoadingState } from "@/components/admin/layout/empty-state";
+import { FilterBar } from "@/components/admin/layout/filter-bar";
+import { PageHeader } from "@/components/admin/layout/page-header";
+import { StatCard } from "@/components/admin/layout/stat-card";
+import { StatusBadge } from "@/components/admin/layout/status-badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { listCustomers } from "@/lib/api/customers/client";
 import { customerErrorMessage } from "@/lib/api/customers/errors";
+import { cn } from "@/lib/utils";
+
+const STATUS_TABS = ["all", "active", "inactive", "banned"] as const;
 
 export function CustomersListPage() {
   const [page, setPage] = useState(1);
@@ -41,6 +44,23 @@ export function CustomersListPage() {
         q: qApplied || undefined,
       }),
   });
+  const totals = useQuery({
+    queryKey: ["admin", "customers", "totals"],
+    queryFn: async () => {
+      const [all, active, inactive, banned] = await Promise.all([
+        listCustomers({ page: 1, per_page: 1 }),
+        listCustomers({ page: 1, per_page: 1, status: "active" }),
+        listCustomers({ page: 1, per_page: 1, status: "inactive" }),
+        listCustomers({ page: 1, per_page: 1, status: "banned" }),
+      ]);
+      return {
+        all: all.meta.total,
+        active: active.meta.total,
+        inactive: inactive.meta.total,
+        banned: banned.meta.total,
+      };
+    },
+  });
 
   const rows = query.data?.data ?? [];
   const meta = query.data?.meta;
@@ -52,59 +72,69 @@ export function CustomersListPage() {
   }
 
   return (
-    <div className="space-y-4">
-      <div>
-        <h1 className="text-xl font-semibold">Customers</h1>
-        <p className="text-sm text-muted-foreground">
-          Danh sách khách hàng — lọc status và tìm name/email/phone.
-        </p>
+    <div className="space-y-6">
+      <PageHeader
+        title="Customers Directory"
+        description="Storefront accounts — filter by status or search name, email, phone."
+      />
+
+      <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <StatCard label="Total" value={totals.data?.all ?? "—"} />
+        <StatCard label="Active" value={totals.data?.active ?? "—"} tone="success" />
+        <StatCard label="Inactive" value={totals.data?.inactive ?? "—"} />
+        <StatCard label="Banned" value={totals.data?.banned ?? "—"} tone="danger" />
+      </section>
+
+      <div className="flex flex-wrap gap-1 rounded-xl border border-[#e2e8f0] bg-white p-1">
+        {STATUS_TABS.map((tab) => (
+          <button
+            key={tab}
+            type="button"
+            onClick={() => {
+              setStatus(tab);
+              setPage(1);
+            }}
+            className={cn(
+              "rounded-lg px-3 py-1.5 text-[13px] font-semibold capitalize transition-colors duration-150",
+              status === tab
+                ? "bg-[#ecf2ff] text-[#1f53c9]"
+                : "text-[#64748b] hover:text-[#0f172a]",
+            )}
+          >
+            {tab}
+          </button>
+        ))}
       </div>
 
-      <Card>
-        <CardContent className="space-y-4 pt-6">
-          <div className="flex flex-wrap gap-2">
-            <Select
-              value={status}
-              onValueChange={(v) => {
-                setStatus(v);
-                setPage(1);
-              }}
-            >
-              <SelectTrigger className="w-40">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">all</SelectItem>
-                <SelectItem value="active">active</SelectItem>
-                <SelectItem value="inactive">inactive</SelectItem>
-                <SelectItem value="banned">banned</SelectItem>
-              </SelectContent>
-            </Select>
-            <form className="flex min-w-[16rem] flex-1 gap-2" onSubmit={onSearch}>
-              <Input
-                placeholder="Tìm name / email / phone…"
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
-              />
-              <Button type="submit" variant="outline">
-                Tìm
-              </Button>
-            </form>
-          </div>
+      <DataTableShell>
+        <FilterBar>
+          <form className="flex min-w-[16rem] flex-1 gap-2" onSubmit={onSearch}>
+            <Input
+              placeholder="Search name / email / phone…"
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+            />
+            <Button type="submit" variant="outline">
+              Search
+            </Button>
+          </form>
+        </FilterBar>
 
-          {query.isPending ? (
-            <p className="text-sm text-muted-foreground">Đang tải…</p>
-          ) : query.isError ? (
-            <p className="text-sm text-destructive">
-              {customerErrorMessage(query.error)}
-            </p>
-          ) : (
-            <>
+        {query.isPending ? (
+          <LoadingState />
+        ) : query.isError ? (
+          <p className="px-4 py-6 text-sm text-[#ba1a1a]">
+            {customerErrorMessage(query.error)}
+          </p>
+        ) : rows.length === 0 ? (
+          <EmptyState title="No customers match this filter" />
+        ) : (
+          <>
+            <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Code</TableHead>
-                    <TableHead>Name</TableHead>
+                    <TableHead>Customer</TableHead>
                     <TableHead>Email</TableHead>
                     <TableHead>Phone</TableHead>
                     <TableHead>Status</TableHead>
@@ -115,16 +145,25 @@ export function CustomersListPage() {
                 <TableBody>
                   {rows.map((customer) => (
                     <TableRow key={customer.id}>
-                      <TableCell className="font-mono text-xs">
-                        {customer.code}
-                      </TableCell>
-                      <TableCell className="font-medium">
-                        {customer.name}
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <div className="flex size-9 items-center justify-center rounded-full bg-[#ecf2ff] text-[#1f53c9]">
+                            <UserRound className="size-4" />
+                          </div>
+                          <div>
+                            <div className="font-medium">{customer.name}</div>
+                            <div className="font-mono text-[11px] text-[#64748b]">
+                              {customer.code}
+                            </div>
+                          </div>
+                        </div>
                       </TableCell>
                       <TableCell>{customer.email}</TableCell>
                       <TableCell>{customer.phone ?? "—"}</TableCell>
-                      <TableCell>{customer.status}</TableCell>
-                      <TableCell className="text-muted-foreground text-xs">
+                      <TableCell>
+                        <StatusBadge status={customer.status} />
+                      </TableCell>
+                      <TableCell className="text-[13px] text-[#64748b]">
                         {customer.created_at
                           ? new Date(customer.created_at).toLocaleString()
                           : "—"}
@@ -132,7 +171,7 @@ export function CustomersListPage() {
                       <TableCell className="text-right">
                         <Button asChild variant="outline" size="sm">
                           <Link href={`/admin/customers/${customer.id}`}>
-                            Xem
+                            View 360
                           </Link>
                         </Button>
                       </TableCell>
@@ -140,37 +179,19 @@ export function CustomersListPage() {
                   ))}
                 </TableBody>
               </Table>
-              {meta ? (
-                <div className="flex items-center justify-between text-sm">
-                  <span>
-                    Trang {meta.current_page}/{meta.last_page} · {meta.total}
-                  </span>
-                  <div className="flex gap-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      disabled={page <= 1}
-                      onClick={() => setPage((p) => p - 1)}
-                    >
-                      Trước
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      disabled={page >= meta.last_page}
-                      onClick={() => setPage((p) => p + 1)}
-                    >
-                      Sau
-                    </Button>
-                  </div>
-                </div>
-              ) : null}
-            </>
-          )}
-        </CardContent>
-      </Card>
+            </div>
+            {meta ? (
+              <AdminPagination
+                page={page}
+                lastPage={meta.last_page}
+                total={meta.total}
+                onPrev={() => setPage((p) => p - 1)}
+                onNext={() => setPage((p) => p + 1)}
+              />
+            ) : null}
+          </>
+        )}
+      </DataTableShell>
     </div>
   );
 }

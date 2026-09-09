@@ -4,7 +4,21 @@ import { FormEvent, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import {
+  AdminPagination,
+  DataTableShell,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/admin/layout/data-table";
+import { EmptyState, LoadingState } from "@/components/admin/layout/empty-state";
+import { FilterBar } from "@/components/admin/layout/filter-bar";
+import { PageHeader } from "@/components/admin/layout/page-header";
+import { StatCard } from "@/components/admin/layout/stat-card";
+import { StatusBadge } from "@/components/admin/layout/status-badge";
 import {
   Dialog,
   DialogContent,
@@ -22,14 +36,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { useAdminMe } from "@/hooks/use-admin-me";
 import { canManageInventory } from "@/lib/admin/can-manage-inventory";
 import {
@@ -138,133 +144,140 @@ export function InventoryPage() {
   const rows = stockQuery.data?.data ?? [];
   const meta = stockQuery.data?.meta;
   const warehouses = warehousesQuery.data?.data ?? [];
+  const lowStock = rows.filter((item) => item.available_qty > 0 && item.available_qty <= 5);
+  const outStock = rows.filter((item) => item.available_qty <= 0);
+  const healthy = rows.filter((item) => item.available_qty > 5);
 
   return (
-    <div className="space-y-4">
-      <div>
-        <h1 className="text-xl font-semibold">Inventory</h1>
-        <p className="text-sm text-muted-foreground">
-          Tồn kho tối thiểu — lọc warehouse và điều chỉnh receipt/issue/adjustment.
-        </p>
-      </div>
+    <div className="space-y-6">
+      <PageHeader
+        title="Inventory & Stock"
+        description="On-hand, reserved, and available quantity by warehouse. Adjustments use receipt / issue / adjustment movements."
+      />
 
-      <Card>
-        <CardContent className="space-y-4 pt-6">
-          <div className="flex flex-wrap gap-2">
-            <Select
-              value={warehouseFilter}
-              onValueChange={(v) => {
-                setWarehouseFilter(v);
-                setPage(1);
-              }}
-            >
-              <SelectTrigger className="w-56">
-                <SelectValue placeholder="Warehouse" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">all warehouses</SelectItem>
-                {warehouses.map((wh) => (
-                  <SelectItem key={wh.id} value={String(wh.id)}>
-                    {wh.code} — {wh.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+      <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <StatCard label="SKU rows" value={meta?.total ?? "—"} />
+        <StatCard label="In stock" value={healthy.length} tone="success" hint="On this page · available > 5" />
+        <StatCard label="Low stock" value={lowStock.length} tone="warning" hint="Available 1–5" />
+        <StatCard label="Out of stock" value={outStock.length} tone="danger" hint="Available ≤ 0" />
+      </section>
 
-          {warehousesQuery.isError ? (
-            <p className="text-sm text-destructive">
-              {inventoryErrorMessage(warehousesQuery.error)}
-            </p>
-          ) : null}
+      <DataTableShell>
+        <FilterBar>
+          <Select
+            value={warehouseFilter}
+            onValueChange={(v) => {
+              setWarehouseFilter(v);
+              setPage(1);
+            }}
+          >
+            <SelectTrigger className="w-56">
+              <SelectValue placeholder="Warehouse" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">all warehouses</SelectItem>
+              {warehouses.map((wh) => (
+                <SelectItem key={wh.id} value={String(wh.id)}>
+                  {wh.code} — {wh.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </FilterBar>
 
-          {stockQuery.isPending ? (
-            <p className="text-sm text-muted-foreground">Đang tải…</p>
-          ) : stockQuery.isError ? (
-            <p className="text-sm text-destructive">
-              {inventoryErrorMessage(stockQuery.error)}
-            </p>
-          ) : (
-            <>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Warehouse</TableHead>
-                    <TableHead>SKU</TableHead>
-                    <TableHead>Product</TableHead>
-                    <TableHead>On hand</TableHead>
-                    <TableHead>Reserved</TableHead>
-                    <TableHead>Available</TableHead>
+        {warehousesQuery.isError ? (
+          <p className="px-4 py-3 text-sm text-[#ba1a1a]">
+            {inventoryErrorMessage(warehousesQuery.error)}
+          </p>
+        ) : null}
+
+        {stockQuery.isPending ? (
+          <LoadingState />
+        ) : stockQuery.isError ? (
+          <p className="px-4 py-6 text-sm text-[#ba1a1a]">
+            {inventoryErrorMessage(stockQuery.error)}
+          </p>
+        ) : rows.length === 0 ? (
+          <EmptyState title="No stock rows" />
+        ) : (
+          <>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Warehouse</TableHead>
+                  <TableHead>SKU</TableHead>
+                  <TableHead>Product</TableHead>
+                  <TableHead className="text-right">On hand</TableHead>
+                  <TableHead className="text-right">Reserved</TableHead>
+                  <TableHead className="text-right">Available</TableHead>
+                  {manage ? (
+                    <TableHead className="text-right">Actions</TableHead>
+                  ) : null}
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {rows.map((item) => (
+                  <TableRow key={item.id}>
+                    <TableCell className="text-sm">
+                      {item.warehouse.code}
+                      <span className="mt-0.5 block text-xs text-[#64748b]">
+                        {item.warehouse.name}
+                      </span>
+                    </TableCell>
+                    <TableCell className="font-mono text-xs">
+                      {item.variant.sku}
+                    </TableCell>
+                    <TableCell>
+                      {item.variant.product_name ?? "—"}
+                    </TableCell>
+                    <TableCell className="text-right tabular-nums">
+                      {item.qty_on_hand}
+                    </TableCell>
+                    <TableCell className="text-right tabular-nums">
+                      {item.qty_reserved}
+                    </TableCell>
+                    <TableCell className="text-right tabular-nums">
+                      <div className="flex flex-col items-end gap-1">
+                        {item.available_qty}
+                        <StatusBadge
+                          status={
+                            item.available_qty <= 0
+                              ? "out of stock"
+                              : item.available_qty <= 5
+                                ? "low stock"
+                                : "in stock"
+                          }
+                        />
+                      </div>
+                    </TableCell>
                     {manage ? (
-                      <TableHead className="text-right">Actions</TableHead>
+                      <TableCell className="text-right">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => openDialog(item)}
+                        >
+                          Adjust
+                        </Button>
+                      </TableCell>
                     ) : null}
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {rows.map((item) => (
-                    <TableRow key={item.id}>
-                      <TableCell className="text-sm">
-                        {item.warehouse.code}
-                        <span className="mt-0.5 block text-xs text-muted-foreground">
-                          {item.warehouse.name}
-                        </span>
-                      </TableCell>
-                      <TableCell className="font-mono text-xs">
-                        {item.variant.sku}
-                      </TableCell>
-                      <TableCell>
-                        {item.variant.product_name ?? "—"}
-                      </TableCell>
-                      <TableCell>{item.qty_on_hand}</TableCell>
-                      <TableCell>{item.qty_reserved}</TableCell>
-                      <TableCell>{item.available_qty}</TableCell>
-                      {manage ? (
-                        <TableCell className="text-right">
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => openDialog(item)}
-                          >
-                            Điều chỉnh
-                          </Button>
-                        </TableCell>
-                      ) : null}
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-              {meta ? (
-                <div className="flex items-center justify-between text-sm">
-                  <span>
-                    Trang {meta.current_page}/{meta.last_page} · {meta.total}
-                  </span>
-                  <div className="flex gap-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      disabled={page <= 1}
-                      onClick={() => setPage((p) => p - 1)}
-                    >
-                      Trước
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      disabled={page >= meta.last_page}
-                      onClick={() => setPage((p) => p + 1)}
-                    >
-                      Sau
-                    </Button>
-                  </div>
-                </div>
-              ) : null}
-            </>
-          )}
-        </CardContent>
-      </Card>
+                ))}
+              </TableBody>
+            </Table>
+            {meta ? (
+              <AdminPagination
+                page={page}
+                lastPage={meta.last_page}
+                total={meta.total}
+                onPrev={() => setPage((p) => p - 1)}
+                onNext={() => setPage((p) => p + 1)}
+              />
+            ) : null}
+          </>
+        )}
+      </DataTableShell>
 
       <Dialog
         open={dialogItem !== null}
@@ -277,9 +290,9 @@ export function InventoryPage() {
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Điều chỉnh tồn</DialogTitle>
+            <DialogTitle>Adjust stock</DialogTitle>
             <DialogDescription>
-              Movement trên dòng stock đã có — không tạo row mới.
+              Movement on an existing stock row — this does not create a new row.
             </DialogDescription>
           </DialogHeader>
           {dialogItem ? (
@@ -356,13 +369,13 @@ export function InventoryPage() {
                   onClick={() => setDialogItem(null)}
                   disabled={movement.isPending}
                 >
-                  Hủy
+                  Cancel
                 </Button>
                 <Button
                   type="submit"
                   disabled={!qtyOk || movement.isPending}
                 >
-                  {movement.isPending ? "Đang lưu…" : "Lưu"}
+                  {movement.isPending ? "Saving…" : "Save"}
                 </Button>
               </DialogFooter>
             </form>

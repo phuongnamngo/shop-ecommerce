@@ -1,0 +1,684 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Customer 360 Detail - Atelier Commerce</title>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "primary-fixed-dim": "#b4c5ff",
+            "primary-container": "#406de4",
+            "tertiary-container": "#00855b",
+            "on-secondary-fixed-variant": "#004c6d",
+            "surface-bright": "#f8f9ff",
+            "outline-variant": "#c3c6d6",
+            "text-body": "#334155",
+            "on-secondary-fixed": "#001e2e",
+            "inverse-on-surface": "#eaf1ff",
+            "error": "#ba1a1a",
+            "on-primary-fixed-variant": "#003daa",
+            "on-error-container": "#93000a",
+            "warning": "#f59e0b",
+            "warning-light": "#fef5e5",
+            "surface-container-highest": "#d3e4fe",
+            "secondary-container": "#48bdfe",
+            "surface-container-high": "#dce9ff",
+            "text-muted": "#64748b",
+            "success-light": "#e6fffa",
+            "page-bg": "#f8fafc",
+            "primary-light": "#ecf2ff",
+            "success": "#13deb9",
+            "surface-variant": "#d3e4fe",
+            "on-error": "#ffffff",
+            "border-subtle": "#e2e8f0",
+            "on-surface": "#0b1c30",
+            "on-primary-container": "#fefcff",
+            "background": "#f8f9ff",
+            "danger-light": "#fdede8",
+            "on-tertiary-fixed": "#002113",
+            "surface-container": "#e5eeff",
+            "surface-tint": "#2355cc",
+            "card-bg": "#ffffff",
+            "on-primary": "#ffffff",
+            "surface-dim": "#cbdbf5",
+            "error-container": "#ffdad6",
+            "secondary-light": "#e8f7ff",
+            "secondary-fixed-dim": "#86ceff",
+            "surface-container-low": "#eff4ff",
+            "secondary-fixed": "#c8e6ff",
+            "inverse-surface": "#213145",
+            "text-headline": "#0f172a",
+            "inverse-primary": "#b4c5ff",
+            "primary": "#1f53c9",
+            "surface": "#f8f9ff",
+            "on-tertiary": "#ffffff",
+            "tertiary-fixed-dim": "#4edea3",
+            "danger": "#fa896b",
+            "surface-container-lowest": "#ffffff",
+            "on-tertiary-container": "#f5fff6",
+            "secondary": "#00658f",
+            "on-secondary": "#ffffff",
+            "outline": "#747685",
+            "on-surface-variant": "#434654",
+            "on-background": "#0b1c30",
+            "tertiary-fixed": "#6ffbbe",
+            "on-secondary-container": "#004a6b",
+            "on-primary-fixed": "#00174c",
+            "on-tertiary-fixed-variant": "#005236",
+            "tertiary": "#006947",
+            "primary-fixed": "#dbe1ff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "sidebar-width": "260px",
+            "gutter-xl": "2rem",
+            "container-margin-desktop": "1.5rem",
+            "gutter-sm": "0.5rem",
+            "gutter-xs": "0.25rem",
+            "card-padding": "1.5rem",
+            "header-height": "70px",
+            "card-padding-sm": "1rem",
+            "gutter-lg": "1.5rem",
+            "gutter-md": "1rem",
+            "container-margin-mobile": "1rem",
+            "sidebar-collapsed-width": "80px"
+          },
+          "fontFamily": {
+            "headline-lg": ["Plus Jakarta Sans"],
+            "label-md": ["Plus Jakarta Sans"],
+            "body-sm": ["Plus Jakarta Sans"],
+            "label-sm": ["Plus Jakarta Sans"],
+            "body-md": ["Plus Jakarta Sans"],
+            "title-md": ["Plus Jakarta Sans"],
+            "headline-md": ["Plus Jakarta Sans"],
+            "body-lg": ["Plus Jakarta Sans"],
+            "headline-sm": ["Plus Jakarta Sans"],
+            "display-lg": ["Plus Jakarta Sans"],
+            "metric-xl": ["Plus Jakarta Sans"],
+            "display-lg-mobile": ["Plus Jakarta Sans"]
+          },
+          "fontSize": {
+            "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+            "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "title-md": ["15px", { "lineHeight": "22px", "fontWeight": "600" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "body-lg": ["15px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "600" }],
+            "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "metric-xl": ["28px", { "lineHeight": "34px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "display-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.015em", "fontWeight": "700" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #f8fafc;
+    }
+    .subtle-card {
+      background-color: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.75rem;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.02), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
+    }
+  </style>
+</head>
+<body class="bg-page-bg text-text-body antialiased min-h-screen">
+<!-- Left Sidebar Navigation -->
+<aside class="fixed top-0 left-0 h-screen w-sidebar-width flex flex-col justify-between p-4 z-50 overflow-y-auto bg-card-bg border-r border-border-subtle">
+<div class="flex flex-col gap-6">
+<!-- Sidebar Brand Header -->
+<div class="flex items-center gap-3 px-2 py-1.5">
+<div class="w-10 h-10 rounded-xl bg-primary-light flex items-center justify-center text-primary flex-shrink-0">
+<span class="material-symbols-outlined text-primary text-[24px]">storefront</span>
+</div>
+<div>
+<h1 class="text-title-md font-title-md font-bold text-text-headline tracking-tight leading-tight">Atelier Commerce</h1>
+<p class="text-label-sm font-label-sm text-text-muted">Retail Management</p>
+</div>
+</div>
+<!-- Navigation Tabs -->
+<nav class="flex flex-col gap-1.5">
+<a class="text-text-body hover:bg-page-bg hover:text-text-headline rounded-xl flex items-center px-4 py-2.5 gap-3 text-body-sm font-body-sm transition-all duration-150 ease-in-out active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined text-[20px] text-text-muted">dashboard</span>
+<span class="">Dashboard</span>
+</a>
+<a class="text-text-body hover:bg-page-bg hover:text-text-headline rounded-xl flex items-center px-4 py-2.5 gap-3 text-body-sm font-body-sm transition-all duration-150 ease-in-out active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined text-[20px] text-text-muted">inventory_2</span>
+<span class="">Products</span>
+</a>
+<a class="text-text-body hover:bg-page-bg hover:text-text-headline rounded-xl flex items-center px-4 py-2.5 gap-3 text-body-sm font-body-sm transition-all duration-150 ease-in-out active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined text-[20px] text-text-muted">shopping_cart</span>
+<span class="">Orders</span>
+</a>
+<!-- Customers Tab (Active) -->
+<a class="bg-primary-light text-primary font-semibold rounded-xl flex items-center px-4 py-2.5 gap-3 text-body-sm font-body-sm transition-all duration-150 ease-in-out active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined text-[20px] text-primary" style="font-variation-settings: 'FILL' 1;">people</span>
+<span class="">Customers</span>
+</a>
+<a class="text-text-body hover:bg-page-bg hover:text-text-headline rounded-xl flex items-center px-4 py-2.5 gap-3 text-body-sm font-body-sm transition-all duration-150 ease-in-out active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined text-[20px] text-text-muted">warehouse</span>
+<span class="">Inventory</span>
+</a>
+<a class="text-text-body hover:bg-page-bg hover:text-text-headline rounded-xl flex items-center px-4 py-2.5 gap-3 text-body-sm font-body-sm transition-all duration-150 ease-in-out active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined text-[20px] text-text-muted">settings</span>
+<span class="">Settings</span>
+</a>
+</nav>
+</div>
+<!-- Operational System Status Card -->
+
+</aside>
+<!-- Main View Container -->
+<div class="pl-sidebar-width min-h-screen flex flex-col">
+<!-- Top Navigation Header -->
+<header class="flex justify-between items-center h-[70px] px-gutter-lg w-full sticky top-0 z-40 bg-card-bg border-b border-border-subtle shadow-sm">
+<!-- Search on Left -->
+<div class="flex items-center gap-4 w-96">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[18px]">search</span>
+<input class="w-full h-10 pl-9 pr-4 text-body-sm font-body-sm bg-page-bg border border-border-subtle rounded-lg text-text-headline placeholder:text-text-muted focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 transition-colors" placeholder="Search customer records, orders, SKUs..." type="text">
+</div>
+</div>
+<!-- Right Utility Actions & Admin Profile -->
+<div class="flex items-center gap-3">
+<button aria-label="Calendar schedule" class="w-10 h-10 rounded-lg flex items-center justify-center text-text-muted hover:bg-page-bg hover:text-text-headline transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]">calendar_today</span>
+</button>
+<button aria-label="Notifications" class="w-10 h-10 rounded-lg flex items-center justify-center text-text-muted hover:bg-page-bg hover:text-text-headline relative transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="w-2 h-2 rounded-full bg-danger absolute top-2.5 right-2.5"></span>
+</button>
+<button aria-label="Dark mode toggle" class="w-10 h-10 rounded-lg flex items-center justify-center text-text-muted hover:bg-page-bg hover:text-text-headline transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]">dark_mode</span>
+</button>
+<div class="h-6 w-px bg-border-subtle mx-1"></div>
+<!-- Admin Profile Pill -->
+<div class="flex items-center gap-3 pl-1">
+<img alt="Administrator Avatar" class="w-9 h-9 rounded-full object-cover border border-border-subtle" data-alt="Close up professional portrait of a senior ecommerce store administrator with warm natural studio lighting against a clean neutral soft grey background, exhibiting professional elegance and confidence." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9C-j89wu4k0Su99gSIkOOYu2O4WzHIT41NBPuc-kEYs6sN-W-1D1JMcibu8oweLH9rvTliB-FYfe2GHMKx0ptvPLhyCzoUEhojv7rTYnV0Fdc-dXk17cT7X9_KXwl4xjpHxZvZtWuBEU7W1Vw9Sz4zBsgoVaPC2FMFmRI-HtW7OGJktuDGY9HO1-26giRM_2yqtwtwvJhocff2Tx4o-QIHntCppHu5JVfLZ9waHOtExXALlaqxVU">
+<div class="hidden lg:flex flex-col text-left">
+<span class="text-body-sm font-body-sm font-semibold text-text-headline">Elena Vance</span>
+<span class="text-label-sm font-label-sm text-text-muted">Operations Director</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Page Body Workspace -->
+<main class="flex-1 p-gutter-lg max-w-[1600px] w-full mx-auto flex flex-col gap-6">
+<!-- Breadcrumb Bar -->
+<nav aria-label="Breadcrumb" class="flex items-center gap-2 text-body-sm font-body-sm text-text-muted">
+<a class="hover:text-primary transition-colors" href="#">Customers</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#">Customer 360</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-text-headline font-semibold">Marcus Vance (#CUST-8492)</span>
+</nav>
+<!-- Customer Profile Header Banner -->
+<section class="subtle-card p-card-padding">
+<div class="flex flex-col xl:flex-row xl:items-center justify-between gap-6">
+<div class="flex flex-col sm:flex-row items-start sm:items-center gap-5">
+<div class="relative">
+<img alt="Marcus Vance Avatar" class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover border-2 border-border-subtle shadow-sm" data-alt="Sophisticated portrait of high-profile customer Marcus Vance wearing a bespoke tailored navy blazer in a naturally lit Manhattan penthouse loft with subtle architectural shadows, conveying discernment, luxury taste, and high purchasing authority." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQhIYBD1ziVnAcJjtREJG4_wBvCTEANlH8Lkn9-qfwsY-dy4N8RTrDItWn_8vp3vcQJ03o06_fHhRlzx1zNUbev9xfBns65dif6vb0sCxR1rXObHDVBaEhIV9s8g2O-VH7nhAdnkYSiM77j9eZcsZn5lczLLcIP9s5vcohXhItiF58qd0cLxn57TQYk5NDjnaOmX3xnfKBdoJ3SovnRFGm3gwjjCoVGMHcL-JU92xVIwTvqynEtYI">
+<span class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-success border-2 border-card-bg flex items-center justify-center text-white" title="Active Account">
+<span class="material-symbols-outlined text-[12px] font-bold">check</span>
+</span>
+</div>
+<div class="flex flex-col gap-1.5">
+<div class="flex flex-wrap items-center gap-3">
+<h2 class="text-headline-lg font-headline-lg text-text-headline tracking-tight">Marcus Vance</h2>
+<span class="px-2.5 py-0.5 rounded-full text-label-md font-label-md bg-success-light text-success font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+                  VIP High-Spender
+                </span>
+<span class="text-label-sm font-label-sm text-text-muted">#CUST-8492</span>
+</div>
+<p class="text-body-sm font-body-sm text-text-muted">Customer since November 2022 • High Affinity: Luxury Apparel &amp; Leather Goods</p>
+<!-- Contact Details Badges -->
+<div class="flex flex-wrap items-center gap-4 mt-2 pt-2 border-t border-border-subtle text-body-sm font-body-sm">
+<span class="flex items-center gap-1.5 text-text-body">
+<span class="material-symbols-outlined text-[16px] text-text-muted">mail</span>
+                  marcus.vance@atelier.com
+                </span>
+<span class="flex items-center gap-1.5 text-text-body">
+<span class="material-symbols-outlined text-[16px] text-text-muted">phone</span>
+                  +1 (555) 234-5678
+                </span>
+<span class="flex items-center gap-1.5 text-text-body">
+<span class="material-symbols-outlined text-[16px] text-text-muted">location_on</span>
+                  New York, USA
+                </span>
+</div>
+</div>
+</div>
+<!-- Banner Action Buttons -->
+<div class="flex flex-wrap items-center gap-2.5 self-start xl:self-center">
+<button class="px-4 py-2 rounded-lg bg-card-bg border border-border-subtle text-text-body text-body-sm font-body-sm font-semibold hover:bg-page-bg hover:text-text-headline transition-colors flex items-center gap-2" type="button">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+              Edit Profile
+            </button>
+<button class="px-4 py-2 rounded-lg bg-primary-light text-primary text-body-sm font-body-sm font-semibold hover:bg-primary-fixed hover:text-primary transition-colors flex items-center gap-2" type="button">
+<span class="material-symbols-outlined text-[18px]">outgoing_mail</span>
+              Send Direct Email
+            </button>
+<button class="px-4 py-2 rounded-lg bg-primary text-white text-body-sm font-body-sm font-semibold hover:bg-primary-container shadow-sm transition-all flex items-center gap-2" type="button">
+<span class="material-symbols-outlined text-[18px]">add_shopping_cart</span>
+              Create Custom Order
+            </button>
+</div>
+</div>
+</section>
+<!-- 4 Metric Highlight Cards -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- Metric 1: Lifetime Value -->
+<div class="subtle-card p-5 flex flex-col justify-between gap-3">
+<div class="flex items-center justify-between">
+<span class="text-label-md font-label-md text-text-muted uppercase">Lifetime Value</span>
+<div class="w-10 h-10 rounded-xl bg-primary-light text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">payments</span>
+</div>
+</div>
+<div>
+<h3 class="text-metric-xl font-metric-xl text-text-headline tracking-tight">$4,820.00</h3>
+<div class="flex items-center gap-1.5 mt-1">
+<span class="px-1.5 py-0.5 rounded text-label-sm font-label-sm bg-success-light text-success font-semibold flex items-center">
+<span class="material-symbols-outlined text-[12px]">trending_up</span> +18.4%
+              </span>
+<span class="text-label-sm font-label-sm text-text-muted">vs median VIP</span>
+</div>
+</div>
+</div>
+<!-- Metric 2: Total Orders -->
+<div class="subtle-card p-5 flex flex-col justify-between gap-3">
+<div class="flex items-center justify-between">
+<span class="text-label-md font-label-md text-text-muted uppercase">Total Orders</span>
+<div class="w-10 h-10 rounded-xl bg-secondary-light text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">shopping_bag</span>
+</div>
+</div>
+<div>
+<h3 class="text-metric-xl font-metric-xl text-text-headline tracking-tight">18 orders</h3>
+<div class="flex items-center gap-1.5 mt-1">
+<span class="px-1.5 py-0.5 rounded text-label-sm font-label-sm bg-page-bg text-text-muted font-semibold">Recent</span>
+<span class="text-label-sm font-label-sm text-text-muted">Last purchased 4 days ago</span>
+</div>
+</div>
+</div>
+<!-- Metric 3: Average Order Value -->
+<div class="subtle-card p-5 flex flex-col justify-between gap-3">
+<div class="flex items-center justify-between">
+<span class="text-label-md font-label-md text-text-muted uppercase">Average Order Value</span>
+<div class="w-10 h-10 rounded-xl bg-warning-light text-warning flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">receipt_long</span>
+</div>
+</div>
+<div>
+<h3 class="text-metric-xl font-metric-xl text-text-headline tracking-tight">$267.77</h3>
+<div class="flex items-center gap-1.5 mt-1">
+<span class="px-1.5 py-0.5 rounded text-label-sm font-label-sm bg-success-light text-success font-semibold flex items-center">
+<span class="material-symbols-outlined text-[12px]">trending_up</span> +8.1%
+              </span>
+<span class="text-label-sm font-label-sm text-text-muted">over quarterly trend</span>
+</div>
+</div>
+</div>
+<!-- Metric 4: Return Rate -->
+<div class="subtle-card p-5 flex flex-col justify-between gap-3">
+<div class="flex items-center justify-between">
+<span class="text-label-md font-label-md text-text-muted uppercase">Return Rate</span>
+<div class="w-10 h-10 rounded-xl bg-success-light text-success flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">assignment_turned_in</span>
+</div>
+</div>
+<div>
+<h3 class="text-metric-xl font-metric-xl text-text-headline tracking-tight">0.0%</h3>
+<div class="flex items-center gap-1.5 mt-1">
+<span class="px-1.5 py-0.5 rounded text-label-sm font-label-sm bg-success-light text-success font-semibold">Clean record</span>
+<span class="text-label-sm font-label-sm text-text-muted">0 refunds / 18 fulfilled</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Main Two-Column Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- Left Wide Column (8 cols) -->
+<div class="lg:col-span-8 flex flex-col gap-6">
+<!-- Interactive Tab Strip & Action Panel -->
+<div class="subtle-card overflow-hidden">
+<!-- Tabs Navigation -->
+<div class="flex items-center border-b border-border-subtle px-6 pt-3 bg-page-bg/50">
+<button class="pb-3 px-4 border-b-2 border-primary text-primary font-semibold text-body-sm font-body-sm transition-colors flex items-center gap-2" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+                Overview
+              </button>
+<button class="pb-3 px-4 border-b-2 border-transparent text-text-muted hover:text-text-headline font-semibold text-body-sm font-body-sm transition-colors flex items-center gap-2" type="button">
+<span class="material-symbols-outlined text-[18px]">receipt</span>
+                Purchase History &amp; Orders
+                <span class="px-1.5 py-0.2 rounded-full bg-border-subtle text-text-headline text-label-sm font-label-sm">18</span>
+</button>
+<button class="pb-3 px-4 border-b-2 border-transparent text-text-muted hover:text-text-headline font-semibold text-body-sm font-body-sm transition-colors flex items-center gap-2" type="button">
+<span class="material-symbols-outlined text-[18px]">schedule</span>
+                Activity Timeline
+              </button>
+<button class="pb-3 px-4 border-b-2 border-transparent text-text-muted hover:text-text-headline font-semibold text-body-sm font-body-sm transition-colors flex items-center gap-2" type="button">
+<span class="material-symbols-outlined text-[18px]">sticky_note_2</span>
+                Internal Notes
+                <span class="px-1.5 py-0.2 rounded-full bg-warning-light text-warning text-label-sm font-label-sm">3</span>
+</button>
+</div>
+<!-- Recent Orders Card Section -->
+<div class="p-card-padding">
+<div class="flex items-center justify-between mb-4">
+<div>
+<h4 class="text-headline-sm font-headline-sm text-text-headline">Recent Purchases</h4>
+<p class="text-body-sm font-body-sm text-text-muted">Displaying most recent transactions with fulfillment tracking</p>
+</div>
+<button class="text-primary hover:text-primary-container text-body-sm font-body-sm font-semibold flex items-center gap-1 transition-colors" type="button">
+                  View full order history
+                  <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+<!-- Orders Table -->
+<div class="overflow-x-auto rounded-xl border border-border-subtle">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-page-bg border-b border-border-subtle text-label-sm font-label-sm text-text-muted uppercase">
+<th class="py-3 px-4">Order ID</th>
+<th class="py-3 px-4">Date</th>
+<th class="py-3 px-4">Items</th>
+<th class="py-3 px-4">Total</th>
+<th class="py-3 px-4">Payment</th>
+<th class="py-3 px-4">Fulfillment</th>
+<th class="py-3 px-4 text-right">Invoice</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-subtle text-body-sm font-body-sm">
+<!-- Order 1 -->
+<tr class="hover:bg-page-bg/60 transition-colors">
+<td class="py-3.5 px-4 font-semibold text-text-headline">#ORD-10492</td>
+<td class="py-3.5 px-4 text-text-muted">May 14, 2024</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center -space-x-2">
+<img alt="Item preview 1" class="w-8 h-8 rounded-lg object-cover border-2 border-card-bg shadow-xs" data-alt="Minimalist luxury handcrafted Italian leather duffel bag in espresso brown resting gracefully on a white marble platform, soft commercial product lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWwQUQmoE5b5LSJ95762vLuL0qOaZYdPivIBnbJZZoLQakrSVgcMxui1KrZqPaOBet_LvaWUO-lt54nRtF9iaHb2_yJz2mmkRoGnX8ODU3o4fBmawRt4yThUg6W02ATR1duprebxKMNNECRfZkgIoOS-D_PeU-aYKEnuBR8025UAFKkWGZA08L3IJMSoKcuzFJUeoXCrWr3DzY2eCu0n0-dIJZwXU30hB2ULazwOehviVR88q4_1Q">
+<img alt="Item preview 2" class="w-8 h-8 rounded-lg object-cover border-2 border-card-bg shadow-xs" data-alt="Cashmere knit sweater in oatmeal cream folded neatly against a crisp light wood background, high-end ecommerce retail catalog photograph." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDXDT_hqJJ9yoRe6dfZDMzVXAQ1CbuCAhVyHBBu4pGgPkAp4sqyaxolgmJrBG3JajdNcSg9KKqUKbndEnyqfQxGjlSDlgr3A11hwMx6sQzjK96DCKontB9yMRQ6n3Qux1p5tGGyQyyKNj_0MKGNRIzQ7-6eMJUDXq9ZhcMeeSm_b9bD_Q7tz_njSqS8oixb0lGWsmTEPuGw5BT_8n-o6f_rBJw2m94Fj91zz9SjQXI-L4j8p7S7ESU">
+<span class="w-7 h-7 rounded-lg bg-page-bg border border-border-subtle text-text-muted text-label-sm font-label-sm flex items-center justify-center font-semibold">+1</span>
+</div>
+</td>
+<td class="py-3.5 px-4 font-semibold text-text-headline">$540.00</td>
+<td class="py-3.5 px-4">
+<span class="px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-success-light text-success font-semibold inline-flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-success"></span> Paid
+                        </span>
+</td>
+<td class="py-3.5 px-4">
+<span class="px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-primary-light text-primary font-semibold inline-flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">local_shipping</span> In Transit
+                        </span>
+</td>
+<td class="py-3.5 px-4 text-right">
+<button aria-label="Download Invoice PDF" class="p-1.5 text-text-muted hover:text-primary hover:bg-page-bg rounded-lg transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
+</button>
+</td>
+</tr>
+<!-- Order 2 -->
+<tr class="hover:bg-page-bg/60 transition-colors">
+<td class="py-3.5 px-4 font-semibold text-text-headline">#ORD-09821</td>
+<td class="py-3.5 px-4 text-text-muted">Apr 28, 2024</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center -space-x-2">
+<img alt="Item preview 3" class="w-8 h-8 rounded-lg object-cover border-2 border-card-bg shadow-xs" data-alt="Luxury chronometer wristwatch with sapphire crystal face and alligator leather strap on clean minimal podium, studio product photograph." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAc6EpcWWljzRqFNfBVQuBaPDuSumlE5g4VzgxnQR4FszwXodOousbIKN0TyfO_y-G8nJw5UVzlCINknNFCks8zgRqWYOtrzLFX-FW6pwVkHZSpYndf-0UYtKKlN4S-zZAWXKyO2RA3UPf3WuNhRsLb7mW_379-VXHvG8Wpm5uViLWMGgbY571Oh9FBVWpSzkhY1ibRyYmqmL_ANMsSJB-Qcx-MwCfgupvL7pViicLIQ9X_o0XD1zM">
+</div>
+</td>
+<td class="py-3.5 px-4 font-semibold text-text-headline">$325.00</td>
+<td class="py-3.5 px-4">
+<span class="px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-success-light text-success font-semibold inline-flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-success"></span> Paid
+                        </span>
+</td>
+<td class="py-3.5 px-4">
+<span class="px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-success-light text-success font-semibold inline-flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">check_circle</span> Delivered
+                        </span>
+</td>
+<td class="py-3.5 px-4 text-right">
+<button aria-label="Download Invoice PDF" class="p-1.5 text-text-muted hover:text-primary hover:bg-page-bg rounded-lg transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
+</button>
+</td>
+</tr>
+<!-- Order 3 -->
+<tr class="hover:bg-page-bg/60 transition-colors">
+<td class="py-3.5 px-4 font-semibold text-text-headline">#ORD-09114</td>
+<td class="py-3.5 px-4 text-text-muted">Apr 03, 2024</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center -space-x-2">
+<img alt="Item preview 4" class="w-8 h-8 rounded-lg object-cover border-2 border-card-bg shadow-xs" data-alt="Artisanal glass fragrance flacon with polished silver stopper surrounded by delicate botanical stems, high-end luxury editorial photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmL9ClxfgQ0vPhXP1tnmJOzQfBxgCEsc2xjKZqs64rZsBs5hARN7CO22uHJRhQjoa5yBJJn89Q3aaG1SPs1D-8ecV9jDAUiuojBwPfI7WmnbbJfU_ERGXNjwqul1Uq9dC3qVXdVKq8CGL6npWuwwqIXFnkBspGHDUvweQFSgLlQo2UgxsiuS2mwJVneH8Gl3YyqR_ca521ANTXEZTpHe9U11D2gtOFoBc6u7GjOl177NjmcgsA_no">
+<img alt="Item preview 5" class="w-8 h-8 rounded-lg object-cover border-2 border-card-bg shadow-xs" data-alt="Handcrafted textured ceramic serving tray with organic matte white glaze, elegant Scandinavian tableware retail catalog photograph." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZ7Il_EWtGks5BBF8XmBdlD3SCUZHvY8fXkqaSOFGTw57h3DKc9bRDOT99NwDptJz5nOfZxEbuFzz5O4zMrvtfPslYBwEXzvHbNEF48F9a2A-_VaNDz0dfkZ5PjW1MiYz3ucYFOqnm_XQ02ed5vyd_Ge4DkDEv0KrqY5whCuwLdOTCb4S04KyvNgoMFCpB54hGfpItBRfE3bGuDt9Ug4-JgsEZUGLD0UnLFaW36HSMOj_EgKdakGo">
+</div>
+</td>
+<td class="py-3.5 px-4 font-semibold text-text-headline">$182.50</td>
+<td class="py-3.5 px-4">
+<span class="px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-success-light text-success font-semibold inline-flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-success"></span> Paid
+                        </span>
+</td>
+<td class="py-3.5 px-4">
+<span class="px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-success-light text-success font-semibold inline-flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">check_circle</span> Delivered
+                        </span>
+</td>
+<td class="py-3.5 px-4 text-right">
+<button aria-label="Download Invoice PDF" class="p-1.5 text-text-muted hover:text-primary hover:bg-page-bg rounded-lg transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- Customer Activity Timeline -->
+<div class="subtle-card p-card-padding">
+<div class="flex items-center justify-between mb-6">
+<div>
+<h4 class="text-headline-sm font-headline-sm text-text-headline">Customer Activity Timeline</h4>
+<p class="text-body-sm font-body-sm text-text-muted">Chronological audit stream of customer engagement and account events</p>
+</div>
+<span class="text-label-sm font-label-sm text-text-muted">Last 30 Days</span>
+</div>
+<!-- Timeline Entries -->
+<div class="relative pl-6 space-y-6 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-border-subtle">
+<!-- Timeline Item 1 -->
+<div class="relative flex items-start gap-4">
+<span class="absolute -left-6 top-1 w-4 h-4 rounded-full bg-primary border-2 border-card-bg"></span>
+<div class="flex-1 bg-page-bg/70 p-3.5 rounded-xl border border-border-subtle">
+<div class="flex items-center justify-between">
+<span class="text-body-sm font-body-sm font-semibold text-text-headline flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-primary">shopping_bag</span>
+                      Placed new order <span class="text-primary font-mono font-bold">#ORD-10492</span>
+</span>
+<span class="text-label-sm font-label-sm text-text-muted">4 days ago • 14:22 EST</span>
+</div>
+<p class="text-body-sm font-body-sm text-text-body mt-1">Purchased 3 items totaling $540.00 via Apple Pay. Expedited courier delivery selected.</p>
+</div>
+</div>
+<!-- Timeline Item 2 -->
+<div class="relative flex items-start gap-4">
+<span class="absolute -left-6 top-1 w-4 h-4 rounded-full bg-secondary border-2 border-card-bg"></span>
+<div class="flex-1 bg-page-bg/70 p-3.5 rounded-xl border border-border-subtle">
+<div class="flex items-center justify-between">
+<span class="text-body-sm font-body-sm font-semibold text-text-headline flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-secondary">lock_reset</span>
+                      Password reset requested &amp; verified
+                    </span>
+<span class="text-label-sm font-label-sm text-text-muted">May 10, 2024 • 09:15 EST</span>
+</div>
+<p class="text-body-sm font-body-sm text-text-body mt-1">Self-service biometric recovery executed via mobile client in New York, NY (Safari iOS).</p>
+</div>
+</div>
+<!-- Timeline Item 3 -->
+<div class="relative flex items-start gap-4">
+<span class="absolute -left-6 top-1 w-4 h-4 rounded-full bg-warning border-2 border-card-bg"></span>
+<div class="flex-1 bg-page-bg/70 p-3.5 rounded-xl border border-border-subtle">
+<div class="flex items-center justify-between">
+<span class="text-body-sm font-body-sm font-semibold text-text-headline flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-warning">mark_email_read</span>
+                      Opened VIP Exclusive Summer Preview Newsletter
+                    </span>
+<span class="text-label-sm font-label-sm text-text-muted">May 07, 2024 • 18:40 EST</span>
+</div>
+<p class="text-body-sm font-body-sm text-text-body mt-1">Clicked 2 preview links (Cashmere outerwear line, Private showroom RSVP).</p>
+</div>
+</div>
+<!-- Timeline Item 4 -->
+<div class="relative flex items-start gap-4">
+<span class="absolute -left-6 top-1 w-4 h-4 rounded-full bg-tertiary-container border-2 border-card-bg"></span>
+<div class="flex-1 bg-page-bg/70 p-3.5 rounded-xl border border-border-subtle">
+<div class="flex items-center justify-between">
+<span class="text-body-sm font-body-sm font-semibold text-text-headline flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-tertiary-container">support_agent</span>
+                      Contacted VIP concierge via phone
+                    </span>
+<span class="text-label-sm font-label-sm text-text-muted">Apr 24, 2024 • 11:02 EST</span>
+</div>
+<p class="text-body-sm font-body-sm text-text-body mt-1">Inquired about limited release travel bag restocking. Handled by Elena Vance (Ticket #VIP-9942).</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Sidebar Column (4 cols) -->
+<div class="lg:col-span-4 flex flex-col gap-6">
+<!-- Address Book Card -->
+<div class="subtle-card p-card-padding flex flex-col gap-4">
+<div class="flex items-center justify-between border-b border-border-subtle pb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-primary">pin_drop</span>
+<h4 class="text-headline-sm font-headline-sm text-text-headline">Address Book</h4>
+</div>
+<button class="text-label-sm font-label-sm text-primary hover:underline font-semibold" type="button">Manage</button>
+</div>
+<!-- Default Shipping Address -->
+<div class="p-3.5 bg-page-bg rounded-xl border border-border-subtle flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="px-2 py-0.5 rounded text-label-sm font-label-sm bg-primary-light text-primary font-semibold">Default Shipping</span>
+<button class="text-text-muted hover:text-text-headline transition-colors flex items-center gap-1 text-label-sm font-label-sm" title="Copy address to clipboard" type="button">
+<span class="material-symbols-outlined text-[16px]">content_copy</span>
+                  Copy
+                </button>
+</div>
+<div class="text-body-sm font-body-sm text-text-headline">
+<p class="font-semibold">Marcus Vance</p>
+<p class="text-text-body">742 Evergreen Terrace, Apt 14B</p>
+<p class="text-text-body">New York, NY 10021</p>
+<p class="text-text-muted text-label-sm font-label-sm mt-1">United States • Gate code: #4421</p>
+</div>
+</div>
+<!-- Default Billing Address -->
+<div class="p-3.5 bg-page-bg rounded-xl border border-border-subtle flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="px-2 py-0.5 rounded text-label-sm font-label-sm bg-border-subtle text-text-headline font-semibold">Default Billing</span>
+<span class="text-label-sm font-label-sm text-text-muted">Same as shipping</span>
+</div>
+<div class="text-body-sm font-body-sm text-text-body">
+<p class="font-semibold text-text-headline">Marcus Vance</p>
+<p class="">742 Evergreen Terrace, Apt 14B</p>
+<p class="">New York, NY 10021, USA</p>
+</div>
+</div>
+</div>
+<!-- Saved Payment Methods Card -->
+<div class="subtle-card p-card-padding flex flex-col gap-4">
+<div class="flex items-center justify-between border-b border-border-subtle pb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-primary">credit_card</span>
+<h4 class="text-headline-sm font-headline-sm text-text-headline">Saved Payment Methods</h4>
+</div>
+<button class="text-label-sm font-label-sm text-primary hover:underline font-semibold" type="button">+ Add New</button>
+</div>
+<!-- Method 1: Visa 4242 -->
+<div class="p-3.5 bg-page-bg rounded-xl border border-border-subtle flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-8 rounded-lg bg-card-bg border border-border-subtle flex items-center justify-center font-bold text-primary text-label-md font-label-md">
+                  VISA
+                </div>
+<div>
+<p class="text-body-sm font-body-sm font-semibold text-text-headline">Visa ending in 4242</p>
+<p class="text-label-sm font-label-sm text-text-muted">Expires 08/27 • Default card</p>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-success-light text-success font-semibold">Default</span>
+</div>
+<!-- Method 2: Apple Pay -->
+<div class="p-3.5 bg-page-bg rounded-xl border border-border-subtle flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-8 rounded-lg bg-card-bg border border-border-subtle flex items-center justify-center text-text-headline font-bold text-label-md font-label-md">
+<span class="material-symbols-outlined text-[18px]">contactless</span>
+</div>
+<div>
+<p class="text-body-sm font-body-sm font-semibold text-text-headline">Apple Pay</p>
+<p class="text-label-sm font-label-sm text-text-muted">Linked to iPhone 15 Pro</p>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-border-subtle text-text-body">Verified</span>
+</div>
+</div>
+<!-- VIP Concierge Notes Card -->
+<div class="subtle-card p-card-padding flex flex-col gap-4">
+<div class="flex items-center justify-between border-b border-border-subtle pb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-warning">star</span>
+<h4 class="text-headline-sm font-headline-sm text-text-headline">VIP Concierge Notes</h4>
+</div>
+<span class="text-label-sm font-label-sm text-text-muted">Internal Team Only</span>
+</div>
+<!-- Existing Pinned Note -->
+<div class="p-3 bg-warning-light/40 border border-warning/20 rounded-xl text-body-sm font-body-sm">
+<div class="flex items-center justify-between mb-1">
+<span class="font-semibold text-text-headline text-label-sm font-label-sm">Elena Vance (Concierge Lead)</span>
+<span class="text-label-sm font-label-sm text-text-muted">May 12</span>
+</div>
+<p class="text-text-body text-body-sm font-body-sm">Customer prefers discrete unmarked outer packaging. Always include signature handwritten gift card for purchases exceeding $400.</p>
+</div>
+<!-- Quick Note Input -->
+<div class="flex flex-col gap-2.5 mt-1">
+<label class="text-label-sm font-label-sm font-semibold text-text-headline" for="quick-note-input">Add Internal Account Note</label>
+<textarea class="w-full text-body-sm font-body-sm p-3 bg-page-bg border border-border-subtle rounded-xl text-text-headline placeholder:text-text-muted focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 transition-colors resize-none" id="quick-note-input" placeholder="Type confidential note for customer care team..." rows="3"></textarea>
+<div class="flex justify-between items-center">
+<span class="text-label-sm font-label-sm text-text-muted">Visible to all store managers</span>
+<button class="px-3.5 py-1.5 rounded-lg bg-primary text-white text-body-sm font-body-sm font-semibold hover:bg-primary-container transition-colors shadow-xs flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[16px]">add_circle</span>
+                  Add Note
+                </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+
+
+</body></html>

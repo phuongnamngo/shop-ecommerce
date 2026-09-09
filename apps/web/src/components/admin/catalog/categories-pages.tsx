@@ -7,6 +7,21 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { ConfirmDeleteButton } from "@/components/admin/catalog/confirm-delete-button";
 import { RequireCatalogManage } from "@/components/admin/require-catalog-manage";
+import {
+  AdminPagination,
+  DataTableShell,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/admin/layout/data-table";
+import { EmptyState, LoadingState } from "@/components/admin/layout/empty-state";
+import { FilterBar } from "@/components/admin/layout/filter-bar";
+import { ModalForm } from "@/components/admin/layout/modal-form";
+import { PageHeader } from "@/components/admin/layout/page-header";
+import { StatusBadge } from "@/components/admin/layout/status-badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -24,14 +39,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import { useAdminMe } from "@/hooks/use-admin-me";
 import { canManageCatalog } from "@/lib/admin/can-manage-catalog";
@@ -47,36 +54,49 @@ import type { CatalogStatus, Category } from "@/lib/api/catalog/types";
 
 export function CategoriesListPage() {
   const me = useAdminMe();
+  const queryClient = useQueryClient();
   const manage =
     me.isSuccess && me.data ? canManageCatalog(me.data.roles) : false;
   const [page, setPage] = useState(1);
   const [q, setQ] = useState("");
   const [qApplied, setQApplied] = useState("");
+  const [createOpen, setCreateOpen] = useState(false);
+  const [editId, setEditId] = useState<number | null>(null);
 
   const query = useQuery({
     queryKey: ["admin", "catalog", "categories", page, qApplied],
     queryFn: () => listCategories({ page, per_page: 20, q: qApplied || undefined }),
   });
+  const parents = useQuery({
+    queryKey: ["admin", "catalog", "categories", "parents"],
+    queryFn: () => listCategories({ per_page: 100 }),
+  });
+  const editQuery = useQuery({
+    queryKey: ["admin", "catalog", "categories", editId],
+    queryFn: () => getCategory(editId!),
+    enabled: editId != null,
+  });
 
   const rows = query.data?.data ?? [];
   const meta = query.data?.meta;
+  const parentOptions = parents.data?.data ?? [];
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <h1 className="text-xl font-semibold">Categories</h1>
-          <p className="text-sm text-muted-foreground">Quản lý danh mục.</p>
-        </div>
-        {manage ? (
-          <Button asChild>
-            <Link href="/admin/catalog/categories/new">Thêm category</Link>
-          </Button>
-        ) : null}
-      </div>
+    <div className="space-y-6">
+      <PageHeader
+        title="Category Management"
+        description="Hierarchy and visibility for the merchandising tree."
+        actions={
+          manage ? (
+            <Button type="button" onClick={() => setCreateOpen(true)}>
+              + Add Category
+            </Button>
+          ) : null
+        }
+      />
 
-      <Card>
-        <CardContent className="space-y-4 pt-6">
+      <DataTableShell>
+        <FilterBar>
           <form
             className="flex gap-2"
             onSubmit={(e) => {
@@ -86,82 +106,138 @@ export function CategoriesListPage() {
             }}
           >
             <Input
-              placeholder="Tìm theo tên…"
+              placeholder="Search by name…"
               value={q}
               onChange={(e) => setQ(e.target.value)}
             />
             <Button type="submit" variant="outline">
-              Tìm
+              Search
             </Button>
           </form>
+        </FilterBar>
 
-          {query.isPending ? (
-            <p className="text-sm text-muted-foreground">Đang tải…</p>
-          ) : query.isError ? (
-            <p className="text-sm text-destructive">
-              {catalogErrorMessage(query.error)}
-            </p>
-          ) : (
-            <>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>ID</TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Parent</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {rows.map((cat) => (
-                    <TableRow key={cat.id}>
-                      <TableCell>{cat.id}</TableCell>
-                      <TableCell>{cat.name}</TableCell>
-                      <TableCell>{cat.parent_id ?? "—"}</TableCell>
-                      <TableCell>{cat.status}</TableCell>
-                      <TableCell className="text-right">
+        {query.isPending ? (
+          <LoadingState />
+        ) : query.isError ? (
+          <p className="px-4 py-6 text-sm text-[#ba1a1a]">
+            {catalogErrorMessage(query.error)}
+          </p>
+        ) : rows.length === 0 ? (
+          <EmptyState title="No categories yet" />
+        ) : (
+          <>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Parent</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {rows.map((cat) => (
+                  <TableRow key={cat.id}>
+                    <TableCell className="font-medium">{cat.name}</TableCell>
+                    <TableCell>{cat.parent_id ?? "—"}</TableCell>
+                    <TableCell>
+                      <StatusBadge status={cat.status} />
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {manage ? (
+                        <div className="flex justify-end gap-1">
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setEditId(cat.id)}
+                          >
+                            Edit
+                          </Button>
+                          <ConfirmDeleteButton
+                            label="Delete"
+                            title="Delete Category"
+                            onConfirm={async () => {
+                              await deleteCategory(cat.id);
+                              await queryClient.invalidateQueries({
+                                queryKey: ["admin", "catalog", "categories"],
+                              });
+                            }}
+                          />
+                        </div>
+                      ) : (
                         <Button asChild variant="outline" size="sm">
                           <Link href={`/admin/catalog/categories/${cat.id}`}>
-                            {manage ? "Sửa" : "Xem"}
+                            View
                           </Link>
                         </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-              {meta ? (
-                <div className="flex items-center justify-between text-sm">
-                  <span>
-                    Trang {meta.current_page}/{meta.last_page} · {meta.total}
-                  </span>
-                  <div className="flex gap-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      disabled={page <= 1}
-                      onClick={() => setPage((p) => p - 1)}
-                    >
-                      Trước
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      disabled={page >= meta.last_page}
-                      onClick={() => setPage((p) => p + 1)}
-                    >
-                      Sau
-                    </Button>
-                  </div>
-                </div>
-              ) : null}
-            </>
-          )}
-        </CardContent>
-      </Card>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+            {meta ? (
+              <AdminPagination
+                page={page}
+                lastPage={meta.last_page}
+                total={meta.total}
+                onPrev={() => setPage((p) => p - 1)}
+                onNext={() => setPage((p) => p + 1)}
+              />
+            ) : null}
+          </>
+        )}
+      </DataTableShell>
+
+      <ModalForm
+        open={createOpen}
+        onOpenChange={setCreateOpen}
+        title="Add New Category"
+        description="Create a merchandising node in the catalog tree."
+      >
+        <CategoryFormFields
+          mode="create"
+          embedded
+          parentOptions={parentOptions}
+          initial={{
+            name: "",
+            slug: "",
+            parent_id: null,
+            status: "active",
+            description: null,
+          }}
+          onDone={() => setCreateOpen(false)}
+        />
+      </ModalForm>
+
+      <ModalForm
+        open={editId !== null}
+        onOpenChange={(open) => {
+          if (!open) setEditId(null);
+        }}
+        title="Edit Category"
+      >
+        {editQuery.isPending ? (
+          <p className="text-sm text-[#71717A]">Loading…</p>
+        ) : editQuery.data?.data ? (
+          <CategoryFormFields
+            key={editQuery.data.data.id}
+            mode="edit"
+            embedded
+            categoryId={editQuery.data.data.id}
+            parentOptions={parentOptions.filter(
+              (c) => c.id !== editQuery.data?.data.id,
+            )}
+            initial={editQuery.data.data}
+            onDone={() => setEditId(null)}
+          />
+        ) : (
+          <p className="text-sm text-[#ba1a1a]">
+            {catalogErrorMessage(editQuery.error)}
+          </p>
+        )}
+      </ModalForm>
     </div>
   );
 }
@@ -171,6 +247,8 @@ function CategoryFormFields({
   categoryId,
   initial,
   parentOptions,
+  embedded = false,
+  onDone,
 }: {
   mode: "create" | "edit";
   categoryId?: number;
@@ -182,6 +260,8 @@ function CategoryFormFields({
     description?: string | null;
   };
   parentOptions: Category[];
+  embedded?: boolean;
+  onDone?: () => void;
 }) {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -206,23 +286,20 @@ function CategoryFormFields({
       if (mode === "create") return createCategory(body);
       return updateCategory(categoryId!, body);
     },
-    onSuccess: async (res) => {
+    onSuccess: async () => {
       await queryClient.invalidateQueries({
         queryKey: ["admin", "catalog", "categories"],
       });
-      router.replace(`/admin/catalog/categories/${res.data.id}`);
+      if (onDone) {
+        onDone();
+        return;
+      }
+      router.replace("/admin/catalog/categories");
     },
     onError: (err) => setError(catalogErrorMessage(err)),
   });
 
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
-          {mode === "create" ? "Thêm category" : "Sửa category"}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
+  const form = (
         <form
           className="space-y-4"
           onSubmit={(e: FormEvent) => {
@@ -295,12 +372,18 @@ function CategoryFormFields({
           ) : null}
           <div className="flex flex-wrap gap-2">
             <Button type="submit" disabled={save.isPending}>
-              {save.isPending ? "Đang lưu…" : "Lưu"}
+              {save.isPending ? "Saving…" : "Save"}
             </Button>
-            <Button asChild type="button" variant="outline">
-              <Link href="/admin/catalog/categories">Hủy</Link>
-            </Button>
-            {mode === "edit" && categoryId ? (
+            {embedded ? (
+              <Button type="button" variant="outline" onClick={() => onDone?.()}>
+                Cancel
+              </Button>
+            ) : (
+              <Button asChild type="button" variant="outline">
+                <Link href="/admin/catalog/categories">Cancel</Link>
+              </Button>
+            )}
+            {!embedded && mode === "edit" && categoryId ? (
               <ConfirmDeleteButton
                 onConfirm={async () => {
                   try {
@@ -317,7 +400,20 @@ function CategoryFormFields({
             ) : null}
           </div>
         </form>
-      </CardContent>
+  );
+
+  if (embedded) {
+    return form;
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>
+          {mode === "create" ? "Add category" : "Edit category"}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>{form}</CardContent>
     </Card>
   );
 }

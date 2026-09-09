@@ -1,0 +1,804 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Inventory &amp; Stock Control — Atelier Commerce</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Google Fonts: Plus Jakarta Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS CDN with forms/container plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "primary-fixed-dim": "#b4c5ff",
+            "primary-container": "#406de4",
+            "tertiary-container": "#00855b",
+            "on-secondary-fixed-variant": "#004c6d",
+            "surface-bright": "#f8f9ff",
+            "outline-variant": "#c3c6d6",
+            "text-body": "#334155",
+            "on-secondary-fixed": "#001e2e",
+            "inverse-on-surface": "#eaf1ff",
+            "error": "#ba1a1a",
+            "on-primary-fixed-variant": "#003daa",
+            "on-error-container": "#93000a",
+            "warning": "#f59e0b",
+            "warning-light": "#fef5e5",
+            "surface-container-highest": "#d3e4fe",
+            "secondary-container": "#48bdfe",
+            "surface-container-high": "#dce9ff",
+            "text-muted": "#64748b",
+            "success-light": "#e6fffa",
+            "page-bg": "#f8fafc",
+            "primary-light": "#ecf2ff",
+            "success": "#13deb9",
+            "surface-variant": "#d3e4fe",
+            "on-error": "#ffffff",
+            "border-subtle": "#e2e8f0",
+            "on-surface": "#0b1c30",
+            "on-primary-container": "#fefcff",
+            "background": "#f8f9ff",
+            "danger-light": "#fdede8",
+            "on-tertiary-fixed": "#002113",
+            "surface-container": "#e5eeff",
+            "surface-tint": "#2355cc",
+            "card-bg": "#ffffff",
+            "on-primary": "#ffffff",
+            "surface-dim": "#cbdbf5",
+            "error-container": "#ffdad6",
+            "secondary-light": "#e8f7ff",
+            "secondary-fixed-dim": "#86ceff",
+            "surface-container-low": "#eff4ff",
+            "secondary-fixed": "#c8e6ff",
+            "inverse-surface": "#213145",
+            "text-headline": "#0f172a",
+            "inverse-primary": "#b4c5ff",
+            "primary": "#1f53c9",
+            "surface": "#f8f9ff",
+            "on-tertiary": "#ffffff",
+            "tertiary-fixed-dim": "#4edea3",
+            "danger": "#fa896b",
+            "surface-container-lowest": "#ffffff",
+            "on-tertiary-container": "#f5fff6",
+            "secondary": "#00658f",
+            "on-secondary": "#ffffff",
+            "outline": "#747685",
+            "on-surface-variant": "#434654",
+            "on-background": "#0b1c30",
+            "tertiary-fixed": "#6ffbbe",
+            "on-secondary-container": "#004a6b",
+            "on-primary-fixed": "#00174c",
+            "on-tertiary-fixed-variant": "#005236",
+            "tertiary": "#006947",
+            "primary-fixed": "#dbe1ff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "sidebar-width": "260px",
+            "gutter-xl": "2rem",
+            "container-margin-desktop": "1.5rem",
+            "gutter-sm": "0.5rem",
+            "gutter-xs": "0.25rem",
+            "card-padding": "1.5rem",
+            "header-height": "70px",
+            "card-padding-sm": "1rem",
+            "gutter-lg": "1.5rem",
+            "gutter-md": "1rem",
+            "container-margin-mobile": "1rem",
+            "sidebar-collapsed-width": "80px"
+          },
+          "fontFamily": {
+            "headline-lg": ["Plus Jakarta Sans"],
+            "label-md": ["Plus Jakarta Sans"],
+            "body-sm": ["Plus Jakarta Sans"],
+            "label-sm": ["Plus Jakarta Sans"],
+            "body-md": ["Plus Jakarta Sans"],
+            "title-md": ["Plus Jakarta Sans"],
+            "headline-md": ["Plus Jakarta Sans"],
+            "body-lg": ["Plus Jakarta Sans"],
+            "headline-sm": ["Plus Jakarta Sans"],
+            "display-lg": ["Plus Jakarta Sans"],
+            "metric-xl": ["Plus Jakarta Sans"],
+            "display-lg-mobile": ["Plus Jakarta Sans"]
+          },
+          "fontSize": {
+            "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+            "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "title-md": ["15px", { "lineHeight": "22px", "fontWeight": "600" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "body-lg": ["15px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "600" }],
+            "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "metric-xl": ["28px", { "lineHeight": "34px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "display-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.015em", "fontWeight": "700" }]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    body {
+      background-color: #f8fafc;
+      color: #334155;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      height: 6px;
+      width: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 9999px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    .card-shadow {
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.02), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
+    }
+  </style>
+</head>
+<body class="bg-page-bg text-text-body font-body-md antialiased selection:bg-primary-light selection:text-primary min-h-screen">
+<!-- Left Navigation Sidebar -->
+<aside class="fixed top-0 left-0 h-screen w-sidebar-width flex flex-col justify-between p-4 z-50 overflow-y-auto bg-card-bg border-r border-border-subtle">
+<div>
+<!-- Brand Anchor -->
+<div class="flex items-center gap-3 px-3 py-3 mb-6">
+<div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-on-primary shadow-sm">
+<span class="material-symbols-outlined text-[24px]">inventory_2</span>
+</div>
+<div>
+<h1 class="font-title-md text-title-md font-bold text-text-headline tracking-tight">Atelier Commerce</h1>
+<p class="font-label-sm text-label-sm text-text-muted">Retail Management</p>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav aria-label="Main Navigation" class="space-y-1.5">
+<!-- Dashboard -->
+<a class="rounded-xl flex items-center px-4 py-2.5 gap-3 font-body-sm text-body-sm text-text-body hover:bg-page-bg hover:text-text-headline transition-all duration-150 ease-in-out active:scale-[0.99]" href="#dashboard">
+<span class="material-symbols-outlined text-text-muted text-[20px]">dashboard</span>
+<span class="">Dashboard</span>
+</a>
+<!-- Products -->
+<a class="rounded-xl flex items-center px-4 py-2.5 gap-3 font-body-sm text-body-sm text-text-body hover:bg-page-bg hover:text-text-headline transition-all duration-150 ease-in-out active:scale-[0.99]" href="#products">
+<span class="material-symbols-outlined text-text-muted text-[20px]">inventory_2</span>
+<span class="">Products</span>
+</a>
+<!-- Orders -->
+<a class="rounded-xl flex items-center px-4 py-2.5 gap-3 font-body-sm text-body-sm text-text-body hover:bg-page-bg hover:text-text-headline transition-all duration-150 ease-in-out active:scale-[0.99]" href="#orders">
+<span class="material-symbols-outlined text-text-muted text-[20px]">shopping_cart</span>
+<span class="">Orders</span>
+<span class="ml-auto bg-primary-light text-primary font-label-sm text-label-sm px-2 py-0.5 rounded-full font-semibold">14</span>
+</a>
+<!-- Customers -->
+<a class="rounded-xl flex items-center px-4 py-2.5 gap-3 font-body-sm text-body-sm text-text-body hover:bg-page-bg hover:text-text-headline transition-all duration-150 ease-in-out active:scale-[0.99]" href="#customers">
+<span class="material-symbols-outlined text-text-muted text-[20px]">people</span>
+<span class="">Customers</span>
+</a>
+<!-- Inventory (ACTIVE TAB) -->
+<a class="bg-primary-light text-primary font-semibold rounded-xl flex items-center px-4 py-2.5 gap-3 font-body-sm text-body-sm transition-all duration-150 ease-in-out active:scale-[0.99] shadow-sm" href="#inventory">
+<span class="material-symbols-outlined text-primary text-[20px]">warehouse</span>
+<span class="font-semibold">Inventory</span>
+<span class="ml-auto w-2 h-2 rounded-full bg-primary"></span>
+</a>
+<!-- Settings -->
+<a class="rounded-xl flex items-center px-4 py-2.5 gap-3 font-body-sm text-body-sm text-text-body hover:bg-page-bg hover:text-text-headline transition-all duration-150 ease-in-out active:scale-[0.99]" href="#settings">
+<span class="material-symbols-outlined text-text-muted text-[20px]">settings</span>
+<span class="">Settings</span>
+</a>
+</nav>
+</div>
+<!-- Facility Summary Mini-Panel in Sidebar Base -->
+
+</aside>
+<!-- Main Canvas Container -->
+<div class="ml-sidebar-width min-h-screen flex flex-col">
+<!-- Sticky Top Header -->
+<header class="sticky top-0 z-40 bg-card-bg border-b border-border-subtle h-[70px] px-gutter-lg flex items-center justify-between">
+<!-- ⌘K Search on Left -->
+<div class="flex items-center gap-4 w-full max-w-md">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted text-[20px]">search</span>
+<input class="w-full h-10 pl-10 pr-16 bg-page-bg border border-border-subtle rounded-lg font-body-sm text-body-sm text-text-headline placeholder:text-text-muted focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-light transition-all" placeholder="Quick search SKU, batch, or location..." type="text">
+<kbd class="absolute right-3 top-1/2 -translate-y-1/2 font-label-sm text-label-sm bg-card-bg border border-border-subtle text-text-muted px-1.5 py-0.5 rounded shadow-sm">⌘K</kbd>
+</div>
+</div>
+<!-- Trailing Icon Actions & Profile -->
+<div class="flex items-center gap-2">
+<button aria-label="Schedule &amp; Calendar" class="w-10 h-10 rounded-lg flex items-center justify-center text-text-body hover:bg-page-bg hover:text-text-headline transition-colors">
+<span class="material-symbols-outlined text-[20px]">calendar_today</span>
+</button>
+<button aria-label="Notifications" class="relative w-10 h-10 rounded-lg flex items-center justify-center text-text-body hover:bg-page-bg hover:text-text-headline transition-colors">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-danger"></span>
+</button>
+<button aria-label="Toggle Mode" class="w-10 h-10 rounded-lg flex items-center justify-center text-text-body hover:bg-page-bg hover:text-text-headline transition-colors">
+<span class="material-symbols-outlined text-[20px]">dark_mode</span>
+</button>
+<div class="h-6 w-[1px] bg-border-subtle mx-2"></div>
+<!-- Administrator Avatar & Name -->
+<div class="flex items-center gap-3 pl-1">
+<img alt="Administrator Avatar" class="w-9 h-9 rounded-full object-cover border border-border-subtle" data-alt="A distinguished professional operations manager looking confident in modern architectural office lighting. Crisp portrait photography with a cool blue ambient light, light neutral background, high detail editorial corporate portrait." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDgGGrT0smGHLnvSka62DPqStg5m5KowYPJ5JqzO43q8BbJFkO2L3FC7A0OOsSTaYkVNFr9v7kYjcC2lQwhg9SKvsBEWWAQlgIFxdgsZCbLKOdjY3XsjAGj0GR7ZRFCptQwUC1OUY9fxwWr1U2FAW6G_L1j2vR_UgZ2wSTMjz1ZseDfJ4YQNIK26Drpfod7lc7qKHg8K2LS1a1IlR36k_YaoGriivxh5txHVU8oX6LWtGMigr4ukTs">
+<div class="hidden xl:block text-left">
+<p class="font-headline-sm text-headline-sm text-text-headline leading-tight">Evelyn Vance</p>
+<p class="font-label-sm text-label-sm text-text-muted">Head of Logistics</p>
+</div>
+</div>
+</div>
+</header>
+<!-- Page Body Content -->
+<main class="flex-1 p-gutter-lg space-y-6">
+<!-- Header Section & Quick Actions -->
+<section class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+<div>
+<h1 class="font-headline-lg text-headline-lg text-text-headline">Inventory &amp; Stock Control</h1>
+<p class="font-body-sm text-body-sm text-text-muted mt-0.5">Multi-facility warehouse balance, replenishment cycles, and realtime reserve allocations</p>
+</div>
+<div class="flex items-center flex-wrap gap-2.5">
+<button class="px-3.5 py-2 bg-card-bg border border-border-subtle hover:bg-page-bg text-text-headline font-body-sm text-body-sm rounded-lg flex items-center gap-2 transition-colors card-shadow font-medium">
+<span class="material-symbols-outlined text-[18px] text-text-muted">sync_alt</span>
+<span class="">Transfer Stock</span>
+</button>
+<button class="px-3.5 py-2 bg-card-bg border border-border-subtle hover:bg-page-bg text-text-headline font-body-sm text-body-sm rounded-lg flex items-center gap-2 transition-colors card-shadow font-medium">
+<span class="material-symbols-outlined text-[18px] text-text-muted">upload_file</span>
+<span class="">Import Inventory CSV</span>
+</button>
+<button class="px-4 py-2 bg-primary hover:bg-primary-container text-on-primary font-body-sm text-body-sm rounded-lg flex items-center gap-2 transition-all shadow-sm active:scale-[0.98] font-medium">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span class="">Create Stock Adjustment</span>
+</button>
+</div>
+</section>
+<!-- KPI Metrics Cards (4 Bento/Grid Tiles) -->
+<section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+<!-- 1. Total SKUs -->
+<div class="bg-card-bg rounded-xl p-5 card-shadow transition-transform hover:-translate-y-0.5 duration-200">
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm font-medium text-text-muted">Total SKUs</span>
+<div class="w-10 h-10 rounded-lg bg-primary-light flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[22px]">category</span>
+</div>
+</div>
+<div class="mt-2">
+<div class="font-metric-xl text-metric-xl font-bold text-text-headline">2,418</div>
+<div class="mt-2 flex items-center gap-1.5 font-label-sm text-label-sm">
+<span class="bg-success-light text-success font-semibold px-2 py-0.5 rounded-full flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span> +42
+              </span>
+<span class="text-text-muted truncate">added across 8 primary categories</span>
+</div>
+</div>
+</div>
+<!-- 2. Inventory Valuation -->
+<div class="bg-card-bg rounded-xl p-5 card-shadow transition-transform hover:-translate-y-0.5 duration-200">
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm font-medium text-text-muted">Inventory Valuation</span>
+<div class="w-10 h-10 rounded-lg bg-success-light flex items-center justify-center text-success">
+<span class="material-symbols-outlined text-[22px]">payments</span>
+</div>
+</div>
+<div class="mt-2">
+<div class="font-metric-xl text-metric-xl font-bold text-text-headline">$1,420,890.00</div>
+<div class="mt-2 flex items-center gap-1.5 font-label-sm text-label-sm">
+<span class="bg-success-light text-success font-semibold px-2 py-0.5 rounded-full flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[14px]">trending_up</span> +3.4%
+              </span>
+<span class="text-text-muted truncate">MoM weighted average landed cost</span>
+</div>
+</div>
+</div>
+<!-- 3. Low Stock Items -->
+<div class="bg-card-bg rounded-xl p-5 card-shadow transition-transform hover:-translate-y-0.5 duration-200">
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm font-medium text-text-muted">Low Stock Items</span>
+<div class="w-10 h-10 rounded-lg bg-warning-light flex items-center justify-center text-warning">
+<span class="material-symbols-outlined text-[22px]">warning</span>
+</div>
+</div>
+<div class="mt-2">
+<div class="font-metric-xl text-metric-xl font-bold text-text-headline">18 <span class="font-body-sm text-body-sm font-normal text-text-muted">items</span></div>
+<div class="mt-2 flex items-center gap-1.5 font-label-sm text-label-sm">
+<span class="bg-warning-light text-warning font-semibold px-2 py-0.5 rounded-full flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[14px]">priority_high</span> Warning
+              </span>
+<span class="text-text-muted truncate">Under safety reorder threshold</span>
+</div>
+</div>
+</div>
+<!-- 4. Out of Stock -->
+<div class="bg-card-bg rounded-xl p-5 card-shadow transition-transform hover:-translate-y-0.5 duration-200">
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm font-medium text-text-muted">Out of Stock</span>
+<div class="w-10 h-10 rounded-lg bg-danger-light flex items-center justify-center text-danger">
+<span class="material-symbols-outlined text-[22px]">error</span>
+</div>
+</div>
+<div class="mt-2">
+<div class="font-metric-xl text-metric-xl font-bold text-text-headline">4 <span class="font-body-sm text-body-sm font-normal text-text-muted">items</span></div>
+<div class="mt-2 flex items-center gap-1.5 font-label-sm text-label-sm">
+<span class="bg-danger-light text-danger font-semibold px-2 py-0.5 rounded-full flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[14px]">block</span> Critical
+              </span>
+<span class="text-text-muted truncate">Requires immediate supplier PO</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Facility Location Pills & Filter Bar -->
+<section class="space-y-3">
+<!-- Facility Tabs -->
+<div class="flex items-center gap-2 overflow-x-auto pb-1 custom-scroll">
+<button class="px-4 py-2 bg-card-bg border-2 border-primary text-primary font-semibold font-body-sm text-body-sm rounded-lg flex items-center gap-2 whitespace-nowrap shadow-sm">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+            All Warehouses (2,418)
+          </button>
+<button class="px-4 py-2 bg-card-bg border border-border-subtle hover:bg-page-bg text-text-body font-body-sm text-body-sm rounded-lg flex items-center gap-2 whitespace-nowrap transition-colors">
+            Logistics Hub (NJ) 1,580
+          </button>
+<button class="px-4 py-2 bg-card-bg border border-border-subtle hover:bg-page-bg text-text-body font-body-sm text-body-sm rounded-lg flex items-center gap-2 whitespace-nowrap transition-colors">
+            West Coast Depot (CA) 620
+          </button>
+<button class="px-4 py-2 bg-card-bg border border-border-subtle hover:bg-page-bg text-text-body font-body-sm text-body-sm rounded-lg flex items-center gap-2 whitespace-nowrap transition-colors">
+            NYC Flagship Store 218
+          </button>
+</div>
+<!-- Filter Controls Toolbar -->
+<div class="bg-card-bg rounded-xl border border-border-subtle p-3.5 card-shadow flex flex-col md:flex-row md:items-center justify-between gap-3">
+<div class="flex items-center flex-wrap gap-2.5 flex-1">
+<!-- Search SKU/Barcode -->
+<div class="relative min-w-[240px] flex-1 max-w-sm">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[18px]">search</span>
+<input class="w-full h-9 pl-9 pr-3 text-body-sm font-body-sm bg-page-bg border border-border-subtle rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary" placeholder="Filter by SKU, barcode, or name..." type="text">
+</div>
+<!-- Health Status Dropdown -->
+<select class="h-9 px-3 bg-card-bg border border-border-subtle rounded-lg text-body-sm font-body-sm text-text-headline focus:outline-none focus:border-primary">
+<option value="all">Stock Health: All</option>
+<option value="optimal">Optimal (2,396)</option>
+<option value="low">Low Stock (18)</option>
+<option value="depleted">Depleted / Out (4)</option>
+</select>
+<!-- Category Filter -->
+<select class="h-9 px-3 bg-card-bg border border-border-subtle rounded-lg text-body-sm font-body-sm text-text-headline focus:outline-none focus:border-primary">
+<option value="all">Category: All</option>
+<option value="apparel">Apparel &amp; Textiles</option>
+<option value="leather">Leather Goods</option>
+<option value="footwear">Footwear</option>
+<option value="accessories">Accessories</option>
+</select>
+<!-- Supplier Filter -->
+<select class="h-9 px-3 bg-card-bg border border-border-subtle rounded-lg text-body-sm font-body-sm text-text-headline focus:outline-none focus:border-primary">
+<option value="all">Supplier: All Vendors</option>
+<option value="milano">Milano Artisan Labs</option>
+<option value="porto">Porto Tannery Co.</option>
+<option value="kyoto">Kyoto Weaving Works</option>
+</select>
+</div>
+<div class="flex items-center gap-2 text-text-muted font-body-sm text-body-sm">
+<span class="text-text-body font-semibold">2,418</span> results
+            <button class="p-1.5 hover:bg-page-bg rounded border border-border-subtle" title="Export current view">
+<span class="material-symbols-outlined text-[18px]">download</span>
+</button>
+<button class="p-1.5 hover:bg-page-bg rounded border border-border-subtle" title="Table columns display">
+<span class="material-symbols-outlined text-[18px]">view_column</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Main Stock Table -->
+<section class="bg-card-bg rounded-xl border border-border-subtle card-shadow overflow-hidden">
+<div class="overflow-x-auto custom-scroll">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-page-bg border-b border-border-subtle">
+<th class="py-3 px-4 w-10 text-center">
+<input class="rounded border-border-subtle text-primary focus:ring-0 w-4 h-4 cursor-pointer" type="checkbox">
+</th>
+<th class="py-3 px-4 font-label-sm text-label-sm font-semibold uppercase text-text-muted">Product &amp; Variant</th>
+<th class="py-3 px-4 font-label-sm text-label-sm font-semibold uppercase text-text-muted">Warehouse Location</th>
+<th class="py-3 px-4 font-label-sm text-label-sm font-semibold uppercase text-text-muted text-right">On-Hand</th>
+<th class="py-3 px-4 font-label-sm text-label-sm font-semibold uppercase text-text-muted text-right">In-Transit</th>
+<th class="py-3 px-4 font-label-sm text-label-sm font-semibold uppercase text-text-muted text-right">Committed</th>
+<th class="py-3 px-4 font-label-sm text-label-sm font-semibold uppercase text-text-muted text-right">Reorder Point</th>
+<th class="py-3 px-4 font-label-sm text-label-sm font-semibold uppercase text-text-muted text-center">Health Status</th>
+<th class="py-3 px-4 font-label-sm text-label-sm font-semibold uppercase text-text-muted text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-subtle text-body-sm font-body-sm text-text-headline">
+<!-- Item 1: Optimal -->
+<tr class="hover:bg-page-bg transition-colors">
+<td class="py-3 px-4 text-center">
+<input class="rounded border-border-subtle text-primary focus:ring-0 w-4 h-4 cursor-pointer" type="checkbox">
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-3">
+<img alt="Merino Sartorial Overshirt" class="w-10 h-10 rounded-lg object-cover border border-border-subtle flex-shrink-0" data-alt="Luxury minimalist tailored wool blazer in navy blue hanging on sleek architectural wooden hanger, soft studio lighting on clean pure off-white background, high key premium ecommerce luxury catalog product shoot." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSltBMtF0UfcQXiyOGWD4d_nBug5MDkk2pTUbw26nGBeb8kttr_O339aHcbGyNjuIDzoFKIc6C_AE-YWy0zt-nsKyei-SPgqViUFEcuBVtXwoVZI2a-TrVJzuaam2Ym6h5A6We2MQPUOqKrrQo55x3nUr5sp-mJ1XsbOFYO-fUL_9ySfX0YMTRGbaCC5fsKrF9DKtmkiB23tTO48qud5S1hhefR6pYbVr1dfNLr4exOIBoBaVwg_4">
+<div>
+<span class="font-headline-sm text-headline-sm font-semibold text-text-headline hover:text-primary cursor-pointer transition-colors block">Merino Sartorial Overshirt</span>
+<div class="flex items-center gap-2 font-label-sm text-label-sm text-text-muted">
+<span class="font-mono text-text-body">SKU-8921-NVY</span>
+<span class="">•</span>
+<span class="">Navy / Size 42 (L)</span>
+</div>
+</div>
+</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1.5 text-text-body">
+<span class="material-symbols-outlined text-[16px] text-text-muted">warehouse</span>
+                    Logistics Hub (NJ)
+                  </span>
+<span class="block font-label-sm text-label-sm text-text-muted">Aisle 04 — Bin C-12</span>
+</td>
+<td class="py-3 px-4 text-right font-semibold font-headline-sm text-text-headline">384</td>
+<td class="py-3 px-4 text-right text-text-muted">45</td>
+<td class="py-3 px-4 text-right text-text-muted">18</td>
+<td class="py-3 px-4 text-right text-text-muted">120</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-semibold bg-success-light text-success">
+<span class="w-1.5 h-1.5 rounded-full bg-success"></span>
+                    Optimal
+                  </span>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="inline-flex items-center gap-1.5">
+<button class="px-2.5 py-1 text-primary hover:bg-primary-light rounded font-medium text-body-sm transition-colors">Adjust</button>
+<button class="px-2.5 py-1 text-text-body hover:bg-page-bg rounded font-medium text-body-sm transition-colors">Transfer</button>
+<button class="p-1 text-text-muted hover:text-text-headline rounded transition-colors" title="Audit History">
+<span class="material-symbols-outlined text-[18px]">history</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Item 2: Low Stock Warning -->
+<tr class="hover:bg-page-bg transition-colors bg-warning-light/20">
+<td class="py-3 px-4 text-center">
+<input class="rounded border-border-subtle text-primary focus:ring-0 w-4 h-4 cursor-pointer" type="checkbox">
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-3">
+<img alt="Milano Leather Commuter Tote" class="w-10 h-10 rounded-lg object-cover border border-border-subtle flex-shrink-0" data-alt="Handcrafted artisanal italian calfskin leather tote bag in cognac brown, natural soft diffuse studio light, crisp shadows on pristine slate light surface, minimalist luxury goods photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1KqpJ_diNEVuFHDkMBGOMbVXgFjRSVIJ4XlOJW6XO_tQxbnhNkJB2Vc4ZOiSR6W_viG5KI1cfwPPw72NZs1oTutS-3BthNOCsjhs4rKiLjx_4EaoqVu63tRG0tsC-Tbz6TqBO63yqZ9YDFSP7QRXpJ5HvMNFhXkC87tk-XPzyhSZegSteGoRKDBnddQPmqJzLoDavmcubV_QUvioKv13_h5hdcwJ4KoWLXesZnU9USQQPrSb2FLo">
+<div>
+<span class="font-headline-sm text-headline-sm font-semibold text-text-headline hover:text-primary cursor-pointer transition-colors block">Milano Leather Commuter Tote</span>
+<div class="flex items-center gap-2 font-label-sm text-label-sm text-text-muted">
+<span class="font-mono text-text-body">SKU-3104-BRN</span>
+<span class="">•</span>
+<span class="">Cognac Brown / Standard</span>
+</div>
+</div>
+</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1.5 text-text-body">
+<span class="material-symbols-outlined text-[16px] text-text-muted">warehouse</span>
+                    West Coast Depot (CA)
+                  </span>
+<span class="block font-label-sm text-label-sm text-text-muted">Aisle 01 — Bin A-04</span>
+</td>
+<td class="py-3 px-4 text-right font-semibold font-headline-sm text-warning">8</td>
+<td class="py-3 px-4 text-right text-text-muted">20</td>
+<td class="py-3 px-4 text-right text-text-muted">6</td>
+<td class="py-3 px-4 text-right text-text-muted font-medium">25</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-semibold bg-warning-light text-warning">
+<span class="w-1.5 h-1.5 rounded-full bg-warning"></span>
+                    Low Stock
+                  </span>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="inline-flex items-center gap-1.5">
+<button class="px-2.5 py-1 text-primary hover:bg-primary-light rounded font-medium text-body-sm transition-colors">Adjust</button>
+<button class="px-2.5 py-1 text-text-body hover:bg-page-bg rounded font-medium text-body-sm transition-colors">Transfer</button>
+<button class="p-1 text-text-muted hover:text-text-headline rounded transition-colors" title="Audit History">
+<span class="material-symbols-outlined text-[18px]">history</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Item 3: Out of Stock (Critical) -->
+<tr class="hover:bg-page-bg transition-colors bg-danger-light/25">
+<td class="py-3 px-4 text-center">
+<input class="rounded border-border-subtle text-primary focus:ring-0 w-4 h-4 cursor-pointer" type="checkbox">
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-3">
+<img alt="Selvedge Denim Chore Coat" class="w-10 h-10 rounded-lg object-cover border border-border-subtle flex-shrink-0" data-alt="Japanese selvedge raw indigo denim jacket with brushed copper hardware laid neatly on textured marble backdrop, precise light and neutral aesthetic, ultra high resolution editorial shot." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmnaHfqfLd_9qkTwKzgKrJYlgznswc-S0ujuV0TZVI98tqKTaT8gs9ycqWeCB3euiWkt1GV_mKpKKrRm5O4CJTGngOw18kcRcmrnzr91xzMrTbdbc2yv4Yy6HaYTXQ07lVs5z77bPwwQ7MJwUtw32wspnPhPWF_oenohinaqrH6fzNoZvSm9ulYdzrXxA1rw9rkmKAhOWjqPrREDLGT0B0JpVKOME1JDC3nb1bi1Wv4q8blOOhSg8">
+<div>
+<span class="font-headline-sm text-headline-sm font-semibold text-text-headline hover:text-primary cursor-pointer transition-colors block">Selvedge Denim Chore Coat</span>
+<div class="flex items-center gap-2 font-label-sm text-label-sm text-text-muted">
+<span class="font-mono text-text-body">SKU-7729-RAW</span>
+<span class="">•</span>
+<span class="">Raw Indigo / Size 38 (S)</span>
+</div>
+</div>
+</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1.5 text-text-body">
+<span class="material-symbols-outlined text-[16px] text-text-muted">storefront</span>
+                    NYC Flagship Store
+                  </span>
+<span class="block font-label-sm text-label-sm text-text-muted">Backroom Racks — Bay 2</span>
+</td>
+<td class="py-3 px-4 text-right font-semibold font-headline-sm text-danger">0</td>
+<td class="py-3 px-4 text-right text-text-muted">15</td>
+<td class="py-3 px-4 text-right text-text-muted">2</td>
+<td class="py-3 px-4 text-right text-text-muted font-medium">30</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-semibold bg-danger-light text-danger">
+<span class="w-1.5 h-1.5 rounded-full bg-danger"></span>
+                    Out of Stock
+                  </span>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="inline-flex items-center gap-1.5">
+<button class="px-2.5 py-1 text-primary hover:bg-primary-light rounded font-medium text-body-sm transition-colors">Adjust</button>
+<button class="px-2.5 py-1 text-text-body hover:bg-page-bg rounded font-medium text-body-sm transition-colors">Transfer</button>
+<button class="p-1 text-text-muted hover:text-text-headline rounded transition-colors" title="Audit History">
+<span class="material-symbols-outlined text-[18px]">history</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Item 4: Optimal -->
+<tr class="hover:bg-page-bg transition-colors">
+<td class="py-3 px-4 text-center">
+<input class="rounded border-border-subtle text-primary focus:ring-0 w-4 h-4 cursor-pointer" type="checkbox">
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-3">
+<img alt="Terra Cotta Thermal Flask" class="w-10 h-10 rounded-lg object-cover border border-border-subtle flex-shrink-0" data-alt="Minimalist monochromatic porcelain ceramic travel cup with silicone sleeve, studio softbox ambient light, light grey concrete pedestal, premium Scandinavian product design photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCoWt0G2fy2xinsf-La8aIzT-p-5J-4Tg3pT6fofoZLHGc3uZoUjJvlUUaZAa-Pm1mlaH6jmbSrlpgddxbMMaZwJ0HAC9IwOedPBiULCelIjR-rPtyaxsrNwrLDFj-L_145FmlRu32cUt9xBxcPgi6FcVwD-lO7u3kbEsuOlJ0DDKEGddd30d5Ya3sv8eaIk-5LLHJGfmAU6AZm4br2dXqyQmJNAKs7TF6CGEQMEwKiV4f2PAlIVQw">
+<div>
+<span class="font-headline-sm text-headline-sm font-semibold text-text-headline hover:text-primary cursor-pointer transition-colors block">Terra Cotta Thermal Flask</span>
+<div class="flex items-center gap-2 font-label-sm text-label-sm text-text-muted">
+<span class="font-mono text-text-body">SKU-4402-TER</span>
+<span class="">•</span>
+<span class="">Warm Clay / 500ml</span>
+</div>
+</div>
+</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1.5 text-text-body">
+<span class="material-symbols-outlined text-[16px] text-text-muted">warehouse</span>
+                    Logistics Hub (NJ)
+                  </span>
+<span class="block font-label-sm text-label-sm text-text-muted">Aisle 09 — Bin B-01</span>
+</td>
+<td class="py-3 px-4 text-right font-semibold font-headline-sm text-text-headline">512</td>
+<td class="py-3 px-4 text-right text-text-muted">0</td>
+<td class="py-3 px-4 text-right text-text-muted">41</td>
+<td class="py-3 px-4 text-right text-text-muted">80</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-semibold bg-success-light text-success">
+<span class="w-1.5 h-1.5 rounded-full bg-success"></span>
+                    Optimal
+                  </span>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="inline-flex items-center gap-1.5">
+<button class="px-2.5 py-1 text-primary hover:bg-primary-light rounded font-medium text-body-sm transition-colors">Adjust</button>
+<button class="px-2.5 py-1 text-text-body hover:bg-page-bg rounded font-medium text-body-sm transition-colors">Transfer</button>
+<button class="p-1 text-text-muted hover:text-text-headline rounded transition-colors" title="Audit History">
+<span class="material-symbols-outlined text-[18px]">history</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Controls -->
+<div class="py-3 px-4 bg-card-bg border-t border-border-subtle flex items-center justify-between">
+<p class="font-body-sm text-body-sm text-text-muted">
+            Showing <span class="font-semibold text-text-headline">1</span> to <span class="font-semibold text-text-headline">4</span> of <span class="font-semibold text-text-headline">2,418</span> items
+          </p>
+<div class="inline-flex items-center gap-1.5">
+<button class="p-1.5 rounded border border-border-subtle text-text-muted hover:bg-page-bg disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="px-3 py-1 rounded bg-primary text-on-primary font-body-sm text-body-sm font-semibold">1</button>
+<button class="px-3 py-1 rounded hover:bg-page-bg text-text-body font-body-sm text-body-sm">2</button>
+<button class="px-3 py-1 rounded hover:bg-page-bg text-text-body font-body-sm text-body-sm">3</button>
+<span class="px-2 text-text-muted font-body-sm text-body-sm">...</span>
+<button class="px-3 py-1 rounded hover:bg-page-bg text-text-body font-body-sm text-body-sm">605</button>
+<button class="p-1.5 rounded border border-border-subtle text-text-muted hover:bg-page-bg">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Real-time Stock Movement Ledger Section -->
+<section class="bg-card-bg rounded-xl border border-border-subtle p-5 card-shadow space-y-4">
+<div class="flex items-center justify-between border-b border-border-subtle pb-3">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-primary-light flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">receipt_long</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-text-headline font-semibold">Real-time Stock Movement Ledger</h2>
+<p class="font-label-sm text-label-sm text-text-muted">Live append-only ledger of automated scan events, returns, and inventory allocations</p>
+</div>
+</div>
+<button class="font-body-sm text-body-sm text-primary hover:underline font-semibold flex items-center gap-1">
+<span class="">View Full Audit Log</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+<div class="overflow-x-auto custom-scroll">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-border-subtle font-label-sm text-label-sm text-text-muted uppercase">
+<th class="py-2.5 px-3">Date / Time</th>
+<th class="py-2.5 px-3">SKU &amp; Item Name</th>
+<th class="py-2.5 px-3">Movement Reason</th>
+<th class="py-2.5 px-3 text-center">Delta Quantity</th>
+<th class="py-2.5 px-3">Warehouse Node</th>
+<th class="py-2.5 px-3 text-right">Operator / Staff</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-subtle font-body-sm text-body-sm">
+<!-- Movement 1: Order Fulfillment -->
+<tr class="hover:bg-page-bg transition-colors">
+<td class="py-3 px-3 text-text-muted whitespace-nowrap">
+<span class="text-text-headline font-medium">Today, 14:32:08</span>
+<span class="block font-label-sm text-label-sm text-text-muted">EDI #9910-US</span>
+</td>
+<td class="py-3 px-3">
+<div class="font-medium text-text-headline">Merino Sartorial Overshirt</div>
+<span class="font-mono font-label-sm text-label-sm text-text-muted">SKU-8921-NVY</span>
+</td>
+<td class="py-3 px-3">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-medium bg-primary-light text-primary">
+<span class="material-symbols-outlined text-[14px]">local_shipping</span>
+                    Order Fulfillment
+                  </span>
+</td>
+<td class="py-3 px-3 text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-semibold bg-danger-light text-danger">
+                    -1
+                  </span>
+</td>
+<td class="py-3 px-3 text-text-body">Logistics Hub (NJ)</td>
+<td class="py-3 px-3 text-right">
+<span class="font-medium text-text-headline">Auto-Pack Station #4</span>
+<span class="block font-label-sm text-label-sm text-text-muted">System Agent</span>
+</td>
+</tr>
+<!-- Movement 2: Restock PO -->
+<tr class="hover:bg-page-bg transition-colors">
+<td class="py-3 px-3 text-text-muted whitespace-nowrap">
+<span class="text-text-headline font-medium">Today, 13:14:55</span>
+<span class="block font-label-sm text-label-sm text-text-muted">PO #8841-MIL</span>
+</td>
+<td class="py-3 px-3">
+<div class="font-medium text-text-headline">Milano Leather Commuter Tote</div>
+<span class="font-mono font-label-sm text-label-sm text-text-muted">SKU-3104-BRN</span>
+</td>
+<td class="py-3 px-3">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-medium bg-success-light text-success">
+<span class="material-symbols-outlined text-[14px]">inbox</span>
+                    Restock PO
+                  </span>
+</td>
+<td class="py-3 px-3 text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-semibold bg-success-light text-success">
+                    +25
+                  </span>
+</td>
+<td class="py-3 px-3 text-text-body">West Coast Depot (CA)</td>
+<td class="py-3 px-3 text-right">
+<span class="font-medium text-text-headline">Marcus Chen</span>
+<span class="block font-label-sm text-label-sm text-text-muted">Receiving Supervisor</span>
+</td>
+</tr>
+<!-- Movement 3: Damaged Inventory -->
+<tr class="hover:bg-page-bg transition-colors">
+<td class="py-3 px-3 text-text-muted whitespace-nowrap">
+<span class="text-text-headline font-medium">Today, 11:45:12</span>
+<span class="block font-label-sm text-label-sm text-text-muted">QA-INCIDENT #129</span>
+</td>
+<td class="py-3 px-3">
+<div class="font-medium text-text-headline">Terra Cotta Thermal Flask</div>
+<span class="font-mono font-label-sm text-label-sm text-text-muted">SKU-4402-TER</span>
+</td>
+<td class="py-3 px-3">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-medium bg-danger-light text-danger">
+<span class="material-symbols-outlined text-[14px]">broken_image</span>
+                    Damaged Inventory
+                  </span>
+</td>
+<td class="py-3 px-3 text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-semibold bg-danger-light text-danger">
+                    -2
+                  </span>
+</td>
+<td class="py-3 px-3 text-text-body">Logistics Hub (NJ)</td>
+<td class="py-3 px-3 text-right">
+<span class="font-medium text-text-headline">Elena Rostova</span>
+<span class="block font-label-sm text-label-sm text-text-muted">QC Inspector</span>
+</td>
+</tr>
+<!-- Movement 4: Inter-Warehouse Transfer -->
+<tr class="hover:bg-page-bg transition-colors">
+<td class="py-3 px-3 text-text-muted whitespace-nowrap">
+<span class="text-text-headline font-medium">Yesterday, 17:20:00</span>
+<span class="block font-label-sm text-label-sm text-text-muted">TR-NJ-NYC #409</span>
+</td>
+<td class="py-3 px-3">
+<div class="font-medium text-text-headline">Selvedge Denim Chore Coat</div>
+<span class="font-mono font-label-sm text-label-sm text-text-muted">SKU-7729-RAW</span>
+</td>
+<td class="py-3 px-3">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-medium bg-secondary-light text-secondary">
+<span class="material-symbols-outlined text-[14px]">swap_horiz</span>
+                    Inter-Warehouse Transfer
+                  </span>
+</td>
+<td class="py-3 px-3 text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-semibold bg-primary-light text-primary">
+                    -15
+                  </span>
+</td>
+<td class="py-3 px-3 text-text-body">Logistics Hub → NYC Store</td>
+<td class="py-3 px-3 text-right">
+<span class="font-medium text-text-headline">Liam O'Connor</span>
+<span class="block font-label-sm text-label-sm text-text-muted">Logistics Dispatch</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</main>
+<!-- Footer System Status Anchor -->
+<footer class="py-4 px-gutter-lg border-t border-border-subtle bg-card-bg text-text-muted text-label-sm font-label-sm flex flex-col sm:flex-row items-center justify-between gap-2">
+<div class="flex items-center gap-4">
+<span class="">Atelier Commerce Management Platform v4.19</span>
+<span class="">•</span>
+<span class="">Warehouse Cluster: US-EAST-01</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-success"></span>
+<span class="text-text-body font-medium">Inventory Balance Synced 12s ago</span>
+</div>
+</footer>
+</div>
+<script>
+    // Keyboard shortcut for Command+K search focus
+    window.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        const searchInput = document.querySelector('input[placeholder*="Quick search"]');
+        if (searchInput) {
+          searchInput.focus();
+        }
+      }
+    });
+  </script>
+
+
+
+
+</body></html>

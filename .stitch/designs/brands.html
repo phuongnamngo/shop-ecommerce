@@ -1,0 +1,771 @@
+<!DOCTYPE html><html class="light" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Brand &amp; Designer Management - Atelier Commerce</title>
+<!-- Google Fonts: Plus Jakarta Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "tertiary-container": "#00855b",
+            "on-surface-variant": "#434654",
+            "on-secondary-container": "#004a6b",
+            "danger": "#fa896b",
+            "primary-container": "#406de4",
+            "on-surface": "#0b1c30",
+            "surface-bright": "#f8f9ff",
+            "surface-tint": "#2355cc",
+            "on-primary-fixed-variant": "#003daa",
+            "card-bg": "#ffffff",
+            "on-background": "#0b1c30",
+            "secondary": "#00658f",
+            "on-error-container": "#93000a",
+            "primary": "#1f53c9",
+            "text-body": "#334155",
+            "secondary-fixed-dim": "#86ceff",
+            "tertiary-fixed-dim": "#4edea3",
+            "surface-container-lowest": "#ffffff",
+            "surface-container-high": "#dce9ff",
+            "text-muted": "#64748b",
+            "primary-fixed-dim": "#b4c5ff",
+            "inverse-surface": "#213145",
+            "success-light": "#e6fffa",
+            "on-primary": "#ffffff",
+            "border-subtle": "#e2e8f0",
+            "surface-container": "#e5eeff",
+            "on-tertiary-container": "#f5fff6",
+            "outline-variant": "#c3c6d6",
+            "tertiary": "#006947",
+            "secondary-container": "#48bdfe",
+            "text-headline": "#0f172a",
+            "danger-light": "#fdede8",
+            "on-tertiary-fixed": "#002113",
+            "on-primary-fixed": "#00174c",
+            "outline": "#747685",
+            "surface-container-highest": "#d3e4fe",
+            "error": "#ba1a1a",
+            "surface-container-low": "#eff4ff",
+            "error-container": "#ffdad6",
+            "surface": "#f8f9ff",
+            "success": "#13deb9",
+            "tertiary-fixed": "#6ffbbe",
+            "on-secondary": "#ffffff",
+            "warning-light": "#fef5e5",
+            "background": "#f8f9ff",
+            "primary-light": "#ecf2ff",
+            "page-bg": "#f8fafc",
+            "surface-variant": "#d3e4fe",
+            "on-tertiary": "#ffffff",
+            "surface-dim": "#cbdbf5",
+            "on-secondary-fixed-variant": "#004c6d",
+            "on-secondary-fixed": "#001e2e",
+            "on-primary-container": "#fefcff",
+            "secondary-fixed": "#c8e6ff",
+            "secondary-light": "#e8f7ff",
+            "on-tertiary-fixed-variant": "#005236",
+            "warning": "#f59e0b",
+            "on-error": "#ffffff",
+            "primary-fixed": "#dbe1ff",
+            "inverse-on-surface": "#eaf1ff",
+            "inverse-primary": "#b4c5ff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "gutter-xs": "0.25rem",
+            "card-padding": "1.5rem",
+            "card-padding-sm": "1rem",
+            "sidebar-width": "260px",
+            "header-height": "70px",
+            "gutter-md": "1rem",
+            "gutter-xl": "2rem",
+            "gutter-lg": "1.5rem",
+            "gutter-sm": "0.5rem",
+            "container-margin-desktop": "1.5rem",
+            "container-margin-mobile": "1rem",
+            "sidebar-collapsed-width": "80px"
+          },
+          "fontFamily": {
+            "body-sm": ["Plus Jakarta Sans"],
+            "headline-md": ["Plus Jakarta Sans"],
+            "label-sm": ["Plus Jakarta Sans"],
+            "headline-lg": ["Plus Jakarta Sans"],
+            "metric-xl": ["Plus Jakarta Sans"],
+            "display-lg-mobile": ["Plus Jakarta Sans"],
+            "body-lg": ["Plus Jakarta Sans"],
+            "headline-sm": ["Plus Jakarta Sans"],
+            "title-md": ["Plus Jakarta Sans"],
+            "body-md": ["Plus Jakarta Sans"],
+            "display-lg": ["Plus Jakarta Sans"],
+            "label-md": ["Plus Jakarta Sans"]
+          },
+          "fontSize": {
+            "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "metric-xl": ["28px", { "lineHeight": "34px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "display-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.015em", "fontWeight": "700" }],
+            "body-lg": ["15px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "600" }],
+            "title-md": ["15px", { "lineHeight": "22px", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .card-depth {
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.02), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
+    }
+    .popover-depth {
+      box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+    }
+    .hover-lift {
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .hover-lift:hover {
+      box-shadow: 0 10px 25px -5px rgba(93, 135, 255, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.03);
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body class="bg-page-bg text-text-body antialiased min-h-screen">
+<!-- SideNavBar Anchor Component from JSON -->
+<aside class="fixed top-0 left-0 h-screen w-sidebar-width flex flex-col justify-between p-4 z-50 overflow-y-auto bg-card-bg border-r border-border-subtle shadow-none">
+<div>
+<!-- Brand Logo / Header -->
+<div class="flex items-center gap-3 px-3 py-3 mb-6">
+<div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-on-primary shadow-sm">
+<span class="material-symbols-outlined text-[24px]">storefront</span>
+</div>
+<div>
+<h1 class="text-title-md font-title-md font-bold text-text-headline tracking-tight">Atelier Commerce</h1>
+<p class="text-body-sm font-body-sm text-text-muted">Retail Management</p>
+</div>
+</div>
+<!-- Navigation Section: Tab items from JSON -->
+<nav class="space-y-1.5">
+<!-- Dashboard -->
+<a class="text-text-body hover:bg-page-bg hover:text-text-headline rounded-xl flex items-center px-4 py-2.5 gap-3 transition-all duration-150 ease-in-out active:scale-[0.99] group" href="#">
+<span class="material-symbols-outlined text-[20px] text-text-muted group-hover:text-text-headline">dashboard</span>
+<span class="text-body-sm font-body-sm">Dashboard</span>
+</a>
+<!-- Products Parent (Active Hierarchy containing Brands) -->
+<div class="space-y-1">
+<a class="bg-primary-light text-primary font-semibold rounded-xl flex items-center justify-between px-4 py-2.5 transition-all duration-150 ease-in-out active:scale-[0.99]" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px]">inventory_2</span>
+<span class="text-body-sm font-body-sm">Products</span>
+</div>
+<span class="material-symbols-outlined text-[18px]">expand_less</span>
+</a>
+<!-- Nested Sub-items -->
+<div class="pl-11 pr-2 py-1 space-y-1">
+<a class="text-body-sm font-body-sm block py-1.5 px-3 text-text-muted hover:text-text-headline rounded-lg hover:bg-page-bg transition-colors" href="#">Catalog Items</a>
+<a class="text-body-sm font-body-sm font-semibold block py-1.5 px-3 text-primary bg-surface-container rounded-lg transition-colors" href="#">Brands<br></a>
+<a class="text-body-sm font-body-sm block py-1.5 px-3 text-text-muted hover:text-text-headline rounded-lg hover:bg-page-bg transition-colors" href="#">Collections</a>
+<a class="text-body-sm font-body-sm block py-1.5 px-3 text-text-muted hover:text-text-headline rounded-lg hover:bg-page-bg transition-colors" href="#">Categories</a>
+</div>
+</div>
+<!-- Orders -->
+<a class="text-text-body hover:bg-page-bg hover:text-text-headline rounded-xl flex items-center px-4 py-2.5 gap-3 transition-all duration-150 ease-in-out active:scale-[0.99] group" href="#">
+<span class="material-symbols-outlined text-[20px] text-text-muted group-hover:text-text-headline">shopping_cart</span>
+<span class="text-body-sm font-body-sm">Orders</span>
+</a>
+<!-- Customers -->
+<a class="text-text-body hover:bg-page-bg hover:text-text-headline rounded-xl flex items-center px-4 py-2.5 gap-3 transition-all duration-150 ease-in-out active:scale-[0.99] group" href="#">
+<span class="material-symbols-outlined text-[20px] text-text-muted group-hover:text-text-headline">people</span>
+<span class="text-body-sm font-body-sm">Customers</span>
+</a>
+<!-- Inventory -->
+<a class="text-text-body hover:bg-page-bg hover:text-text-headline rounded-xl flex items-center px-4 py-2.5 gap-3 transition-all duration-150 ease-in-out active:scale-[0.99] group" href="#">
+<span class="material-symbols-outlined text-[20px] text-text-muted group-hover:text-text-headline">warehouse</span>
+<span class="text-body-sm font-body-sm">Inventory</span>
+</a>
+<!-- Settings -->
+<a class="text-text-body hover:bg-page-bg hover:text-text-headline rounded-xl flex items-center px-4 py-2.5 gap-3 transition-all duration-150 ease-in-out active:scale-[0.99] group" href="#">
+<span class="material-symbols-outlined text-[20px] text-text-muted group-hover:text-text-headline">settings</span>
+<span class="text-body-sm font-body-sm">Settings</span>
+</a>
+<!-- Storefront Preview -->
+
+</nav>
+<!-- Sidebar Promo / Storefront CTA Card -->
+
+</div>
+<!-- Sidebar Footer -->
+
+</aside>
+<!-- Main Content Canvas (Offset by sidebar width 260px) -->
+<div class="ml-[260px] min-h-screen flex flex-col">
+<!-- TopNavBar Anchor Component from JSON -->
+<header class="flex justify-between items-center h-[70px] px-gutter-lg w-full sticky top-0 z-40 bg-card-bg border-b border-border-subtle shadow-sm">
+<!-- Search Bar on Left -->
+<div class="flex items-center gap-4 flex-1 max-w-lg">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted text-[19px]">search</span>
+<input class="w-full h-10 pl-10 pr-4 bg-page-bg border border-border-subtle rounded-lg text-body-sm font-body-sm text-text-headline placeholder:text-text-muted focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 transition-all" placeholder="Search brands, partner contracts, SKUs..." type="text">
+<div class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
+<kbd class="px-1.5 py-0.5 text-[10px] font-mono text-text-muted bg-card-bg border border-border-subtle rounded">⌘K</kbd>
+</div>
+</div>
+</div>
+<!-- Navigation Links from JSON -->
+<div class="hidden lg:flex items-center gap-6 mx-6">
+<a class="text-primary font-semibold text-label-md font-label-md transition-colors duration-150 ease-in-out" href="#">Dashboard</a>
+<a class="text-text-muted hover:bg-page-bg hover:text-text-headline px-2 py-1 rounded text-label-md font-label-md transition-colors duration-150 ease-in-out" href="#">Analytics</a>
+<a class="text-text-muted hover:bg-page-bg hover:text-text-headline px-2 py-1 rounded text-label-md font-label-md transition-colors duration-150 ease-in-out" href="#">Reports</a>
+</div>
+<!-- Trailing Icon Actions & Profile Avatar from JSON -->
+<div class="flex items-center gap-3">
+<button class="w-10 h-10 rounded-lg flex items-center justify-center text-text-muted hover:bg-page-bg hover:text-text-headline transition-colors relative" title="Calendar">
+<span class="material-symbols-outlined text-[20px]">calendar_today</span>
+</button>
+<button class="w-10 h-10 rounded-lg flex items-center justify-center text-text-muted hover:bg-page-bg hover:text-text-headline transition-colors relative" title="Notifications">
+<span class="material-symbols-outlined text-[21px]">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-primary ring-2 ring-card-bg"></span>
+</button>
+<button class="w-10 h-10 rounded-lg flex items-center justify-center text-text-muted hover:bg-page-bg hover:text-text-headline transition-colors" title="Toggle Theme">
+<span class="material-symbols-outlined text-[20px]">dark_mode</span>
+</button>
+<div class="h-6 w-[1px] bg-border-subtle mx-1"></div>
+<!-- Administrator Profile -->
+<button class="flex items-center gap-3 p-1.5 rounded-xl hover:bg-page-bg transition-colors text-left group">
+<img alt="Administrator Avatar" class="w-9 h-9 rounded-full object-cover ring-1 ring-border-subtle" data-alt="Close-up portrait of a chic Parisian retail merchandise director wearing a sleek charcoal turtleneck against a clean, warm studio background with soft natural lighting and refined elegance." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWg7eywWJXSXNQtYVcFnbL1GJC2OCL7qrjSAv79eIBOGSkq6_-mlmCnwjXo6VoKwep0HZrGzFwuHJUEz_xT8BLBsYdUqkSguPAJA59imdmeLVxUKfitkES40HZ6ejL9tvWOiX0eADFKXasCimidbq1l_vqn6RhBbHf8DGs-zAMvKmhqSMCO8QVinokJkXT6p0Lb23KSWzpyv9VGZj-mqWpUmR7Te6ijHyirOpv8HNy6zLM1MemFVM">
+<div class="hidden xl:block">
+<p class="text-headline-sm font-headline-sm text-xs font-bold text-text-headline group-hover:text-primary transition-colors">Elena Vance</p>
+<p class="text-body-sm font-body-sm text-[11px] text-text-muted">Lead Merchandiser</p>
+</div>
+<span class="material-symbols-outlined text-[16px] text-text-muted">expand_more</span>
+</button>
+</div>
+</header>
+<!-- Page Body -->
+<main class="flex-1 p-gutter-lg max-w-[1600px] w-full mx-auto">
+<!-- Breadcrumbs -->
+<nav class="flex items-center gap-2 mb-3 text-label-md font-label-md text-text-muted">
+<a class="hover:text-primary transition-colors" href="#">Catalog</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-text-headline font-semibold">Brands</span>
+</nav>
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-2 border-b border-border-subtle">
+<div>
+<div class="flex items-center gap-3">
+<h1 class="text-display-lg font-display-lg text-text-headline tracking-tight">Brands</h1>
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-success-light text-tertiary text-label-md font-label-md font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-success"></span>
+              46 active brands
+            </span>
+</div>
+<p class="text-body-md font-body-md text-text-muted mt-1 max-w-2xl">Manage brand partnerships, commission contracts, and catalog performance across channels.</p>
+</div>
+<!-- Header Actions -->
+<div class="flex items-center gap-3">
+<button class="h-10 px-4 bg-card-bg border border-border-subtle hover:bg-page-bg text-text-headline rounded-lg text-label-md font-label-md font-semibold flex items-center gap-2 transition-all shadow-sm active:scale-[0.98]">
+<span class="material-symbols-outlined text-[18px] text-text-muted">file_download</span>
+<span class="">Export List</span>
+</button>
+<button class="h-10 px-4 bg-primary hover:bg-surface-tint text-on-primary rounded-lg text-label-md font-label-md font-semibold flex items-center gap-2 transition-all shadow-sm hover:shadow-md hover:shadow-primary/20 active:scale-[0.98]" onclick="document.getElementById('add-brand-modal').classList.remove('hidden')">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span class="">Add Brand</span>
+</button>
+</div>
+</div>
+<!-- Bento-style KPI Metric Cards (Grid 4-columns) -->
+
+<!-- Filter Toolbar Card -->
+<div class="bg-card-bg p-4 rounded-xl border border-border-subtle card-depth mb-6 flex flex-wrap items-center justify-between gap-3">
+<div class="flex flex-wrap items-center gap-3 flex-1 min-w-[280px]">
+<!-- Filter Search -->
+<div class="relative min-w-[220px]">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[18px]">search</span>
+<input class="w-full h-9 pl-9 pr-3 bg-page-bg border border-border-subtle rounded-lg text-body-sm font-body-sm text-text-headline placeholder:text-text-muted focus:outline-none focus:border-primary text-xs" placeholder="Filter by name or city..." type="text">
+</div>
+<!-- Status Filter Pills -->
+<div class="flex items-center bg-page-bg p-1 rounded-lg border border-border-subtle text-label-sm font-label-sm">
+<button class="px-3 py-1 bg-card-bg text-primary font-bold rounded-md shadow-xs transition-all">All Status</button>
+<button class="px-3 py-1 text-text-muted hover:text-text-headline transition-all">Active</button>
+<button class="px-3 py-1 text-text-muted hover:text-text-headline transition-all">Under Review</button>
+<button class="px-3 py-1 text-text-muted hover:text-text-headline transition-all">Archived</button>
+</div>
+<!-- Origin Country Dropdown -->
+<div class="relative">
+<select class="h-9 pl-3 pr-8 bg-card-bg border border-border-subtle rounded-lg text-body-sm font-body-sm text-text-headline appearance-none focus:outline-none focus:border-primary text-xs cursor-pointer">
+<option value="">Origin: All Countries</option>
+<option value="FR">France</option>
+<option value="IT">Italy</option>
+<option value="JP">Japan</option>
+<option value="UK">United Kingdom</option>
+<option value="US">United States</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted text-[16px] pointer-events-none">expand_more</span>
+</div>
+<!-- Catalog Size Range -->
+<div class="relative">
+<select class="h-9 pl-3 pr-8 bg-card-bg border border-border-subtle rounded-lg text-body-sm font-body-sm text-text-headline appearance-none focus:outline-none focus:border-primary text-xs cursor-pointer">
+<option value="">Catalog Size: Any</option>
+<option value="small">&lt; 50 SKUs</option>
+<option value="mid">50 - 200 SKUs</option>
+<option value="large">200+ SKUs</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted text-[16px] pointer-events-none">expand_more</span>
+</div>
+</div>
+<!-- Sort by dropdown -->
+<div class="flex items-center gap-2">
+<span class="text-label-sm font-label-sm text-text-muted uppercase">Sort by:</span>
+<div class="relative">
+<select class="h-9 pl-3 pr-8 bg-card-bg border border-border-subtle rounded-lg text-body-sm font-body-sm text-text-headline appearance-none focus:outline-none focus:border-primary text-xs font-semibold cursor-pointer">
+<option>Highest GMV</option>
+<option>Alphabetical (A-Z)</option>
+<option>Newest Onboarded</option>
+<option>Largest Catalog</option>
+<option>Commission Rate</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted text-[16px] pointer-events-none">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Brand Management Data Table -->
+<div class="bg-card-bg rounded-xl border border-border-subtle card-depth overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-page-bg border-b border-border-subtle">
+<th class="py-3 px-4 w-12 text-center">
+<input class="rounded border-border-subtle text-primary focus:ring-primary h-4 w-4" type="checkbox">
+</th>
+<th class="py-3 px-4 text-label-sm font-label-sm text-text-muted uppercase">Brand &amp; Origin</th>
+<th class="py-3 px-4 text-label-sm font-label-sm text-text-muted uppercase">Official Contact</th>
+<th class="py-3 px-4 text-label-sm font-label-sm text-text-muted uppercase text-right">Products</th>
+<th class="py-3 px-4 text-label-sm font-label-sm text-text-muted uppercase text-right">Lifetime GMV</th>
+<th class="py-3 px-4 text-label-sm font-label-sm text-text-muted uppercase">Status</th>
+<th class="py-3 px-4 text-label-sm font-label-sm text-text-muted uppercase">Contract Renewal</th>
+<th class="py-3 px-4 text-label-sm font-label-sm text-text-muted uppercase text-center w-24">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-subtle text-body-sm font-body-sm">
+<!-- Row 1 -->
+<tr class="hover:bg-page-bg/80 transition-colors group">
+<td class="py-4 px-4 text-center">
+<input class="rounded border-border-subtle text-primary focus:ring-primary h-4 w-4" type="checkbox">
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center font-bold text-text-headline text-sm ring-1 ring-border-subtle shrink-0">
+                      AN
+                    </div>
+<div>
+<p class="text-title-md font-title-md font-bold text-text-headline group-hover:text-primary transition-colors">Atelier Noire</p>
+<div class="flex items-center gap-1.5 text-text-muted text-xs mt-0.5">
+<span class="material-symbols-outlined text-[13px]">location_on</span>
+<span class="">Paris, France</span>
+</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-4">
+<p class="font-semibold text-text-headline">Camille Laurent</p>
+<p class="text-text-muted text-xs mt-0.5">camille@ateliernoire.fr</p>
+</td>
+<td class="py-4 px-4 text-right font-semibold text-text-headline">
+                  248 SKUs
+                </td>
+<td class="py-4 px-4 text-right">
+<p class="font-bold text-text-headline">$3,420,800</p>
+<p class="text-[11px] text-tertiary font-semibold">24% rate</p>
+</td>
+<td class="py-4 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-success-light text-tertiary text-xs font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-success"></span>
+                    Active Partner
+                  </span>
+</td>
+<td class="py-4 px-4 text-text-muted">
+<div class="flex items-center gap-1 text-xs">
+<span class="material-symbols-outlined text-[14px]">event</span>
+<span class="">Nov 14, 2025</span>
+</div>
+</td>
+<td class="py-4 px-4 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="p-1.5 rounded-lg text-text-muted hover:text-primary hover:bg-primary-light transition-colors" title="Edit Brand">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 rounded-lg text-text-muted hover:text-text-headline hover:bg-page-bg transition-colors" title="View Storefront">
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</button>
+<button class="p-1.5 rounded-lg text-text-muted hover:text-danger hover:bg-danger-light transition-colors" title="Delete">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-page-bg/80 transition-colors group">
+<td class="py-4 px-4 text-center">
+<input class="rounded border-border-subtle text-primary focus:ring-primary h-4 w-4" type="checkbox">
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-secondary-light flex items-center justify-center font-bold text-secondary text-sm ring-1 ring-border-subtle shrink-0">
+                      MK
+                    </div>
+<div>
+<p class="text-title-md font-title-md font-bold text-text-headline group-hover:text-primary transition-colors">Maison Kura</p>
+<div class="flex items-center gap-1.5 text-text-muted text-xs mt-0.5">
+<span class="material-symbols-outlined text-[13px]">location_on</span>
+<span class="">Kyoto, Japan</span>
+</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-4">
+<p class="font-semibold text-text-headline">Kenji Takahashi</p>
+<p class="text-text-muted text-xs mt-0.5">kenji@maisonkura.jp</p>
+</td>
+<td class="py-4 px-4 text-right font-semibold text-text-headline">
+                  185 SKUs
+                </td>
+<td class="py-4 px-4 text-right">
+<p class="font-bold text-text-headline">$2,180,450</p>
+<p class="text-[11px] text-tertiary font-semibold">22% rate</p>
+</td>
+<td class="py-4 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-success-light text-tertiary text-xs font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-success"></span>
+                    Active Partner
+                  </span>
+</td>
+<td class="py-4 px-4 text-text-muted">
+<div class="flex items-center gap-1 text-xs">
+<span class="material-symbols-outlined text-[14px]">event</span>
+<span class="">Jan 30, 2026</span>
+</div>
+</td>
+<td class="py-4 px-4 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="p-1.5 rounded-lg text-text-muted hover:text-primary hover:bg-primary-light transition-colors" title="Edit Brand">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 rounded-lg text-text-muted hover:text-text-headline hover:bg-page-bg transition-colors" title="View Storefront">
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</button>
+<button class="p-1.5 rounded-lg text-text-muted hover:text-danger hover:bg-danger-light transition-colors" title="Delete">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-page-bg/80 transition-colors group">
+<td class="py-4 px-4 text-center">
+<input class="rounded border-border-subtle text-primary focus:ring-primary h-4 w-4" type="checkbox">
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-warning-light flex items-center justify-center font-bold text-warning text-sm ring-1 ring-border-subtle shrink-0">
+                      SV
+                    </div>
+<div>
+<p class="text-title-md font-title-md font-bold text-text-headline group-hover:text-primary transition-colors">Studio Valente</p>
+<div class="flex items-center gap-1.5 text-text-muted text-xs mt-0.5">
+<span class="material-symbols-outlined text-[13px]">location_on</span>
+<span class="">Milan, Italy</span>
+</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-4">
+<p class="font-semibold text-text-headline">Matteo Rossi</p>
+<p class="text-text-muted text-xs mt-0.5">partners@valente.it</p>
+</td>
+<td class="py-4 px-4 text-right font-semibold text-text-headline">
+                  92 SKUs
+                </td>
+<td class="py-4 px-4 text-right">
+<p class="font-bold text-text-headline">$980,120</p>
+<p class="text-[11px] text-text-muted font-semibold">20% rate</p>
+</td>
+<td class="py-4 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-warning-light text-warning text-xs font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-warning"></span>
+                    Under Review
+                  </span>
+</td>
+<td class="py-4 px-4 text-text-muted">
+<div class="flex items-center gap-1 text-xs">
+<span class="material-symbols-outlined text-[14px]">event</span>
+<span class="">Pending Terms</span>
+</div>
+</td>
+<td class="py-4 px-4 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="p-1.5 rounded-lg text-text-muted hover:text-primary hover:bg-primary-light transition-colors" title="Edit Brand">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 rounded-lg text-text-muted hover:text-text-headline hover:bg-page-bg transition-colors" title="View Storefront">
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</button>
+<button class="p-1.5 rounded-lg text-text-muted hover:text-danger hover:bg-danger-light transition-colors" title="Delete">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-page-bg/80 transition-colors group">
+<td class="py-4 px-4 text-center">
+<input class="rounded border-border-subtle text-primary focus:ring-primary h-4 w-4" type="checkbox">
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-primary-light flex items-center justify-center font-bold text-primary text-sm ring-1 ring-border-subtle shrink-0">
+                      OS
+                    </div>
+<div>
+<p class="text-title-md font-title-md font-bold text-text-headline group-hover:text-primary transition-colors">Oak &amp; Suede</p>
+<div class="flex items-center gap-1.5 text-text-muted text-xs mt-0.5">
+<span class="material-symbols-outlined text-[13px]">location_on</span>
+<span class="">London, United Kingdom</span>
+</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-4">
+<p class="font-semibold text-text-headline">Eleanor Wright</p>
+<p class="text-text-muted text-xs mt-0.5">e.wright@oaksuede.co.uk</p>
+</td>
+<td class="py-4 px-4 text-right font-semibold text-text-headline">
+                  312 SKUs
+                </td>
+<td class="py-4 px-4 text-right">
+<p class="font-bold text-text-headline">$4,812,000</p>
+<p class="text-[11px] text-tertiary font-semibold">25% rate</p>
+</td>
+<td class="py-4 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-success-light text-tertiary text-xs font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-success"></span>
+                    Active Partner
+                  </span>
+</td>
+<td class="py-4 px-4 text-text-muted">
+<div class="flex items-center gap-1 text-xs">
+<span class="material-symbols-outlined text-[14px]">event</span>
+<span class="">Mar 18, 2026</span>
+</div>
+</td>
+<td class="py-4 px-4 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="p-1.5 rounded-lg text-text-muted hover:text-primary hover:bg-primary-light transition-colors" title="Edit Brand">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 rounded-lg text-text-muted hover:text-text-headline hover:bg-page-bg transition-colors" title="View Storefront">
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</button>
+<button class="p-1.5 rounded-lg text-text-muted hover:text-danger hover:bg-danger-light transition-colors" title="Delete">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-page-bg/80 transition-colors group">
+<td class="py-4 px-4 text-center">
+<input class="rounded border-border-subtle text-primary focus:ring-primary h-4 w-4" type="checkbox">
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-danger-light flex items-center justify-center font-bold text-danger text-sm ring-1 ring-border-subtle shrink-0">
+                      LC
+                    </div>
+<div>
+<p class="text-title-md font-title-md font-bold text-text-headline group-hover:text-primary transition-colors">Lumière Céramique</p>
+<div class="flex items-center gap-1.5 text-text-muted text-xs mt-0.5">
+<span class="material-symbols-outlined text-[13px]">location_on</span>
+<span class="">Geneva, Switzerland</span>
+</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-4">
+<p class="font-semibold text-text-headline">Benoit Mercier</p>
+<p class="text-text-muted text-xs mt-0.5">admin@lumiere.ch</p>
+</td>
+<td class="py-4 px-4 text-right font-semibold text-text-headline">
+                  48 SKUs
+                </td>
+<td class="py-4 px-4 text-right">
+<p class="font-bold text-text-headline">$314,000</p>
+<p class="text-[11px] text-text-muted font-semibold">18% rate</p>
+</td>
+<td class="py-4 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container text-text-muted text-xs font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-text-muted"></span>
+                    Archived
+                  </span>
+</td>
+<td class="py-4 px-4 text-text-muted">
+<div class="flex items-center gap-1 text-xs">
+<span class="material-symbols-outlined text-[14px]">event</span>
+<span class="">Expired Dec 2024</span>
+</div>
+</td>
+<td class="py-4 px-4 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="p-1.5 rounded-lg text-text-muted hover:text-primary hover:bg-primary-light transition-colors" title="Edit Brand">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 rounded-lg text-text-muted hover:text-text-headline hover:bg-page-bg transition-colors" title="View Storefront">
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</button>
+<button class="p-1.5 rounded-lg text-text-muted hover:text-danger hover:bg-danger-light transition-colors" title="Delete">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer / Pagination -->
+<div class="p-4 bg-card-bg border-t border-border-subtle flex flex-col sm:flex-row items-center justify-between gap-3 text-body-sm font-body-sm">
+<span class="text-text-muted">
+            Showing <strong class="text-text-headline font-semibold">1-5</strong> of <strong class="text-text-headline font-semibold">46</strong> luxury brands
+          </span>
+<div class="flex items-center gap-1">
+<button class="h-8 px-3 rounded-lg border border-border-subtle bg-card-bg text-text-muted hover:text-text-headline hover:bg-page-bg disabled:opacity-40 transition-colors" disabled="">
+              Previous
+            </button>
+<button class="h-8 w-8 rounded-lg bg-primary text-on-primary font-bold text-xs">1</button>
+<button class="h-8 w-8 rounded-lg text-text-muted hover:bg-page-bg transition-colors text-xs font-semibold">2</button>
+<button class="h-8 w-8 rounded-lg text-text-muted hover:bg-page-bg transition-colors text-xs font-semibold">3</button>
+<span class="text-text-muted px-1">...</span>
+<button class="h-8 w-8 rounded-lg text-text-muted hover:bg-page-bg transition-colors text-xs font-semibold">10</button>
+<button class="h-8 px-3 rounded-lg border border-border-subtle bg-card-bg text-text-muted hover:text-text-headline hover:bg-page-bg transition-colors">
+              Next
+            </button>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Add Brand Modal Dialog (Interactive overlay) -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-on-surface/40 backdrop-blur-[4px] hidden transition-opacity duration-200" id="add-brand-modal">
+<div class="bg-card-bg rounded-xl border border-border-subtle popover-depth w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+<!-- Modal Header -->
+<div class="px-6 py-5 border-b border-border-subtle flex items-center justify-between">
+<div>
+<h3 class="text-headline-md font-headline-md text-text-headline font-bold">Onboard New Brand Partner</h3>
+<p class="text-body-sm font-body-sm text-text-muted mt-0.5">Register a brand partner, assign commissions, and setup storefront feeds.</p>
+</div>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-text-muted hover:bg-page-bg hover:text-text-headline transition-colors" onclick="document.getElementById('add-brand-modal').classList.add('hidden')">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- Modal Form Body -->
+<form class="p-6 space-y-5" onsubmit="event.preventDefault(); document.getElementById('add-brand-modal').classList.add('hidden');">
+<!-- Logo Upload Area -->
+<div>
+<label class="block text-label-md font-label-md text-text-headline font-semibold mb-1.5">Brand Logo &amp; Identity Mark</label>
+<div class="border-2 border-dashed border-border-subtle hover:border-primary/50 rounded-xl p-5 text-center bg-page-bg/50 transition-colors cursor-pointer group">
+<div class="w-12 h-12 rounded-full bg-primary-light text-primary flex items-center justify-center mx-auto mb-2 group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[24px]">cloud_upload</span>
+</div>
+<p class="text-body-sm font-body-sm font-semibold text-text-headline">Click to upload SVG or PNG</p>
+<p class="text-label-sm font-label-sm text-text-muted mt-0.5">Register a brand partner, assign commissions, and setup storefront feeds.</p>
+</div>
+</div>
+<!-- 2-Column Fields -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div>
+<label class="block text-label-md font-label-md text-text-headline font-semibold mb-1">Brand Name *</label>
+<input class="w-full h-10 px-3 bg-card-bg border border-border-subtle rounded-lg text-body-sm font-body-sm text-text-headline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15" placeholder="e.g. Maison de Verre" required="" type="text">
+</div>
+<div>
+<label class="block text-label-md font-label-md text-text-headline font-semibold mb-1">Origin City &amp; Country *</label>
+<input class="w-full h-10 px-3 bg-card-bg border border-border-subtle rounded-lg text-body-sm font-body-sm text-text-headline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15" placeholder="e.g. Florence, Italy" required="" type="text">
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div>
+<label class="block text-label-md font-label-md text-text-headline font-semibold mb-1">Official Contact Representative</label>
+<input class="w-full h-10 px-3 bg-card-bg border border-border-subtle rounded-lg text-body-sm font-body-sm text-text-headline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15" placeholder="Full name" type="text">
+</div>
+<div>
+<label class="block text-label-md font-label-md text-text-headline font-semibold mb-1">Direct Business Email *</label>
+<input class="w-full h-10 px-3 bg-card-bg border border-border-subtle rounded-lg text-body-sm font-body-sm text-text-headline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15" placeholder="partners@brand.com" required="" type="email">
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div>
+<label class="block text-label-md font-label-md text-text-headline font-semibold mb-1">Commission Rate (%)</label>
+<div class="relative">
+<input class="w-full h-10 pl-3 pr-8 bg-card-bg border border-border-subtle rounded-lg text-body-sm font-body-sm text-text-headline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 font-semibold" step="0.1" type="number" value="22.5">
+<span class="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted font-bold text-xs">%</span>
+</div>
+</div>
+<div>
+<label class="block text-label-md font-label-md text-text-headline font-semibold mb-1">Contract Renewal Date</label>
+<input class="w-full h-10 px-3 bg-card-bg border border-border-subtle rounded-lg text-body-sm font-body-sm text-text-headline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 text-xs" type="date" value="2026-03-31">
+</div>
+<div>
+<label class="block text-label-md font-label-md text-text-headline font-semibold mb-1">Initial Status</label>
+<select class="w-full h-10 px-3 bg-card-bg border border-border-subtle rounded-lg text-body-sm font-body-sm text-text-headline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 text-xs cursor-pointer font-semibold">
+<option value="active">Active Partner</option>
+<option selected="" value="review">Under Review</option>
+<option value="archived">Archived</option>
+</select>
+</div>
+</div>
+<div>
+<label class="block text-label-md font-label-md text-text-headline font-semibold mb-1">Official Website &amp; Digital Showroom URL</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[17px]">link</span>
+<input class="w-full h-10 pl-9 pr-3 bg-card-bg border border-border-subtle rounded-lg text-body-sm font-body-sm text-text-headline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15" placeholder="https://www.atelier-label.com" type="url">
+</div>
+</div>
+<!-- Modal Footer Actions -->
+<div class="pt-4 border-t border-border-subtle flex items-center justify-end gap-3">
+<button class="h-10 px-4 bg-card-bg border border-border-subtle hover:bg-page-bg text-text-body font-semibold rounded-lg text-label-md font-label-md transition-colors" onclick="document.getElementById('add-brand-modal').classList.add('hidden')" type="button">
+            Cancel
+          </button>
+<button class="h-10 px-5 bg-primary hover:bg-surface-tint text-on-primary font-semibold rounded-lg text-label-md font-label-md transition-all shadow-sm hover:shadow-md hover:shadow-primary/25 flex items-center gap-2" type="submit">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+<span class="">Register Brand</span>
+</button>
+</div>
+</form>
+</div>
+</div>
+
+
+
+
+
+
+</body></html>

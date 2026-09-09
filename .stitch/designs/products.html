@@ -1,0 +1,1076 @@
+<!DOCTYPE html><html lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Products Management | Atelier Commerce</title>
+<!-- Google Fonts: Plus Jakarta Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-background": "#0b1c30",
+            "tertiary-fixed-dim": "#4edea3",
+            "secondary-fixed": "#c8e6ff",
+            "on-error-container": "#93000a",
+            "primary-fixed-dim": "#b4c5ff",
+            "text-body": "#334155",
+            "secondary-light": "#e8f7ff",
+            "background": "#f8f9ff",
+            "inverse-on-surface": "#eaf1ff",
+            "on-surface-variant": "#434654",
+            "warning": "#f59e0b",
+            "danger": "#fa896b",
+            "surface-container-lowest": "#ffffff",
+            "surface-tint": "#2355cc",
+            "primary-fixed": "#dbe1ff",
+            "warning-light": "#fef5e5",
+            "on-primary-fixed-variant": "#003daa",
+            "on-primary-container": "#fefcff",
+            "primary-light": "#ecf2ff",
+            "primary": "#1f53c9",
+            "on-secondary-fixed-variant": "#004c6d",
+            "surface": "#f8f9ff",
+            "secondary-fixed-dim": "#86ceff",
+            "on-primary": "#ffffff",
+            "on-tertiary-fixed-variant": "#005236",
+            "on-tertiary-container": "#f5fff6",
+            "primary-container": "#406de4",
+            "error-container": "#ffdad6",
+            "on-surface": "#0b1c30",
+            "success-light": "#e6fffa",
+            "on-tertiary": "#ffffff",
+            "inverse-surface": "#213145",
+            "text-headline": "#0f172a",
+            "surface-container-high": "#dce9ff",
+            "on-tertiary-fixed": "#002113",
+            "error": "#ba1a1a",
+            "secondary-container": "#48bdfe",
+            "border-subtle": "#e2e8f0",
+            "surface-container": "#e5eeff",
+            "outline-variant": "#c3c6d6",
+            "on-secondary-fixed": "#001e2e",
+            "on-primary-fixed": "#00174c",
+            "on-error": "#ffffff",
+            "tertiary-fixed": "#6ffbbe",
+            "success": "#13deb9",
+            "text-muted": "#64748b",
+            "secondary": "#00658f",
+            "danger-light": "#fdede8",
+            "card-bg": "#ffffff",
+            "tertiary": "#006947",
+            "surface-dim": "#cbdbf5",
+            "surface-container-highest": "#d3e4fe",
+            "surface-variant": "#d3e4fe",
+            "on-secondary": "#ffffff",
+            "page-bg": "#f8fafc",
+            "surface-container-low": "#eff4ff",
+            "inverse-primary": "#b4c5ff",
+            "tertiary-container": "#00855b",
+            "outline": "#747685",
+            "surface-bright": "#f8f9ff",
+            "on-secondary-container": "#004a6b"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "header-height": "70px",
+            "card-padding-sm": "1rem",
+            "gutter-xl": "2rem",
+            "gutter-sm": "0.5rem",
+            "container-margin-desktop": "1.5rem",
+            "gutter-xs": "0.25rem",
+            "card-padding": "1.5rem",
+            "sidebar-collapsed-width": "80px",
+            "gutter-md": "1rem",
+            "container-margin-mobile": "1rem",
+            "sidebar-width": "260px",
+            "gutter-lg": "1.5rem"
+          },
+          "fontFamily": {
+            "body-sm": ["Plus Jakarta Sans"],
+            "body-md": ["Plus Jakarta Sans"],
+            "metric-xl": ["Plus Jakarta Sans"],
+            "display-lg-mobile": ["Plus Jakarta Sans"],
+            "headline-md": ["Plus Jakarta Sans"],
+            "headline-lg": ["Plus Jakarta Sans"],
+            "label-sm": ["Plus Jakarta Sans"],
+            "label-md": ["Plus Jakarta Sans"],
+            "headline-sm": ["Plus Jakarta Sans"],
+            "title-md": ["Plus Jakarta Sans"],
+            "display-lg": ["Plus Jakarta Sans"],
+            "body-lg": ["Plus Jakarta Sans"]
+          },
+          "fontSize": {
+            "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+            "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+            "metric-xl": ["28px", {"lineHeight": "34px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+            "display-lg-mobile": ["26px", {"lineHeight": "34px", "letterSpacing": "-0.015em", "fontWeight": "700"}],
+            "headline-md": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+            "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600"}],
+            "label-sm": ["11px", {"lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600"}],
+            "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+            "headline-sm": ["16px", {"lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "600"}],
+            "title-md": ["15px", {"lineHeight": "22px", "fontWeight": "600"}],
+            "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+            "body-lg": ["15px", {"lineHeight": "24px", "fontWeight": "400"}]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #f8fafc;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="bg-page-bg text-text-body antialiased min-h-screen">
+<!-- Fixed App Shell: SideNavBar (Strictly based on Shared Components JSON) -->
+<aside class="fixed top-0 left-0 h-screen w-sidebar-width flex flex-col justify-between p-4 z-50 overflow-y-auto bg-card-bg border-r border-border-subtle transition-all duration-150 ease-in-out">
+<!-- Brand Top Area -->
+<div class="flex flex-col gap-6">
+<div class="flex items-center gap-3 px-2 pt-1">
+<div class="w-10 h-10 rounded-xl bg-primary-light flex items-center justify-center text-primary font-bold shadow-sm">
+<span class="material-symbols-outlined text-primary" data-icon="storefront">storefront</span>
+</div>
+<div class="flex flex-col">
+<span class="text-title-md font-title-md font-bold text-text-headline tracking-tight">Atelier Commerce</span>
+<span class="text-label-sm font-label-sm text-text-muted">Retail Management</span>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav class="flex flex-col gap-1.5">
+<!-- Dashboard -->
+<a class="text-text-body hover:bg-page-bg hover:text-text-headline rounded-xl flex items-center px-4 py-2.5 gap-3 transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-text-muted text-[20px]" data-icon="dashboard">dashboard</span>
+<span class="text-body-sm font-body-sm font-medium">Dashboard</span>
+</a>
+<!-- Products (Active Parent Destination) -->
+<div class="flex flex-col gap-1">
+<a class="bg-primary-light text-primary font-semibold rounded-xl flex items-center px-4 py-2.5 gap-3 transition-all duration-150" href="#">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="inventory_2">inventory_2</span>
+<span class="text-body-sm font-body-sm flex-1">Products</span>
+<span class="material-symbols-outlined text-primary text-[18px]" data-icon="expand_more">expand_more</span>
+</a>
+<!-- Nested Sub-links -->
+<div class="flex flex-col pl-10 pr-2 py-1 gap-1">
+<a class="bg-primary text-on-primary rounded-lg px-3 py-1.5 text-label-md font-label-md font-semibold flex items-center justify-between shadow-sm" href="#">
+<span class="">Product List</span>
+<span class="bg-primary-container text-on-primary-container text-[10px] px-1.5 py-0.5 rounded-full">1.2k</span>
+</a>
+<a class="text-text-muted hover:text-text-headline hover:bg-page-bg rounded-lg px-3 py-1.5 text-label-md font-label-md transition-colors" href="#">
+              Categories
+            </a>
+<a class="text-text-muted hover:text-text-headline hover:bg-page-bg rounded-lg px-3 py-1.5 text-label-md font-label-md transition-colors" href="#">
+              Attributes &amp; Tags
+            </a>
+</div>
+</div>
+<!-- Orders -->
+<a class="text-text-body hover:bg-page-bg hover:text-text-headline rounded-xl flex items-center px-4 py-2.5 gap-3 transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-text-muted text-[20px]" data-icon="shopping_cart">shopping_cart</span>
+<span class="text-body-sm font-body-sm font-medium">Orders</span>
+</a>
+<!-- Customers -->
+<a class="text-text-body hover:bg-page-bg hover:text-text-headline rounded-xl flex items-center px-4 py-2.5 gap-3 transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-text-muted text-[20px]" data-icon="people">people</span>
+<span class="text-body-sm font-body-sm font-medium">Customers</span>
+</a>
+<!-- Inventory -->
+<a class="text-text-body hover:bg-page-bg hover:text-text-headline rounded-xl flex items-center px-4 py-2.5 gap-3 transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-text-muted text-[20px]" data-icon="warehouse">warehouse</span>
+<span class="text-body-sm font-body-sm font-medium">Inventory</span>
+</a>
+<!-- Settings -->
+<a class="text-text-body hover:bg-page-bg hover:text-text-headline rounded-xl flex items-center px-4 py-2.5 gap-3 transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-text-muted text-[20px]" data-icon="settings">settings</span>
+<span class="text-body-sm font-body-sm font-medium">Settings</span>
+</a>
+<!-- Storefront Preview -->
+<a class="text-text-body hover:bg-page-bg hover:text-text-headline rounded-xl flex items-center px-4 py-2.5 gap-3 transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-text-muted text-[20px]" data-icon="storefront">storefront</span>
+<span class="text-body-sm font-body-sm font-medium">Storefront Preview</span>
+</a>
+</nav>
+</div>
+<!-- Sidebar Bottom Action & Utility Links -->
+
+</aside>
+<!-- Main Canvas Container -->
+<div class="pl-sidebar-width flex flex-col min-h-screen">
+<!-- Fixed/Sticky TopNavBar -->
+<header class="flex justify-between items-center h-[70px] px-gutter-lg w-full sticky top-0 z-40 bg-card-bg border-b border-border-subtle shadow-sm">
+<!-- Left Search Bar -->
+<div class="flex items-center gap-4 w-96">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[20px]" data-icon="search">search</span>
+<input class="w-full h-10 pl-10 pr-4 text-body-sm font-body-sm bg-page-bg border border-border-subtle rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-text-headline placeholder-text-muted" placeholder="Search catalog, SKU, order or customer..." type="text">
+</div>
+</div>
+<!-- Navigation Center Links (Web) -->
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-text-muted hover:text-text-headline transition-colors duration-150 text-label-md font-label-md" href="#">Dashboard</a>
+<a class="text-primary font-semibold transition-colors duration-150 text-label-md font-label-md" href="#">Analytics</a>
+<a class="text-text-muted hover:text-text-headline transition-colors duration-150 text-label-md font-label-md" href="#">Reports</a>
+</nav>
+<!-- Trailing Action Icons & Profile -->
+<div class="flex items-center gap-3">
+<button class="w-10 h-10 rounded-lg flex items-center justify-center text-text-muted hover:bg-page-bg hover:text-text-headline transition-colors" title="Calendar">
+<span class="material-symbols-outlined text-[22px]" data-icon="calendar_today">calendar_today</span>
+</button>
+<button class="w-10 h-10 rounded-lg flex items-center justify-center text-text-muted hover:bg-page-bg hover:text-text-headline relative transition-colors" title="Notifications">
+<span class="material-symbols-outlined text-[22px]" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-danger"></span>
+</button>
+<button class="w-10 h-10 rounded-lg flex items-center justify-center text-text-muted hover:bg-page-bg hover:text-text-headline transition-colors" title="Dark Mode Toggle">
+<span class="material-symbols-outlined text-[22px]" data-icon="dark_mode">dark_mode</span>
+</button>
+<!-- Divider -->
+<div class="h-6 w-[1px] bg-border-subtle mx-1"></div>
+<!-- Admin Profile Pill -->
+<div class="flex items-center gap-3 pl-2 cursor-pointer group">
+<img alt="Administrator Avatar" class="w-9 h-9 rounded-full object-cover border border-border-subtle shadow-xs" data-alt="Close-up portrait of a chic retail director administrator wearing a tailored navy blazer in a bright contemporary design studio with clean soft architectural lines and subtle warm natural illumination." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNB86y6NEXh9mJGNSHfjDROZ8adspoOpbHWYueNKHpKu-CeswGLmVuVkrbizZSgAmrTxUH4rffR1bu08iJbcoBWye1jl4YlKpxEfivyiA9-s_3UUaqxgLPj7os4hdw-Y5j9ShBWPtKn8njqBOdqLG8FAZJiBP5Km8b5rcmBJc1F2vQlUukxAkWIcyCSJ3f47u63ZcxlVytwUV8_Z8OvcgPKcGpeaOCtlztx3m2_i2Wt-785-JnGk8">
+<div class="hidden xl:flex flex-col text-left">
+<span class="text-body-sm font-body-sm font-semibold text-text-headline leading-tight">Elena Rostova</span>
+<span class="text-label-sm font-label-sm text-text-muted leading-tight">Catalog Director</span>
+</div>
+<span class="material-symbols-outlined text-text-muted group-hover:text-text-headline text-[18px]" data-icon="keyboard_arrow_down">keyboard_arrow_down</span>
+</div>
+</div>
+</header>
+<!-- Page Content Container -->
+<main class="p-6 md:p-8 flex-1 flex flex-col gap-6 max-w-[1600px] w-full mx-auto">
+<!-- Breadcrumb & Top Header Bar -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<div class="flex items-center gap-2 text-label-sm font-label-sm text-text-muted mb-1">
+<a class="hover:text-primary transition-colors" href="#">Catalog</a>
+<span class="material-symbols-outlined text-[14px]" data-icon="chevron_right">chevron_right</span>
+<span class="text-text-headline font-semibold">Products</span>
+</div>
+<div class="flex items-center gap-3">
+<h1 class="text-headline-lg font-headline-lg text-text-headline tracking-tight">Products</h1>
+<span class="bg-primary-light text-primary text-label-sm font-label-sm px-2.5 py-1 rounded-full font-semibold">1,248 items</span>
+</div>
+</div>
+<!-- Primary Action CTA Button -->
+<div class="flex items-center gap-3">
+<button class="h-10 px-4 bg-card-bg border border-border-subtle hover:bg-page-bg text-text-body font-label-md text-label-md font-semibold rounded-lg flex items-center gap-2 transition-all shadow-sm">
+<span class="material-symbols-outlined text-[18px]" data-icon="file_upload">file_upload</span>
+<span class="">Import CSV</span>
+</button>
+<button class="h-10 px-4 bg-card-bg border border-border-subtle hover:bg-page-bg text-text-body font-label-md text-label-md font-semibold rounded-lg flex items-center gap-2 transition-all shadow-sm">
+<span class="material-symbols-outlined text-[18px]" data-icon="file_download">file_download</span>
+<span class="">Export</span>
+</button>
+<button class="h-10 px-5 bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md font-semibold rounded-lg flex items-center gap-2 transition-all shadow-[0_4px_12px_rgba(93,135,255,0.35)] active:scale-[0.99]" onclick="window.openProductModal('create')">
+<span class="material-symbols-outlined text-[20px]" data-icon="add">add</span>
+<span class="">Add Product</span>
+</button>
+</div>
+</div>
+<!-- Quick KPI Stats Bar -->
+
+<!-- Bulk Action Bar (Active State: 3 items selected) -->
+<div class="bg-primary-light border border-primary/20 rounded-xl px-5 py-3 flex flex-wrap items-center justify-between gap-4 transition-all">
+<div class="flex items-center gap-3">
+<span class="w-7 h-7 rounded-lg bg-primary text-on-primary font-bold text-label-sm font-label-sm flex items-center justify-center">3</span>
+<span class="text-body-sm font-body-sm font-semibold text-text-headline">Items selected across current view</span>
+<span class="text-text-muted text-body-sm">|</span>
+<button class="text-label-md font-label-md text-primary font-medium hover:underline">Select all 1,248</button>
+</div>
+<div class="flex items-center gap-2">
+<button class="h-8 px-3 rounded-lg bg-card-bg border border-border-subtle text-text-headline hover:bg-page-bg font-label-md text-label-md flex items-center gap-1.5 shadow-xs transition-colors">
+<span class="material-symbols-outlined text-[16px] text-primary" data-icon="publish">publish</span>
+<span class="">Bulk Publish</span>
+</button>
+<button class="h-8 px-3 rounded-lg bg-card-bg border border-border-subtle text-text-headline hover:bg-page-bg font-label-md text-label-md flex items-center gap-1.5 shadow-xs transition-colors">
+<span class="material-symbols-outlined text-[16px] text-primary" data-icon="price_change">price_change</span>
+<span class="">Update Price</span>
+</button>
+<button class="h-8 px-3 rounded-lg bg-card-bg border border-border-subtle text-text-headline hover:bg-page-bg font-label-md text-label-md flex items-center gap-1.5 shadow-xs transition-colors">
+<span class="material-symbols-outlined text-[16px] text-text-muted" data-icon="archive">archive</span>
+<span class="">Archive</span>
+</button>
+<button class="h-8 px-3 rounded-lg bg-danger-light text-danger hover:bg-danger/20 font-label-md text-label-md flex items-center gap-1.5 transition-colors">
+<span class="material-symbols-outlined text-[16px]" data-icon="delete">delete</span>
+<span class="">Delete</span>
+</button>
+<button class="h-8 w-8 rounded-lg hover:bg-card-bg text-text-muted hover:text-text-headline flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-[18px]" data-icon="close">close</span>
+</button>
+</div>
+</div>
+<!-- Search & Filters Toolbar -->
+<div class="bg-card-bg border border-border-subtle rounded-xl p-4 shadow-sm flex flex-col lg:flex-row gap-3 items-stretch lg:items-center justify-between"><div class="flex flex-wrap items-center gap-3 flex-1"><div class="relative min-w-[280px] flex-1"><span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[18px]" data-icon="search">search</span><input class="w-full h-10 pl-9 pr-4 text-body-sm font-body-sm bg-page-bg border border-border-subtle rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 transition-all text-text-headline placeholder-text-muted" placeholder="Search by title, SKU, barcode..." type="text"></div><div class="relative"><select class="h-10 pl-3 pr-8 text-body-sm font-body-sm bg-card-bg border border-border-subtle rounded-lg text-text-body focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 appearance-none cursor-pointer"><option value="">All Categories</option><option value="apparel">Apparel (520)</option><option value="footwear">Footwear (310)</option><option value="accessories">Accessories (280)</option><option value="leather">Leather Goods (138)</option></select><span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none text-[18px]" data-icon="expand_more">expand_more</span></div><div class="relative"><select class="h-10 pl-3 pr-8 text-body-sm font-body-sm bg-card-bg border border-border-subtle rounded-lg text-text-body focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 appearance-none cursor-pointer"><option value="">Stock Status: Any</option><option value="in_stock">In Stock (&gt;10)</option><option value="low_stock">Low Stock (1-10)</option><option value="depleted">Depleted (0)</option></select><span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none text-[18px]" data-icon="expand_more">expand_more</span></div></div><div class="flex items-center gap-2 border-t lg:border-t-0 pt-3 lg:pt-0 border-border-subtle"><span class="text-label-sm font-label-sm text-text-muted">Sort by:</span><div class="relative"><select class="h-10 pl-3 pr-8 text-body-sm font-body-sm bg-card-bg border border-border-subtle rounded-lg text-text-headline font-medium focus:outline-none focus:border-primary appearance-none cursor-pointer"><option>Newest Added</option><option>Price: High to Low</option><option>Price: Low to High</option><option>Stock Velocity</option><option>Highest Margin</option></select><span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none text-[18px]" data-icon="expand_more">expand_more</span></div><button class="h-10 w-10 flex items-center justify-center rounded-lg border border-border-subtle text-text-muted hover:text-text-headline hover:bg-page-bg transition-colors" title="Reset Filters"><span class="material-symbols-outlined text-[18px]" data-icon="refresh">refresh</span></button></div></div>
+<!-- Modern High-Density Product Table Card -->
+<div class="bg-card-bg border border-border-subtle rounded-xl shadow-sm overflow-hidden flex flex-col">
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-page-bg border-b border-border-subtle">
+<th class="py-3 px-4 w-12 text-center">
+<input checked="" class="w-4 h-4 rounded text-primary focus:ring-primary/20 border-border-subtle cursor-pointer" type="checkbox">
+</th>
+<th class="py-3 px-3 text-label-sm font-label-sm uppercase text-text-muted tracking-wider w-16">Item</th>
+<th class="py-3 px-4 text-label-sm font-label-sm uppercase text-text-muted tracking-wider">Product Title &amp; SKU</th>
+<th class="py-3 px-4 text-label-sm font-label-sm uppercase text-text-muted tracking-wider">Category</th>
+<th class="py-3 px-4 text-label-sm font-label-sm uppercase text-text-muted tracking-wider">Brand</th>
+<th class="py-3 px-4 text-label-sm font-label-sm uppercase text-text-muted tracking-wider">Price</th>
+<th class="py-3 px-4 text-label-sm font-label-sm uppercase text-text-muted tracking-wider min-w-[140px]">Stock Velocity</th>
+<th class="py-3 px-4 text-label-sm font-label-sm uppercase text-text-muted tracking-wider">Status</th>
+<th class="py-3 px-4 text-label-sm font-label-sm uppercase text-text-muted tracking-wider">Updated</th>
+<th class="py-3 px-4 text-label-sm font-label-sm uppercase text-text-muted tracking-wider text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-subtle text-body-sm font-body-sm">
+<!-- Row 1 (Selected) -->
+<tr class="hover:bg-page-bg transition-colors duration-150 bg-primary-light/20">
+<td class="py-3.5 px-4 text-center">
+<input checked="" class="w-4 h-4 rounded text-primary focus:ring-primary/20 border-border-subtle cursor-pointer" type="checkbox">
+</td>
+<td class="py-3.5 px-3">
+<div class="w-11 h-11 rounded-lg overflow-hidden border border-border-subtle bg-surface flex-shrink-0 group relative">
+<img alt="Wool Overcoat" class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-110" data-alt="Studio catalog photograph of a tailored charcoal wool minimal coat displayed on a discreet architectural mannequin with soft studio lightbox illumination on pristine white background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLGK4mJqMv2DDD5-ziIgcTT1hgR3uG2Y4DLA3uqiFUcusTkAlZBCM9tkOSIEMfVaRdP_1QKSRn02OvP5cBoBLL79Fwkw0Zcmb8mjVhk34FpgIjzph9cM4ZoHpl2XfdcfbNnHWJGpZ-tG91Zcg3XLJdp0RsiHJHFzHxnrFU8AN98SfOeR48OHmwDJOdMgN9iJ7WWF4FPSH5-SNrOnyBeIviG_hbBZaHYYWBM_rPRhAZBKTsebKoToI">
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<a class="font-semibold text-text-headline hover:text-primary transition-colors" href="#" onclick="event.preventDefault(); window.openProductModal('view', {title:'Cashmere Tailored Overcoat', sku:'ATL-COAT-0941', category:'Apparel', brand:'Atelier Studio', price:'480.00', cost:'192.00', stock:'84', status:'Active', image:'https://lh3.googleusercontent.com/aida-public/AB6AXuDLGK4mJqMv2DDD5-ziIgcTT1hgR3uG2Y4DLA3uqiFUcusTkAlZBCM9tkOSIEMfVaRdP_1QKSRn02OvP5cBoBLL79Fwkw0Zcmb8mjVhk34FpgIjzph9cM4ZoHpl2XfdcfbNnHWJGpZ-tG91Zcg3XLJdp0RsiHJHFzHxnrFU8AN98SfOeR48OHmwDJOdMgN9iJ7WWF4FPSH5-SNrOnyBeIviG_hbBZaHYYWBM_rPRhAZBKTsebKoToI', desc:'Handcrafted premium water-repellent Italian double-faced cashmere with genuine horn buttons, satin cupro lining, and tailored silhouette.'})">Cashmere Tailored Overcoat</a>
+<span class="text-label-sm font-label-sm text-text-muted">SKU: ATL-COAT-0941</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-block px-2.5 py-1 rounded-full text-label-sm font-label-sm font-semibold bg-secondary-light text-secondary">
+                    Apparel
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-text-headline font-medium">Atelier Studio</td>
+<td class="py-3.5 px-4">
+<div class="font-bold text-text-headline">$480.00</div>
+<div class="text-[11px] text-text-muted">Cost: $192.00</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between text-label-sm font-label-sm">
+<span class="font-semibold text-text-headline">84 in stock</span>
+<span class="text-success font-medium">92%</span>
+</div>
+<div class="w-full bg-border-subtle rounded-full h-1.5 overflow-hidden">
+<div class="bg-success h-full rounded-full" style="width: 92%"></div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-label-sm font-semibold bg-success-light text-success">
+<span class="w-1.5 h-1.5 rounded-full bg-success"></span>
+                    Active
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-text-muted text-label-sm font-label-sm">12 mins ago</td>
+<td class="py-3.5 px-4 text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 text-text-muted hover:text-primary hover:bg-card-bg rounded-md transition-colors" title="Edit Product" onclick="window.openProductModal('edit', {title:'Cashmere Tailored Overcoat', sku:'ATL-COAT-0941', category:'Apparel', brand:'Atelier Studio', price:'480.00', cost:'192.00', stock:'84', status:'Active', image:'https://lh3.googleusercontent.com/aida-public/AB6AXuDLGK4mJqMv2DDD5-ziIgcTT1hgR3uG2Y4DLA3uqiFUcusTkAlZBCM9tkOSIEMfVaRdP_1QKSRn02OvP5cBoBLL79Fwkw0Zcmb8mjVhk34FpgIjzph9cM4ZoHpl2XfdcfbNnHWJGpZ-tG91Zcg3XLJdp0RsiHJHFzHxnrFU8AN98SfOeR48OHmwDJOdMgN9iJ7WWF4FPSH5-SNrOnyBeIviG_hbBZaHYYWBM_rPRhAZBKTsebKoToI', desc:'Handcrafted premium water-repellent Italian double-faced cashmere with genuine horn buttons, satin cupro lining, and tailored silhouette.'})">
+<span class="material-symbols-outlined text-[18px]" data-icon="edit">edit</span>
+</button>
+<button class="p-1.5 text-text-muted hover:text-text-headline hover:bg-card-bg rounded-md transition-colors" title="Duplicate">
+<span class="material-symbols-outlined text-[18px]" data-icon="content_copy">content_copy</span>
+</button>
+<button class="p-1.5 text-text-muted hover:text-danger hover:bg-danger-light rounded-md transition-colors" title="Delete">
+<span class="material-symbols-outlined text-[18px]" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 (Selected) -->
+<tr class="hover:bg-page-bg transition-colors duration-150 bg-primary-light/20">
+<td class="py-3.5 px-4 text-center">
+<input checked="" class="w-4 h-4 rounded text-primary focus:ring-primary/20 border-border-subtle cursor-pointer" type="checkbox">
+</td>
+<td class="py-3.5 px-3">
+<div class="w-11 h-11 rounded-lg overflow-hidden border border-border-subtle bg-surface flex-shrink-0 group relative">
+<img alt="Leather Tote Bag" class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-110" data-alt="Commercial product still life of handcrafted Italian cognac brown leather tote bag with brushed brass hardware against a warm neutral clean surface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA65594Tt-rAQBAbyGsfq3bTFO0tAI_jg3dSBN9hMLiVyDZxn0tC-EUj7lgCkQ7M2bzUB_VLCbs-rdihZq1-fni2do30cz0mncrFsst2byg1VnyuEe7stcuPJG7t20uk7jXYa2_OoOFTIrjUL-hs7Q9lE6vyCv58fEzQ6Yt0A1T5KMF0NURjnWomhFJQf6m-whtlbfezUHNPQbj4svKwE0EtiIOIaAZ73neqlAU7dcjPo55Uh-atHQ">
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<a class="font-semibold text-text-headline hover:text-primary transition-colors" href="#" onclick="event.preventDefault(); window.openProductModal('view', {title:'Artisan Weekend Leather Tote', sku:'ATL-BAG-3320', category:'Leather Goods', brand:'Urban Artisan', price:'325.00', cost:'110.00', stock:'8', status:'Low Stock', image:'https://lh3.googleusercontent.com/aida-public/AB6AXuA65594Tt-rAQBAbyGsfq3bTFO0tAI_jg3dSBN9hMLiVyDZxn0tC-EUj7lgCkQ7M2bzUB_VLCbs-rdihZq1-fni2do30cz0mncrFsst2byg1VnyuEe7stcuPJG7t20uk7jXYa2_OoOFTIrjUL-hs7Q9lE6vyCv58fEzQ6Yt0A1T5KMF0NURjnWomhFJQf6m-whtlbfezUHNPQbj4svKwE0EtiIOIaAZ73neqlAU7dcjPo55Uh-atHQ', desc:'Commercial product still life of handcrafted Italian cognac brown leather tote bag with brushed brass hardware.'})">Artisan Weekend Leather Tote</a>
+<span class="text-label-sm font-label-sm text-text-muted">SKU: ATL-BAG-3320</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-block px-2.5 py-1 rounded-full text-label-sm font-label-sm font-semibold bg-primary-light text-primary">
+                    Leather Goods
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-text-headline font-medium">Urban Artisan</td>
+<td class="py-3.5 px-4">
+<div class="font-bold text-text-headline">$325.00</div>
+<div class="text-[11px] text-text-muted">Cost: $110.00</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between text-label-sm font-label-sm">
+<span class="font-semibold text-warning">8 in stock</span>
+<span class="text-warning font-medium">18%</span>
+</div>
+<div class="w-full bg-border-subtle rounded-full h-1.5 overflow-hidden">
+<div class="bg-warning h-full rounded-full" style="width: 18%"></div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-label-sm font-semibold bg-warning-light text-warning">
+<span class="w-1.5 h-1.5 rounded-full bg-warning"></span>
+                    Low Stock
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-text-muted text-label-sm font-label-sm">1 hour ago</td>
+<td class="py-3.5 px-4 text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 text-text-muted hover:text-primary hover:bg-card-bg rounded-md transition-colors" title="Edit Product" onclick="window.openProductModal('edit', {title:'Artisan Weekend Leather Tote', sku:'ATL-BAG-3320', category:'Leather Goods', brand:'Urban Artisan', price:'325.00', cost:'110.00', stock:'8', status:'Low Stock', image:'https://lh3.googleusercontent.com/aida-public/AB6AXuA65594Tt-rAQBAbyGsfq3bTFO0tAI_jg3dSBN9hMLiVyDZxn0tC-EUj7lgCkQ7M2bzUB_VLCbs-rdihZq1-fni2do30cz0mncrFsst2byg1VnyuEe7stcuPJG7t20uk7jXYa2_OoOFTIrjUL-hs7Q9lE6vyCv58fEzQ6Yt0A1T5KMF0NURjnWomhFJQf6m-whtlbfezUHNPQbj4svKwE0EtiIOIaAZ73neqlAU7dcjPo55Uh-atHQ', desc:'Commercial product still life of handcrafted Italian cognac brown leather tote bag with brushed brass hardware.'})">
+<span class="material-symbols-outlined text-[18px]" data-icon="edit">edit</span>
+</button>
+<button class="p-1.5 text-text-muted hover:text-text-headline hover:bg-card-bg rounded-md transition-colors" title="Duplicate">
+<span class="material-symbols-outlined text-[18px]" data-icon="content_copy">content_copy</span>
+</button>
+<button class="p-1.5 text-text-muted hover:text-danger hover:bg-danger-light rounded-md transition-colors" title="Delete">
+<span class="material-symbols-outlined text-[18px]" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 (Selected) -->
+<tr class="hover:bg-page-bg transition-colors duration-150 bg-primary-light/20">
+<td class="py-3.5 px-4 text-center">
+<input checked="" class="w-4 h-4 rounded text-primary focus:ring-primary/20 border-border-subtle cursor-pointer" type="checkbox">
+</td>
+<td class="py-3.5 px-3">
+<div class="w-11 h-11 rounded-lg overflow-hidden border border-border-subtle bg-surface flex-shrink-0 group relative">
+<img alt="Low Top Sneakers" class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-110" data-alt="Minimalist luxury sneaker presentation showing pure white calfskin low top trainer with subtle gum sole on an elevated concrete plinth under soft architectural light." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_Mv97GpbiUT7YO_50xKK_H-_StnddeMjA8UT0OCcdNhC_6uOC_LqtpS3e8-Zz9kv3WRocUXwb15VwfBg93HNK0FwKZvUjUCFjr_ptAoOEBlJjpag_GCv11Jzt8Tt6rF1Q4W80VyiM0OrTdq7gSvbM4af3Jws5yWGu-L5hQIuYXEkIL7prfpjSZ8zYX0sH0Eizh_YoVflScRnfIl-_JZZXpvz9AB5zwOAxW6TWdfxFA7ewzqET0dQ">
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<a class="font-semibold text-text-headline hover:text-primary transition-colors" href="#" onclick="event.preventDefault(); window.openProductModal('view', {title:'Monochrome Minimal Sneaker', sku:'ATL-SHOE-1108', category:'Footwear', brand:'Nordic Minimal', price:'210.00', cost:'75.00', stock:'142', status:'Active', image:'https://lh3.googleusercontent.com/aida-public/AB6AXuA_Mv97GpbiUT7YO_50xKK_H-_StnddeMjA8UT0OCcdNhC_6uOC_LqtpS3e8-Zz9kv3WRocUXwb15VwfBg93HNK0FwKZvUjUCFjr_ptAoOEBlJjpag_GCv11Jzt8Tt6rF1Q4W80VyiM0OrTdq7gSvbM4af3Jws5yWGu-L5hQIuYXEkIL7prfpjSZ8zYX0sH0Eizh_YoVflScRnfIl-_JZZXpvz9AB5zwOAxW6TWdfxFA7ewzqET0dQ', desc:'Minimalist luxury sneaker presentation showing pure white calfskin low top trainer with subtle gum sole.'})">Monochrome Minimal Sneaker</a>
+<span class="text-label-sm font-label-sm text-text-muted">SKU: ATL-SHOE-1108</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-block px-2.5 py-1 rounded-full text-label-sm font-label-sm font-semibold bg-tertiary-fixed/30 text-tertiary">
+                    Footwear
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-text-headline font-medium">Nordic Minimal</td>
+<td class="py-3.5 px-4">
+<div class="font-bold text-text-headline">$210.00</div>
+<div class="text-[11px] text-text-muted">Cost: $75.00</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between text-label-sm font-label-sm">
+<span class="font-semibold text-text-headline">142 in stock</span>
+<span class="text-success font-medium">78%</span>
+</div>
+<div class="w-full bg-border-subtle rounded-full h-1.5 overflow-hidden">
+<div class="bg-success h-full rounded-full" style="width: 78%"></div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-label-sm font-semibold bg-success-light text-success">
+<span class="w-1.5 h-1.5 rounded-full bg-success"></span>
+                    Active
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-text-muted text-label-sm font-label-sm">3 hours ago</td>
+<td class="py-3.5 px-4 text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 text-text-muted hover:text-primary hover:bg-card-bg rounded-md transition-colors" title="Edit Product" onclick="window.openProductModal('edit', {title:'Monochrome Minimal Sneaker', sku:'ATL-SHOE-1108', category:'Footwear', brand:'Nordic Minimal', price:'210.00', cost:'75.00', stock:'142', status:'Active', image:'https://lh3.googleusercontent.com/aida-public/AB6AXuA_Mv97GpbiUT7YO_50xKK_H-_StnddeMjA8UT0OCcdNhC_6uOC_LqtpS3e8-Zz9kv3WRocUXwb15VwfBg93HNK0FwKZvUjUCFjr_ptAoOEBlJjpag_GCv11Jzt8Tt6rF1Q4W80VyiM0OrTdq7gSvbM4af3Jws5yWGu-L5hQIuYXEkIL7prfpjSZ8zYX0sH0Eizh_YoVflScRnfIl-_JZZXpvz9AB5zwOAxW6TWdfxFA7ewzqET0dQ', desc:'Minimalist luxury sneaker presentation showing pure white calfskin low top trainer with subtle gum sole.'})">
+<span class="material-symbols-outlined text-[18px]" data-icon="edit">edit</span>
+</button>
+<button class="p-1.5 text-text-muted hover:text-text-headline hover:bg-card-bg rounded-md transition-colors" title="Duplicate">
+<span class="material-symbols-outlined text-[18px]" data-icon="content_copy">content_copy</span>
+</button>
+<button class="p-1.5 text-text-muted hover:text-danger hover:bg-danger-light rounded-md transition-colors" title="Delete">
+<span class="material-symbols-outlined text-[18px]" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-page-bg transition-colors duration-150">
+<td class="py-3.5 px-4 text-center">
+<input class="w-4 h-4 rounded text-primary focus:ring-primary/20 border-border-subtle cursor-pointer" type="checkbox">
+</td>
+<td class="py-3.5 px-3">
+<div class="w-11 h-11 rounded-lg overflow-hidden border border-border-subtle bg-surface flex-shrink-0 group relative">
+<img alt="Titanium Sunglasses" class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-110" data-alt="High precision product photography of polarized titanium frame sunglasses with dark gradient lenses resting on a smooth grey geometric stone surface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwqE7SrUSjwGz5B2Wn1yppph9RNsPjzYGttl3Mgs6kGcF2_xcH-jqb1bD5hK_y31oyalyHwJPKMays5lIv6YpHtv2a0YbqLsq32aW9jKhQAGl27pG-NNs3kn7YkHpnU72dwBRZ3d15vW0ZeX0qHjC7lWoM8ijL-GYMqneSXZCZKnOGQpNHvEL5Wf8Bie-iO8w9W9OyQG1qoX5EqDmaVFila7xIl8nlgitCYOV9GKwrp3xdxBODfh4">
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<a class="font-semibold text-text-headline hover:text-primary transition-colors" href="#">Titanium Aviator Sunglasses</a>
+<span class="text-label-sm font-label-sm text-text-muted">SKU: ATL-ACC-5519</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-block px-2.5 py-1 rounded-full text-label-sm font-label-sm font-semibold bg-warning-light text-warning">
+                    Accessories
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-text-headline font-medium">Vanguard Luxe</td>
+<td class="py-3.5 px-4">
+<div class="font-bold text-text-headline">$165.00</div>
+<div class="text-[11px] text-text-muted">Cost: $52.00</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between text-label-sm font-label-sm">
+<span class="font-semibold text-danger">0 in stock</span>
+<span class="text-danger font-medium">0%</span>
+</div>
+<div class="w-full bg-border-subtle rounded-full h-1.5 overflow-hidden">
+<div class="bg-danger h-full rounded-full" style="width: 0%"></div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-label-sm font-semibold bg-danger-light text-danger">
+<span class="w-1.5 h-1.5 rounded-full bg-danger"></span>
+                    Depleted
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-text-muted text-label-sm font-label-sm">Yesterday</td>
+<td class="py-3.5 px-4 text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 text-text-muted hover:text-primary hover:bg-card-bg rounded-md transition-colors" title="Edit Product">
+<span class="material-symbols-outlined text-[18px]" data-icon="edit">edit</span>
+</button>
+<button class="p-1.5 text-text-muted hover:text-text-headline hover:bg-card-bg rounded-md transition-colors" title="Duplicate">
+<span class="material-symbols-outlined text-[18px]" data-icon="content_copy">content_copy</span>
+</button>
+<button class="p-1.5 text-text-muted hover:text-danger hover:bg-danger-light rounded-md transition-colors" title="Delete">
+<span class="material-symbols-outlined text-[18px]" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-page-bg transition-colors duration-150">
+<td class="py-3.5 px-4 text-center">
+<input class="w-4 h-4 rounded text-primary focus:ring-primary/20 border-border-subtle cursor-pointer" type="checkbox">
+</td>
+<td class="py-3.5 px-3">
+<div class="w-11 h-11 rounded-lg overflow-hidden border border-border-subtle bg-surface flex-shrink-0 group relative">
+<img alt="Merino Knit Sweater" class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-110" data-alt="Elegant ecommerce catalog photo of a heavy structured knit merino wool turtleneck sweater in cream white neatly folded on modern ash wood surface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZfAug_cbRkxHV1NLuZLG5amx4zm9Y9SKnz0jxZxHf6HQ0Ea6pkbhBy6zEU4JOvo1KHGxat50H13dCNgKEqVRamg37jdrwWu4WkvPwjnG86Di7BFvc53n8MxE_U2XH-cPQ1mSb-ofRemM9XjI2pHumc4fsMN3xwRrTq95PQIKra68Ip3lQiL25nruW6hhnGsBX7bkAO-SDszb8xruhuo_vBEQjrsxq_14xlzuDaHVtnTEIGMR5fmQ">
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<a class="font-semibold text-text-headline hover:text-primary transition-colors" href="#">Ribbed Merino Knit Sweater</a>
+<span class="text-label-sm font-label-sm text-text-muted">SKU: ATL-KNIT-4882</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-block px-2.5 py-1 rounded-full text-label-sm font-label-sm font-semibold bg-secondary-light text-secondary">
+                    Apparel
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-text-headline font-medium">Atelier Studio</td>
+<td class="py-3.5 px-4">
+<div class="font-bold text-text-headline">$195.00</div>
+<div class="text-[11px] text-text-muted">Cost: $68.00</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between text-label-sm font-label-sm">
+<span class="font-semibold text-text-headline">56 in stock</span>
+<span class="text-success font-medium">65%</span>
+</div>
+<div class="w-full bg-border-subtle rounded-full h-1.5 overflow-hidden">
+<div class="bg-success h-full rounded-full" style="width: 65%"></div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-label-sm font-semibold bg-surface-container-high text-text-muted">
+<span class="w-1.5 h-1.5 rounded-full bg-text-muted"></span>
+                    Draft
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-text-muted text-label-sm font-label-sm">2 days ago</td>
+<td class="py-3.5 px-4 text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 text-text-muted hover:text-primary hover:bg-card-bg rounded-md transition-colors" title="Edit Product">
+<span class="material-symbols-outlined text-[18px]" data-icon="edit">edit</span>
+</button>
+<button class="p-1.5 text-text-muted hover:text-text-headline hover:bg-card-bg rounded-md transition-colors" title="Duplicate">
+<span class="material-symbols-outlined text-[18px]" data-icon="content_copy">content_copy</span>
+</button>
+<button class="p-1.5 text-text-muted hover:text-danger hover:bg-danger-light rounded-md transition-colors" title="Delete">
+<span class="material-symbols-outlined text-[18px]" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Pagination Footer -->
+<div class="p-4 bg-card-bg border-t border-border-subtle flex flex-col sm:flex-row items-center justify-between gap-4">
+<div class="text-body-sm font-body-sm text-text-muted">
+            Showing <span class="font-semibold text-text-headline">1 - 5</span> of <span class="font-semibold text-text-headline">1,248</span> products
+          </div>
+<div class="flex items-center gap-2">
+<div class="flex items-center gap-1 mr-3 text-label-sm font-label-sm text-text-muted">
+<span class="">Per page:</span>
+<select class="h-8 pl-2 pr-6 text-label-sm font-label-sm border border-border-subtle rounded-md bg-page-bg text-text-headline focus:outline-none focus:border-primary">
+<option>25</option>
+<option>50</option>
+<option>100</option>
+</select>
+</div>
+<button class="w-8 h-8 rounded-lg border border-border-subtle flex items-center justify-center text-text-muted hover:bg-page-bg hover:text-text-headline disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-[18px]" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-primary text-on-primary font-semibold text-label-sm font-label-sm flex items-center justify-center shadow-xs">1</button>
+<button class="w-8 h-8 rounded-lg border border-border-subtle text-text-body font-medium text-label-sm font-label-sm hover:bg-page-bg flex items-center justify-center">2</button>
+<button class="w-8 h-8 rounded-lg border border-border-subtle text-text-body font-medium text-label-sm font-label-sm hover:bg-page-bg flex items-center justify-center">3</button>
+<span class="text-text-muted px-1">...</span>
+<button class="w-8 h-8 rounded-lg border border-border-subtle text-text-body font-medium text-label-sm font-label-sm hover:bg-page-bg flex items-center justify-center">50</button>
+<button class="w-8 h-8 rounded-lg border border-border-subtle flex items-center justify-center text-text-muted hover:bg-page-bg hover:text-text-headline">
+<span class="material-symbols-outlined text-[18px]" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Interactive Add / Edit Product Modal Interaction (Open Overlay Dialog) -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-inverse-surface/60 backdrop-blur-[4px] transition-all hidden" id="product-modal" onclick="if(event.target===this) window.closeProductModal()">
+  <div class="bg-card-bg border border-border-subtle rounded-2xl w-full max-w-3xl shadow-2xl flex flex-col max-h-[92vh] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+    <!-- Modal Header with Dynamic Mode Navigation -->
+    <div class="px-6 py-4 border-b border-border-subtle flex items-center justify-between bg-card-bg flex-shrink-0">
+      <div class="flex items-center gap-3">
+        <div id="modal-icon-badge" class="w-10 h-10 rounded-xl bg-primary-light flex items-center justify-center text-primary shadow-xs">
+          <span id="modal-header-icon" class="material-symbols-outlined text-[22px]">inventory_2</span>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h3 id="modal-title" class="text-headline-sm font-headline-sm text-text-headline font-bold">Product Details</h3>
+            <span id="modal-badge-status" class="px-2 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-success-light text-success">Active</span>
+          </div>
+          <p id="modal-subtitle" class="text-label-sm font-label-sm text-text-muted">Manage product specifications, pricing, media, and stock levels</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <!-- Mode Switcher Tabs -->
+        <div class="hidden sm:flex items-center bg-page-bg p-1 rounded-lg border border-border-subtle text-label-sm font-label-sm">
+          <button id="tab-btn-view" onclick="window.switchModalTab('view')" class="px-3 py-1 rounded-md font-semibold text-primary bg-card-bg shadow-xs transition-colors flex items-center gap-1">
+            <span class="material-symbols-outlined text-[16px]">visibility</span> View
+          </button>
+          <button id="tab-btn-edit" onclick="window.switchModalTab('edit')" class="px-3 py-1 rounded-md font-medium text-text-muted hover:text-text-headline transition-colors flex items-center gap-1">
+            <span class="material-symbols-outlined text-[16px]">edit_square</span> Edit Form
+          </button>
+        </div>
+        <button class="w-9 h-9 rounded-lg text-text-muted hover:text-text-headline hover:bg-page-bg flex items-center justify-center transition-colors" onclick="window.closeProductModal()" title="Close (Esc)">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Tab Panel: QUICK VIEW -->
+    <div id="modal-view-panel" class="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar bg-page-bg/40">
+      <!-- Top Showcase Card -->
+      <div class="bg-card-bg p-5 rounded-xl border border-border-subtle shadow-xs flex flex-col md:flex-row gap-6 items-start">
+        <div class="w-full md:w-52 aspect-square rounded-xl overflow-hidden border border-border-subtle bg-surface flex-shrink-0 relative group">
+          <img id="view-image" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLGK4mJqMv2DDD5-ziIgcTT1hgR3uG2Y4DLA3uqiFUcusTkAlZBCM9tkOSIEMfVaRdP_1QKSRn02OvP5cBoBLL79Fwkw0Zcmb8mjVhk34FpgIjzph9cM4ZoHpl2XfdcfbNnHWJGpZ-tG91Zcg3XLJdp0RsiHJHFzHxnrFU8AN98SfOeR48OHmwDJOdMgN9iJ7WWF4FPSH5-SNrOnyBeIviG_hbBZaHYYWBM_rPRhAZBKTsebKoToI" alt="Product Display" class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105">
+          <span class="absolute top-2 left-2 px-2 py-0.5 rounded-md text-[10px] font-bold bg-primary text-on-primary">PRIMARY SHOT</span>
+        </div>
+        <div class="flex-1 flex flex-col justify-between h-full space-y-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span id="view-category" class="px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-secondary-light text-secondary">Apparel</span>
+              <span id="view-brand" class="text-label-sm font-label-sm text-text-muted font-medium">Brand: Atelier Studio</span>
+            </div>
+            <h2 id="view-title" class="text-headline-md font-headline-md font-bold text-text-headline mt-1">Cashmere Tailored Overcoat</h2>
+            <p id="view-sku" class="text-label-sm font-label-sm font-mono text-text-muted mt-0.5">SKU: ATL-COAT-0941 | Barcode: 880921471029</p>
+            <p id="view-desc" class="text-body-sm font-body-sm text-text-body mt-2 leading-relaxed">Handcrafted premium water-repellent Italian double-faced cashmere with genuine horn buttons, satin cupro lining, and tailored silhouette.</p>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-border-subtle">
+            <div class="bg-page-bg p-2.5 rounded-lg border border-border-subtle">
+              <span class="text-label-sm font-label-sm text-text-muted block">Retail Price</span>
+              <span id="view-price" class="text-title-md font-title-md font-bold text-text-headline">$480.00</span>
+            </div>
+            <div class="bg-page-bg p-2.5 rounded-lg border border-border-subtle">
+              <span class="text-label-sm font-label-sm text-text-muted block">Unit Cost</span>
+              <span id="view-cost" class="text-title-md font-title-md font-semibold text-text-headline">$192.00</span>
+            </div>
+            <div class="bg-page-bg p-2.5 rounded-lg border border-border-subtle">
+              <span class="text-label-sm font-label-sm text-text-muted block">Est. Margin</span>
+              <span id="view-margin" class="text-title-md font-title-md font-bold text-success">60.0%</span>
+            </div>
+            <div class="bg-page-bg p-2.5 rounded-lg border border-border-subtle">
+              <span class="text-label-sm font-label-sm text-text-muted block">Total In Stock</span>
+              <span id="view-stock" class="text-title-md font-title-md font-bold text-primary">84 units</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stock Breakdown by Location & Variants -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-card-bg p-5 rounded-xl border border-border-subtle shadow-xs space-y-3">
+          <h4 class="text-title-md font-title-md font-semibold text-text-headline flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-[18px]">store</span>
+            Inventory by Location
+          </h4>
+          <div class="space-y-2 text-body-sm font-body-sm">
+            <div class="flex items-center justify-between py-1.5 border-b border-border-subtle">
+              <span class="text-text-headline font-medium">Main Flagship Store</span>
+              <span class="font-semibold text-text-headline">48 units</span>
+            </div>
+            <div class="flex items-center justify-between py-1.5 border-b border-border-subtle">
+              <span class="text-text-headline font-medium">SoHo Boutique</span>
+              <span class="font-semibold text-text-headline">24 units</span>
+            </div>
+            <div class="flex items-center justify-between py-1.5">
+              <span class="text-text-headline font-medium">Central Distribution DC</span>
+              <span class="font-semibold text-text-headline">12 units</span>
+            </div>
+          </div>
+        </div>
+        <div class="bg-card-bg p-5 rounded-xl border border-border-subtle shadow-xs space-y-3">
+          <h4 class="text-title-md font-title-md font-semibold text-text-headline flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-[18px]">style</span>
+            Active Variants &amp; Sizes
+          </h4>
+          <div class="flex flex-wrap gap-2 pt-1">
+            <span class="px-3 py-1 rounded-lg text-label-md font-label-md font-semibold border border-border-subtle bg-page-bg text-text-headline">Size 38 (S) - 18 pcs</span>
+            <span class="px-3 py-1 rounded-lg text-label-md font-label-md font-semibold border border-border-subtle bg-page-bg text-text-headline">Size 40 (M) - 34 pcs</span>
+            <span class="px-3 py-1 rounded-lg text-label-md font-label-md font-semibold border border-border-subtle bg-page-bg text-text-headline">Size 42 (L) - 22 pcs</span>
+            <span class="px-3 py-1 rounded-lg text-label-md font-label-md font-semibold border border-border-subtle bg-page-bg text-text-headline">Size 44 (XL) - 10 pcs</span>
+          </div>
+          <div class="pt-2 text-label-sm font-label-sm text-text-muted flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[16px] text-success">check_circle</span>
+            Available across retail POS and storefront online.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab Panel: EDIT / ADD FORM -->
+    <div id="modal-form-panel" class="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar bg-page-bg/40 hidden">
+      <!-- General Information Card -->
+      <div class="bg-card-bg p-5 rounded-xl border border-border-subtle shadow-xs space-y-4">
+        <h4 class="text-title-md font-title-md font-semibold text-text-headline flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary text-[18px]">info</span>
+          General Information
+        </h4>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="md:col-span-2">
+            <label class="block text-label-md font-label-md text-text-body font-semibold mb-1.5">Product Title *</label>
+            <input id="form-title" class="w-full h-10 px-3 text-body-sm font-body-sm bg-card-bg border border-border-subtle rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 text-text-headline" placeholder="e.g. Cashmere Tailored Overcoat" type="text" value="Cashmere Tailored Overcoat">
+          </div>
+          <div>
+            <label class="block text-label-md font-label-md text-text-body font-semibold mb-1.5">SKU / Barcode *</label>
+            <input id="form-sku" class="w-full h-10 px-3 text-body-sm font-body-sm bg-card-bg border border-border-subtle rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 text-text-headline uppercase font-mono" placeholder="e.g. ATL-COAT-0941" type="text" value="ATL-COAT-0941">
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-label-md font-label-md text-text-body font-semibold mb-1.5">Category</label>
+            <select id="form-category" class="w-full h-10 px-3 text-body-sm font-body-sm bg-card-bg border border-border-subtle rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 text-text-headline">
+              <option value="Apparel">Apparel</option>
+              <option value="Leather Goods">Leather Goods</option>
+              <option value="Footwear">Footwear</option>
+              <option value="Accessories">Accessories</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-label-md font-label-md text-text-body font-semibold mb-1.5">Brand</label>
+            <select id="form-brand" class="w-full h-10 px-3 text-body-sm font-body-sm bg-card-bg border border-border-subtle rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 text-text-headline">
+              <option value="Atelier Studio">Atelier Studio</option>
+              <option value="Urban Artisan">Urban Artisan</option>
+              <option value="Nordic Minimal">Nordic Minimal</option>
+              <option value="Vanguard Luxe">Vanguard Luxe</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-label-md font-label-md text-text-body font-semibold mb-1.5">Description</label>
+          <textarea id="form-desc" class="w-full p-3 text-body-sm font-body-sm bg-card-bg border border-border-subtle rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 text-text-headline resize-none" placeholder="Write full product description, styling details and fit notes..." rows="3">Handcrafted premium water-repellent Italian cashmere with genuine horn buttons, satin cupro lining, and tailored silhouette.</textarea>
+        </div>
+      </div>
+
+      <!-- Media Gallery Card -->
+      <div class="bg-card-bg p-5 rounded-xl border border-border-subtle shadow-xs space-y-4">
+        <div class="flex items-center justify-between">
+          <h4 class="text-title-md font-title-md font-semibold text-text-headline flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-[18px]">photo_library</span>
+            Product Media &amp; Assets
+          </h4>
+          <span class="text-label-sm font-label-sm text-text-muted">PNG, JPG, WEBP up to 10MB</span>
+        </div>
+        <div class="grid grid-cols-4 gap-3">
+          <div class="relative rounded-lg overflow-hidden border-2 border-primary aspect-square group">
+            <img id="form-image-preview" alt="Main product preview" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLGK4mJqMv2DDD5-ziIgcTT1hgR3uG2Y4DLA3uqiFUcusTkAlZBCM9tkOSIEMfVaRdP_1QKSRn02OvP5cBoBLL79Fwkw0Zcmb8mjVhk34FpgIjzph9cM4ZoHpl2XfdcfbNnHWJGpZ-tG91Zcg3XLJdp0RsiHJHFzHxnrFU8AN98SfOeR48OHmwDJOdMgN9iJ7WWF4FPSH5-SNrOnyBeIviG_hbBZaHYYWBM_rPRhAZBKTsebKoToI">
+            <span class="absolute top-1.5 left-1.5 bg-primary text-on-primary text-[9px] font-bold px-1.5 py-0.5 rounded">MAIN</span>
+            <button type="button" class="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-inverse-surface/60 text-on-primary flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity" title="Remove photo">
+              <span class="material-symbols-outlined text-[14px]">close</span>
+            </button>
+          </div>
+          <div class="border-2 border-dashed border-border-subtle rounded-lg aspect-square flex flex-col items-center justify-center p-2 text-center hover:border-primary hover:bg-page-bg transition-colors cursor-pointer group">
+            <span class="material-symbols-outlined text-text-muted group-hover:text-primary text-[24px]">cloud_upload</span>
+            <span class="text-label-sm font-label-sm text-text-muted mt-1">Upload File</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pricing & Stock Economics Card -->
+      <div class="bg-card-bg p-5 rounded-xl border border-border-subtle shadow-xs space-y-4">
+        <h4 class="text-title-md font-title-md font-semibold text-text-headline flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary text-[18px]">payments</span>
+          Pricing &amp; Inventory Economics
+        </h4>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-label-md font-label-md text-text-body font-semibold mb-1.5">Regular Price ($) *</label>
+            <input id="form-price" class="w-full h-10 px-3 text-body-sm font-body-sm bg-card-bg border border-border-subtle rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 text-text-headline font-semibold" type="number" value="480.00">
+          </div>
+          <div>
+            <label class="block text-label-md font-label-md text-text-body font-semibold mb-1.5">Cost per Item ($)</label>
+            <input id="form-cost" class="w-full h-10 px-3 text-body-sm font-body-sm bg-card-bg border border-border-subtle rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 text-text-headline" type="number" value="192.00">
+          </div>
+          <div>
+            <label class="block text-label-md font-label-md text-text-body font-semibold mb-1.5">Compare-at Price ($)</label>
+            <input id="form-compare-price" class="w-full h-10 px-3 text-body-sm font-body-sm bg-card-bg border border-border-subtle rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 text-text-headline" placeholder="e.g. 520.00" type="number" value="520.00">
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+          <div>
+            <label class="block text-label-md font-label-md text-text-body font-semibold mb-1.5">Stock Quantity</label>
+            <input id="form-stock" class="w-full h-10 px-3 text-body-sm font-body-sm bg-card-bg border border-border-subtle rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 text-text-headline font-semibold" type="number" value="84">
+          </div>
+          <div>
+            <label class="block text-label-md font-label-md text-text-body font-semibold mb-1.5">Low Stock Alert Threshold</label>
+            <input id="form-threshold" class="w-full h-10 px-3 text-body-sm font-body-sm bg-card-bg border border-border-subtle rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 text-text-headline" type="number" value="15">
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Variants (Sizes & Colors) -->
+      <div class="bg-card-bg p-5 rounded-xl border border-border-subtle shadow-xs space-y-4">
+        <h4 class="text-title-md font-title-md font-semibold text-text-headline flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary text-[18px]">tune</span>
+          Attributes &amp; Product Variants
+        </h4>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="block text-label-md font-label-md text-text-body font-semibold mb-1.5">Available Sizes</label>
+            <input class="w-full h-10 px-3 text-body-sm font-body-sm bg-card-bg border border-border-subtle rounded-lg text-text-headline" value="S, M, L, XL" placeholder="e.g. S, M, L">
+          </div>
+          <div>
+            <label class="block text-label-md font-label-md text-text-body font-semibold mb-1.5">Color Swatch</label>
+            <input class="w-full h-10 px-3 text-body-sm font-body-sm bg-card-bg border border-border-subtle rounded-lg text-text-headline" value="Charcoal Melange, Navy" placeholder="e.g. Navy, Tan">
+          </div>
+          <div>
+            <label class="block text-label-md font-label-md text-text-body font-semibold mb-1.5">Material</label>
+            <input class="w-full h-10 px-3 text-body-sm font-body-sm bg-card-bg border border-border-subtle rounded-lg text-text-headline" value="90% Cashmere, 10% Wool" placeholder="e.g. 100% Silk">
+          </div>
+        </div>
+      </div>
+
+      <!-- Status & Publishing Switch -->
+      <div class="bg-card-bg p-5 rounded-xl border border-border-subtle shadow-xs space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <label class="block text-label-md font-label-md text-text-body font-semibold mb-1">Product Publication Status</label>
+            <span class="text-label-sm font-label-sm text-text-muted">Choose lifecycle state across online storefront and POS terminals</span>
+          </div>
+          <select id="form-status" class="h-10 px-3 text-body-sm font-body-sm bg-card-bg border border-border-subtle rounded-lg focus:outline-none focus:border-primary text-text-headline font-semibold">
+            <option value="Active">Active</option>
+            <option value="Draft">Draft</option>
+            <option value="Archived">Archived</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Action Footer -->
+    <div class="px-6 py-4 border-t border-border-subtle bg-card-bg flex items-center justify-between gap-3 flex-shrink-0">
+      <div>
+        <button type="button" class="px-4 h-10 rounded-lg border border-border-subtle bg-card-bg text-text-body hover:bg-page-bg text-label-md font-label-md font-semibold transition-colors" onclick="window.closeProductModal()">
+          Close
+        </button>
+      </div>
+      <div class="flex items-center gap-3">
+        <button id="btn-save-draft" type="button" class="px-4 h-10 rounded-lg border border-border-subtle hover:bg-page-bg text-text-headline text-label-md font-label-md font-semibold transition-colors" onclick="window.closeProductModal()">
+          Save as Draft
+        </button>
+        <button id="btn-primary-action" type="button" class="px-6 h-10 rounded-lg bg-primary hover:bg-primary-container text-on-primary text-label-md font-label-md font-semibold transition-all shadow-[0_4px_12px_rgba(93,135,255,0.35)] active:scale-[0.99] flex items-center gap-2" onclick="window.closeProductModal()">
+          <span class="material-symbols-outlined text-[18px]">check</span>
+          <span id="btn-primary-text" class="">Save &amp; Publish</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+<script>
+window.openProductModal = function(mode, product) {
+  var modal = document.getElementById('product-modal');
+  var viewPanel = document.getElementById('modal-view-panel');
+  var formPanel = document.getElementById('modal-form-panel');
+  var tabView = document.getElementById('tab-btn-view');
+  var tabEdit = document.getElementById('tab-btn-edit');
+  var titleEl = document.getElementById('modal-title');
+  var subtitleEl = document.getElementById('modal-subtitle');
+  var iconEl = document.getElementById('modal-header-icon');
+  var btnText = document.getElementById('btn-primary-text');
+  var btnDraft = document.getElementById('btn-save-draft');
+  var badgeStatus = document.getElementById('modal-badge-status');
+
+  if (!modal) return;
+
+  if (mode === 'create') {
+    titleEl.textContent = 'Add New Product';
+    subtitleEl.textContent = 'Create a new SKU with catalog inventory specifications';
+    iconEl.textContent = 'add_box';
+    btnText.textContent = 'Save & Publish';
+    btnDraft.classList.remove('hidden');
+    badgeStatus.textContent = 'New SKU';
+    badgeStatus.className = 'px-2 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-primary-light text-primary';
+
+    document.getElementById('form-title').value = '';
+    document.getElementById('form-sku').value = 'ATL-' + Math.floor(1000 + Math.random() * 9000);
+    document.getElementById('form-desc').value = '';
+    document.getElementById('form-price').value = '';
+    document.getElementById('form-cost').value = '';
+    document.getElementById('form-compare-price').value = '';
+    document.getElementById('form-stock').value = '0';
+    document.getElementById('form-status').value = 'Active';
+
+    window.switchModalTab('edit');
+    tabView.classList.add('hidden');
+  } else {
+    tabView.classList.remove('hidden');
+    var p = product || {
+      title: 'Cashmere Tailored Overcoat',
+      sku: 'ATL-COAT-0941',
+      category: 'Apparel',
+      brand: 'Atelier Studio',
+      price: '480.00',
+      cost: '192.00',
+      stock: '84',
+      status: 'Active',
+      desc: 'Handcrafted premium water-repellent Italian double-faced cashmere with genuine horn buttons, satin cupro lining, and tailored silhouette.',
+      image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDLGK4mJqMv2DDD5-ziIgcTT1hgR3uG2Y4DLA3uqiFUcusTkAlZBCM9tkOSIEMfVaRdP_1QKSRn02OvP5cBoBLL79Fwkw0Zcmb8mjVhk34FpgIjzph9cM4ZoHpl2XfdcfbNnHWJGpZ-tG91Zcg3XLJdp0RsiHJHFzHxnrFU8AN98SfOeR48OHmwDJOdMgN9iJ7WWF4FPSH5-SNrOnyBeIviG_hbBZaHYYWBM_rPRhAZBKTsebKoToI'
+    };
+
+    // Populate Quick View data
+    document.getElementById('view-title').textContent = p.title;
+    document.getElementById('view-sku').textContent = 'SKU: ' + p.sku + ' | Barcode: 880921471029';
+    document.getElementById('view-desc').textContent = p.desc;
+    document.getElementById('view-category').textContent = p.category;
+    document.getElementById('view-brand').textContent = 'Brand: ' + p.brand;
+    document.getElementById('view-price').textContent = '$' + parseFloat(p.price).toFixed(2);
+    document.getElementById('view-cost').textContent = '$' + parseFloat(p.cost).toFixed(2);
+    document.getElementById('view-stock').textContent = p.stock + ' units';
+    if (p.image) {
+      document.getElementById('view-image').src = p.image;
+      document.getElementById('form-image-preview').src = p.image;
+    }
+
+    // Populate Form data
+    document.getElementById('form-title').value = p.title;
+    document.getElementById('form-sku').value = p.sku;
+    document.getElementById('form-category').value = p.category;
+    document.getElementById('form-brand').value = p.brand;
+    document.getElementById('form-desc').value = p.desc;
+    document.getElementById('form-price').value = p.price;
+    document.getElementById('form-cost').value = p.cost;
+    document.getElementById('form-stock').value = p.stock;
+    document.getElementById('form-status').value = p.status;
+
+    badgeStatus.textContent = p.status;
+    badgeStatus.className = 'px-2 py-0.5 rounded-full text-label-sm font-label-sm font-semibold ' + (p.status === 'Active' ? 'bg-success-light text-success' : (p.status === 'Low Stock' ? 'bg-warning-light text-warning' : 'bg-surface-container-high text-text-muted'));
+
+    if (mode === 'edit') {
+      titleEl.textContent = 'Edit Product: ' + p.sku;
+      subtitleEl.textContent = 'Update pricing, variant specifications, and status';
+      iconEl.textContent = 'edit_square';
+      btnText.textContent = 'Update Product';
+      window.switchModalTab('edit');
+    } else {
+      titleEl.textContent = 'Quick View: ' + p.title;
+      subtitleEl.textContent = 'Full catalog overview, inventory distribution, and economics';
+      iconEl.textContent = 'visibility';
+      btnText.textContent = 'Done Viewing';
+      window.switchModalTab('view');
+    }
+  }
+
+  modal.classList.remove('hidden');
+};
+
+window.switchModalTab = function(tab) {
+  var viewPanel = document.getElementById('modal-view-panel');
+  var formPanel = document.getElementById('modal-form-panel');
+  var tabView = document.getElementById('tab-btn-view');
+  var tabEdit = document.getElementById('tab-btn-edit');
+
+  if (tab === 'view') {
+    viewPanel.classList.remove('hidden');
+    formPanel.classList.add('hidden');
+    tabView.className = 'px-3 py-1 rounded-md font-semibold text-primary bg-card-bg shadow-xs transition-colors flex items-center gap-1';
+    tabEdit.className = 'px-3 py-1 rounded-md font-medium text-text-muted hover:text-text-headline transition-colors flex items-center gap-1';
+  } else {
+    viewPanel.classList.add('hidden');
+    formPanel.classList.remove('hidden');
+    tabEdit.className = 'px-3 py-1 rounded-md font-semibold text-primary bg-card-bg shadow-xs transition-colors flex items-center gap-1';
+    tabView.className = 'px-3 py-1 rounded-md font-medium text-text-muted hover:text-text-headline transition-colors flex items-center gap-1';
+  }
+};
+
+window.closeProductModal = function() {
+  var modal = document.getElementById('product-modal');
+  if (modal) modal.classList.add('hidden');
+};
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') window.closeProductModal();
+});
+</script></body></html>

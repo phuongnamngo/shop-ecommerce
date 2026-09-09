@@ -1,0 +1,92 @@
+{
+  "projectId": "488978466418677770",
+  "projectName": "Ecommerce web",
+  "projectType": "TEXT_TO_UI_PRO",
+  "origin": "STITCH",
+  "deviceType": "DESKTOP",
+  "updatedAt": "2026-09-09T14:16:02.867743Z",
+  "screens": {
+    "dashboard": {
+      "id": "8340d152aa794caa8dc65224e4b5b1db",
+      "title": "Modern Ecommerce Dashboard",
+      "width": 2560,
+      "height": 3564,
+      "html": "designs/dashboard.html",
+      "screenshot": "designs/dashboard.png"
+    },
+    "products": {
+      "id": "f4f9a27de2e049f8a8221b7cd56d09a7",
+      "title": "Product Management & Catalog",
+      "width": 2560,
+      "height": 2592,
+      "html": "designs/products.html",
+      "screenshot": "designs/products.png"
+    },
+    "categories": {
+      "id": "7272d20af34f45239a2bc01112bda4ab",
+      "title": "Category Management",
+      "width": 2560,
+      "height": 2324,
+      "html": "designs/categories.html",
+      "screenshot": "designs/categories.png"
+    },
+    "brands": {
+      "id": "ae5fe262f4d24b1bb86cd16460463519",
+      "title": "Brand Management",
+      "width": 2560,
+      "height": 2414,
+      "html": "designs/brands.html",
+      "screenshot": "designs/brands.png"
+    },
+    "orders": {
+      "id": "f1b4615aba294214bfe408d81bcfdfd9",
+      "title": "Order Management & Details",
+      "width": 2560,
+      "height": 3068,
+      "html": "designs/orders.html",
+      "screenshot": "designs/orders.png",
+      "overlays": ["order-detail-modal"]
+    },
+    "customers": {
+      "id": "138097d55198458f9a8a814bc8d468a5",
+      "title": "Customers Directory",
+      "width": 2560,
+      "height": 2996,
+      "html": "designs/customers.html",
+      "screenshot": "designs/customers.png"
+    },
+    "customer-detail": {
+      "id": "b835bec8a0094f9bbc3b7858612dccca",
+      "title": "Customer 360 Detail",
+      "width": 2560,
+      "height": 3444,
+      "html": "designs/customer-detail.html",
+      "screenshot": "designs/customer-detail.png"
+    },
+    "inventory": {
+      "id": "96ed7ac42db14895a6c57935bb635f37",
+      "title": "Inventory & Stock Management",
+      "width": 2560,
+      "height": 3506,
+      "html": "designs/inventory.html",
+      "screenshot": "designs/inventory.png"
+    },
+    "login": {
+      "id": "813c9c9c6697405c893b61a8405e5acb",
+      "title": "Admin Sign In",
+      "width": 2560,
+      "height": 2048,
+      "html": "designs/login.html",
+      "screenshot": "designs/login.png"
+    },
+    "forgot-password": {
+      "id": "f1dbd0e1c2de4d458ff136bac9346f61",
+      "title": "Admin Reset Password",
+      "width": 2560,
+      "height": 2048,
+      "html": "designs/forgot-password.html",
+      "screenshot": "designs/forgot-password.png",
+      "states": ["request-state", "success-state"]
+    }
+  }
+}

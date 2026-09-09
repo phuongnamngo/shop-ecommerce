@@ -1,0 +1,887 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Customers Directory | Atelier Commerce</title>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "primary-fixed-dim": "#b4c5ff",
+            "primary-container": "#406de4",
+            "tertiary-container": "#00855b",
+            "on-secondary-fixed-variant": "#004c6d",
+            "surface-bright": "#f8f9ff",
+            "outline-variant": "#c3c6d6",
+            "text-body": "#334155",
+            "on-secondary-fixed": "#001e2e",
+            "inverse-on-surface": "#eaf1ff",
+            "error": "#ba1a1a",
+            "on-primary-fixed-variant": "#003daa",
+            "on-error-container": "#93000a",
+            "warning": "#f59e0b",
+            "warning-light": "#fef5e5",
+            "surface-container-highest": "#d3e4fe",
+            "secondary-container": "#48bdfe",
+            "surface-container-high": "#dce9ff",
+            "text-muted": "#64748b",
+            "success-light": "#e6fffa",
+            "page-bg": "#f8fafc",
+            "primary-light": "#ecf2ff",
+            "success": "#13deb9",
+            "surface-variant": "#d3e4fe",
+            "on-error": "#ffffff",
+            "border-subtle": "#e2e8f0",
+            "on-surface": "#0b1c30",
+            "on-primary-container": "#fefcff",
+            "background": "#f8f9ff",
+            "danger-light": "#fdede8",
+            "on-tertiary-fixed": "#002113",
+            "surface-container": "#e5eeff",
+            "surface-tint": "#2355cc",
+            "card-bg": "#ffffff",
+            "on-primary": "#ffffff",
+            "surface-dim": "#cbdbf5",
+            "error-container": "#ffdad6",
+            "secondary-light": "#e8f7ff",
+            "secondary-fixed-dim": "#86ceff",
+            "surface-container-low": "#eff4ff",
+            "secondary-fixed": "#c8e6ff",
+            "inverse-surface": "#213145",
+            "text-headline": "#0f172a",
+            "inverse-primary": "#b4c5ff",
+            "primary": "#1f53c9",
+            "surface": "#f8f9ff",
+            "on-tertiary": "#ffffff",
+            "tertiary-fixed-dim": "#4edea3",
+            "danger": "#fa896b",
+            "surface-container-lowest": "#ffffff",
+            "on-tertiary-container": "#f5fff6",
+            "secondary": "#00658f",
+            "on-secondary": "#ffffff",
+            "outline": "#747685",
+            "on-surface-variant": "#434654",
+            "on-background": "#0b1c30",
+            "tertiary-fixed": "#6ffbbe",
+            "on-secondary-container": "#004a6b",
+            "on-primary-fixed": "#00174c",
+            "on-tertiary-fixed-variant": "#005236",
+            "tertiary": "#006947",
+            "primary-fixed": "#dbe1ff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "sidebar-width": "260px",
+            "gutter-xl": "2rem",
+            "container-margin-desktop": "1.5rem",
+            "gutter-sm": "0.5rem",
+            "gutter-xs": "0.25rem",
+            "card-padding": "1.5rem",
+            "header-height": "70px",
+            "card-padding-sm": "1rem",
+            "gutter-lg": "1.5rem",
+            "gutter-md": "1rem",
+            "container-margin-mobile": "1rem",
+            "sidebar-collapsed-width": "80px"
+          },
+          "fontFamily": {
+            "headline-lg": ["Plus Jakarta Sans"],
+            "label-md": ["Plus Jakarta Sans"],
+            "body-sm": ["Plus Jakarta Sans"],
+            "label-sm": ["Plus Jakarta Sans"],
+            "body-md": ["Plus Jakarta Sans"],
+            "title-md": ["Plus Jakarta Sans"],
+            "headline-md": ["Plus Jakarta Sans"],
+            "body-lg": ["Plus Jakarta Sans"],
+            "headline-sm": ["Plus Jakarta Sans"],
+            "display-lg": ["Plus Jakarta Sans"],
+            "metric-xl": ["Plus Jakarta Sans"],
+            "display-lg-mobile": ["Plus Jakarta Sans"]
+          },
+          "fontSize": {
+            "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+            "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "title-md": ["15px", { "lineHeight": "22px", "fontWeight": "600" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "body-lg": ["15px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "600" }],
+            "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "metric-xl": ["28px", { "lineHeight": "34px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "display-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.015em", "fontWeight": "700" }]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background-color: #cbd5e1;
+      border-radius: 4px;
+    }
+    .card-shadow {
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.02), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
+    }
+  </style>
+</head>
+<body class="bg-page-bg text-text-body font-body-md antialiased selection:bg-primary-light selection:text-primary min-h-screen flex flex-col">
+<!-- Fixed Left Sidebar (Standard navigation: Dashboard, Products, Orders, Customers (active), Inventory, Settings) -->
+<aside class="fixed top-0 left-0 h-screen w-sidebar-width bg-card-bg border-r border-border-subtle z-50 flex flex-col justify-between py-5 px-4 custom-scrollbar overflow-y-auto">
+<div>
+<!-- Brand Header -->
+<div class="flex items-center gap-3 px-3 pb-6 border-b border-border-subtle mb-4">
+<div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-on-primary shadow-sm flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">auto_awesome</span>
+</div>
+<div class="flex flex-col">
+<span class="text-title-md font-title-md text-text-headline tracking-tight">Atelier Commerce</span>
+<span class="text-label-sm font-label-sm text-text-muted">Retail Management</span>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav class="space-y-1">
+<!-- Dashboard -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-text-body hover:bg-page-bg hover:text-text-headline transition-colors duration-150" href="#dashboard">
+<span class="material-symbols-outlined text-text-muted text-[20px]">dashboard</span>
+<span class="text-body-md font-body-md font-medium">Dashboard</span>
+</a>
+<!-- Products (Accordion / Submenu) -->
+<div class="space-y-1">
+<button class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-text-body hover:bg-page-bg hover:text-text-headline transition-colors duration-150" onclick="document.getElementById('products-submenu').classList.toggle('hidden'); document.getElementById('products-arrow').classList.toggle('rotate-180');" type="button">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-text-muted text-[20px]">inventory_2</span>
+<span class="text-body-md font-body-md font-medium">Products</span>
+</div>
+<span class="material-symbols-outlined text-text-muted text-[18px] transition-transform duration-200" id="products-arrow">expand_more</span>
+</button>
+<div class="pl-9 pr-2 space-y-1" id="products-submenu">
+<a class="block py-1.5 px-2 text-body-sm font-body-sm text-text-muted hover:text-text-headline rounded-lg hover:bg-page-bg transition-colors" href="#product-list">Product List</a>
+<a class="block py-1.5 px-2 text-body-sm font-body-sm text-text-muted hover:text-text-headline rounded-lg hover:bg-page-bg transition-colors" href="#categories">Categories</a>
+<a class="block py-1.5 px-2 text-body-sm font-body-sm text-text-muted hover:text-text-headline rounded-lg hover:bg-page-bg transition-colors" href="#brands">Brands</a>
+</div>
+</div>
+<!-- Orders -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-text-body hover:bg-page-bg hover:text-text-headline transition-colors duration-150" href="#orders">
+<span class="material-symbols-outlined text-text-muted text-[20px]">shopping_cart</span>
+<span class="text-body-md font-body-md font-medium">Orders</span>
+<span class="ml-auto bg-primary-light text-primary text-label-sm font-label-sm px-2 py-0.5 rounded-full">18</span>
+</a>
+<!-- Customers (Active) -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-primary-light text-primary font-semibold transition-colors duration-150" href="#customers">
+<span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">people</span>
+<span class="text-body-md font-body-md">Customers</span>
+</a>
+<!-- Inventory -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-text-body hover:bg-page-bg hover:text-text-headline transition-colors duration-150" href="#inventory">
+<span class="material-symbols-outlined text-text-muted text-[20px]">warehouse</span>
+<span class="text-body-md font-body-md font-medium">Inventory</span>
+</a>
+<!-- Settings -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-text-body hover:bg-page-bg hover:text-text-headline transition-colors duration-150" href="#settings">
+<span class="material-symbols-outlined text-text-muted text-[20px]">settings</span>
+<span class="text-body-md font-body-md font-medium">Settings</span>
+</a>
+</nav>
+</div>
+<!-- Bottom Account Pill -->
+
+</aside>
+<!-- Main Content Area Wrapper -->
+<div class="ml-sidebar-width flex-1 flex flex-col min-w-0">
+<!-- TopNavBar (Fixed Header) -->
+<header class="flex justify-between items-center h-[70px] px-gutter-lg w-full sticky top-0 z-40 bg-card-bg border-b border-border-subtle shadow-sm">
+<!-- Search Input with ⌘K -->
+<div class="flex items-center w-80 lg:w-96 relative">
+<span class="material-symbols-outlined absolute left-3.5 text-text-muted text-[20px]">search</span>
+<input class="w-full pl-10 pr-14 py-2 text-body-sm font-body-sm bg-page-bg border border-border-subtle rounded-xl text-text-headline placeholder:text-text-muted focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Search customers, orders, metrics..." type="text">
+<div class="absolute right-3 flex items-center gap-0.5 px-1.5 py-0.5 bg-card-bg border border-border-subtle rounded text-[11px] font-semibold text-text-muted">
+<span class="">⌘</span><span class="">K</span>
+</div>
+</div>
+<!-- Navigation & Trailing Actions -->
+<div class="flex items-center gap-4">
+<!-- Navigation Links -->
+<nav class="hidden md:flex items-center gap-6 mr-3">
+<a class="text-body-sm font-body-sm text-text-muted hover:text-text-headline transition-colors" href="#dashboard">Dashboard</a>
+<a class="text-body-sm font-body-sm text-text-muted hover:text-text-headline transition-colors" href="#analytics">Analytics</a>
+<a class="text-body-sm font-body-sm text-text-muted hover:text-text-headline transition-colors" href="#reports">Reports</a>
+</nav>
+<div class="h-4 w-px bg-border-subtle hidden md:block"></div>
+<!-- Trailing action buttons -->
+<div class="flex items-center gap-1.5">
+<!-- Calendar Today -->
+<button class="w-9 h-9 flex items-center justify-center rounded-xl text-text-muted hover:text-text-headline hover:bg-page-bg transition-colors relative" title="Calendar View" type="button">
+<span class="material-symbols-outlined text-[20px]">calendar_today</span>
+</button>
+<!-- Notifications Bell -->
+<button class="w-9 h-9 flex items-center justify-center rounded-xl text-text-muted hover:text-text-headline hover:bg-page-bg transition-colors relative" title="Notifications" type="button">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-danger rounded-full ring-2 ring-card-bg"></span>
+</button>
+<!-- Dark Mode Toggle -->
+<button class="w-9 h-9 flex items-center justify-center rounded-xl text-text-muted hover:text-text-headline hover:bg-page-bg transition-colors" onclick="document.documentElement.classList.toggle('dark')" title="Toggle theme" type="button">
+<span class="material-symbols-outlined text-[20px]">dark_mode</span>
+</button>
+</div>
+<div class="h-6 w-px bg-border-subtle"></div>
+<!-- Admin Profile Avatar -->
+<div class="flex items-center gap-3 pl-1">
+<div class="relative cursor-pointer flex items-center gap-2">
+<img alt="Administrator Avatar" class="w-9 h-9 rounded-full object-cover ring-2 ring-primary/20" data-alt="Professional studio portrait photograph of a confident retail store administrator wearing a dark tailored minimalist blazer, illuminated with soft ambient studio light against a light neutral background, expressing modern precision." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2llyHxfxruoAHYsu-ybhQne5agPgN2iwTbYyuk3Y7OkuPggnY1QInwrSVDMhsPAaFcVho6-_cmEkVaGGRzySxv2VuMhsgsWAtp4zygw561qkH--IcoLHaduSaD_DMLYxaEmoAV7vYfBpVWmZXmBbGjWWizbkcGqskm8P-7cfaVy5cSquwuzJOipZfvfxMuOlmtuK4aYUvSDEGgswryyO57PVHGfhWqGyR1RCQAlwq5JoN7MOy8q8">
+<div class="hidden lg:flex flex-col text-left">
+<span class="text-body-sm font-body-sm font-semibold text-text-headline leading-tight">Elena Rostova</span>
+<span class="text-[11px] text-text-muted">Head of Commerce</span>
+</div>
+<span class="material-symbols-outlined text-text-muted text-[16px] hidden lg:block">expand_more</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Page Body Container -->
+<main class="flex-1 p-gutter-lg max-w-[1600px] w-full mx-auto space-y-6">
+<!-- Page Title & Header Actions -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<div class="flex items-center gap-3">
+<h1 class="text-headline-lg font-headline-lg text-text-headline">Customers</h1>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-primary-light text-primary font-semibold">
+              14,290 registered
+            </span>
+</div>
+<p class="text-body-sm font-body-sm text-text-muted mt-1">Manage, analyze, and segment high-value omnichannel luxury clients and accounts.</p>
+</div>
+<div class="flex items-center gap-3">
+<!-- Export CSV -->
+<button class="inline-flex items-center gap-2 px-4 py-2 bg-card-bg border border-border-subtle rounded-xl text-body-sm font-body-sm font-medium text-text-body hover:bg-page-bg hover:text-text-headline transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span class="">Export CSV</span>
+</button>
+<!-- Add Customer -->
+<button class="inline-flex items-center gap-2 px-4 py-2 bg-primary rounded-xl text-body-sm font-body-sm font-semibold text-on-primary hover:bg-primary-container shadow-sm transition-all duration-150" type="button">
+<span class="material-symbols-outlined text-[18px]">person_add</span>
+<span class="">Add Customer</span>
+</button>
+</div>
+</div>
+<!-- KPI Summary Cards (4 in a row with soft pastel backgrounds) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+<!-- KPI 1: Total Customers -->
+<div class="bg-card-bg border border-border-subtle rounded-xl p-5 card-shadow flex flex-col justify-between hover:translate-y-[-2px] transition-transform duration-200">
+<div class="flex items-center justify-between">
+<span class="text-label-sm font-label-sm uppercase tracking-wider text-text-muted">Total Customers</span>
+<div class="w-10 h-10 rounded-xl bg-primary-light flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[22px]">group</span>
+</div>
+</div>
+<div class="mt-3">
+<div class="text-metric-xl font-metric-xl text-text-headline">14,290</div>
+<div class="flex items-center gap-2 mt-1.5">
+<span class="inline-flex items-center text-label-sm font-label-sm font-semibold text-success bg-success-light px-2 py-0.5 rounded-full">
+<span class="material-symbols-outlined text-[14px] mr-0.5">trending_up</span>+12.4%
+              </span>
+<span class="text-label-sm font-label-sm text-text-muted">vs last quarter</span>
+</div>
+</div>
+</div>
+<!-- KPI 2: VIP Segment -->
+<div class="bg-card-bg border border-border-subtle rounded-xl p-5 card-shadow flex flex-col justify-between hover:translate-y-[-2px] transition-transform duration-200">
+<div class="flex items-center justify-between">
+<span class="text-label-sm font-label-sm uppercase tracking-wider text-text-muted">VIP Segment</span>
+<div class="w-10 h-10 rounded-xl bg-warning-light flex items-center justify-center text-warning">
+<span class="material-symbols-outlined text-[22px]">workspace_premium</span>
+</div>
+</div>
+<div class="mt-3">
+<div class="text-metric-xl font-metric-xl text-text-headline">1,840</div>
+<div class="flex items-center gap-2 mt-1.5">
+<span class="inline-flex items-center text-label-sm font-label-sm font-semibold text-warning bg-warning-light px-2 py-0.5 rounded-full">
+                12.8% of base
+              </span>
+<span class="inline-flex items-center text-label-sm font-label-sm font-semibold text-success">
+                +8.1%
+              </span>
+</div>
+</div>
+</div>
+<!-- KPI 3: Repeat Customer Rate -->
+<div class="bg-card-bg border border-border-subtle rounded-xl p-5 card-shadow flex flex-col justify-between hover:translate-y-[-2px] transition-transform duration-200">
+<div class="flex items-center justify-between">
+<span class="text-label-sm font-label-sm uppercase tracking-wider text-text-muted">Repeat Customer Rate</span>
+<div class="w-10 h-10 rounded-xl bg-success-light flex items-center justify-center text-success">
+<span class="material-symbols-outlined text-[22px]">sync_alt</span>
+</div>
+</div>
+<div class="mt-3">
+<div class="text-metric-xl font-metric-xl text-text-headline">34.8%</div>
+<div class="flex items-center gap-2 mt-1.5">
+<span class="inline-flex items-center text-label-sm font-label-sm font-semibold text-success bg-success-light px-2 py-0.5 rounded-full">
+<span class="material-symbols-outlined text-[14px] mr-0.5">trending_up</span>+2.3%
+              </span>
+<span class="text-label-sm font-label-sm text-text-muted">benchmark 31%</span>
+</div>
+</div>
+</div>
+<!-- KPI 4: Average Lifetime Value -->
+<div class="bg-card-bg border border-border-subtle rounded-xl p-5 card-shadow flex flex-col justify-between hover:translate-y-[-2px] transition-transform duration-200">
+<div class="flex items-center justify-between">
+<span class="text-label-sm font-label-sm uppercase tracking-wider text-text-muted">Avg Lifetime Value</span>
+<div class="w-10 h-10 rounded-xl bg-secondary-light flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[22px]">payments</span>
+</div>
+</div>
+<div class="mt-3">
+<div class="text-metric-xl font-metric-xl text-text-headline">$412.50</div>
+<div class="flex items-center gap-2 mt-1.5">
+<span class="inline-flex items-center text-label-sm font-label-sm font-semibold text-success bg-success-light px-2 py-0.5 rounded-full">
+<span class="material-symbols-outlined text-[14px] mr-0.5">trending_up</span>+18.2%
+              </span>
+<span class="text-label-sm font-label-sm text-text-muted">year over year</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Main Directory Card with Filter Toolbar & Customer Table -->
+<div class="bg-card-bg border border-border-subtle rounded-xl card-shadow overflow-hidden">
+<!-- Filter Tabs -->
+<div class="border-b border-border-subtle px-6 pt-4 flex flex-wrap items-center justify-between gap-4">
+<div class="flex items-center gap-2 sm:gap-6 overflow-x-auto custom-scrollbar text-body-sm font-body-sm">
+<button class="pb-3 border-b-2 border-primary text-primary font-semibold flex items-center gap-1.5 whitespace-nowrap" type="button">
+<span class="">All Customers</span>
+<span class="bg-primary-light text-primary text-[11px] px-2 py-0.5 rounded-full font-bold">14,290</span>
+</button>
+<button class="pb-3 border-b-2 border-transparent text-text-muted hover:text-text-headline flex items-center gap-1.5 whitespace-nowrap transition-colors" type="button">
+<span class="">VIP</span>
+<span class="bg-warning-light text-warning text-[11px] px-2 py-0.5 rounded-full font-semibold">1,840</span>
+</button>
+<button class="pb-3 border-b-2 border-transparent text-text-muted hover:text-text-headline flex items-center gap-1.5 whitespace-nowrap transition-colors" type="button">
+<span class="">Returning</span>
+<span class="bg-page-bg text-text-muted text-[11px] px-2 py-0.5 rounded-full font-semibold">4,973</span>
+</button>
+<button class="pb-3 border-b-2 border-transparent text-text-muted hover:text-text-headline flex items-center gap-1.5 whitespace-nowrap transition-colors" type="button">
+<span class="">First-Time</span>
+<span class="bg-page-bg text-text-muted text-[11px] px-2 py-0.5 rounded-full font-semibold">6,120</span>
+</button>
+<button class="pb-3 border-b-2 border-transparent text-text-muted hover:text-text-headline flex items-center gap-1.5 whitespace-nowrap transition-colors" type="button">
+<span class="">Inactive</span>
+<span class="bg-page-bg text-text-muted text-[11px] px-2 py-0.5 rounded-full font-semibold">1,357</span>
+</button>
+</div>
+<!-- Quick view selector -->
+<div class="pb-3 flex items-center gap-2 text-text-muted text-body-sm">
+<span class="text-label-sm font-label-sm text-text-muted">Showing page 1 of 572</span>
+</div>
+</div>
+<!-- Filter Sub-bar: Search, Spend Range, Orders Count -->
+<div class="p-4 sm:p-6 bg-card-bg flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 border-b border-border-subtle">
+<!-- Search input -->
+<div class="relative flex-1 max-w-md">
+<span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted text-[18px]">search</span>
+<input class="w-full pl-10 pr-4 py-2 text-body-sm font-body-sm bg-card-bg border border-border-subtle rounded-xl text-text-headline placeholder:text-text-muted focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Search by name, email or customer ID..." type="text">
+</div>
+<!-- Filter Controls Dropdowns -->
+<div class="flex flex-wrap items-center gap-3">
+<!-- Spend Range Select -->
+<div class="relative">
+<select class="appearance-none bg-card-bg border border-border-subtle text-text-body text-body-sm font-body-sm rounded-xl pl-3.5 pr-8 py-2 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 cursor-pointer">
+<option>Spend Range: All</option>
+<option>&gt; $10,000 (Ultra High Net)</option>
+<option>$5,000 - $10,000</option>
+<option>$1,000 - $4,999</option>
+<option>&lt; $1,000</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted text-[16px] pointer-events-none">expand_more</span>
+</div>
+<!-- Orders Count Select -->
+<div class="relative">
+<select class="appearance-none bg-card-bg border border-border-subtle text-text-body text-body-sm font-body-sm rounded-xl pl-3.5 pr-8 py-2 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 cursor-pointer">
+<option>Orders Count: Any</option>
+<option>10+ Orders</option>
+<option>5 - 9 Orders</option>
+<option>2 - 4 Orders</option>
+<option>1 Order</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted text-[16px] pointer-events-none">expand_more</span>
+</div>
+<!-- Additional Filters Button -->
+<button class="inline-flex items-center gap-1.5 px-3 py-2 bg-page-bg border border-border-subtle rounded-xl text-body-sm font-body-sm text-text-body hover:text-text-headline hover:bg-surface-container transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+<span class="">More Filters</span>
+</button>
+</div>
+</div>
+<!-- Customer Data Table -->
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-page-bg border-b border-border-subtle text-label-sm font-label-sm text-text-muted uppercase tracking-wider">
+<th class="py-3.5 pl-6 pr-3 w-10">
+<input class="w-4 h-4 rounded border-border-subtle text-primary focus:ring-primary/30" type="checkbox">
+</th>
+<th class="py-3.5 px-4 font-semibold">Customer</th>
+<th class="py-3.5 px-4 font-semibold">Email &amp; Phone</th>
+<th class="py-3.5 px-4 font-semibold">Location</th>
+<th class="py-3.5 px-4 font-semibold text-center">Total Orders</th>
+<th class="py-3.5 px-4 font-semibold text-right">Total Spent</th>
+<th class="py-3.5 px-4 font-semibold">Last Order</th>
+<th class="py-3.5 px-4 font-semibold">Status</th>
+<th class="py-3.5 pl-4 pr-6 font-semibold text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#f1f5f9] text-body-sm font-body-sm text-text-body">
+<!-- Row 1: VIP Geneva -->
+<tr class="hover:bg-page-bg transition-colors duration-150 group">
+<td class="py-4 pl-6 pr-3">
+<input class="w-4 h-4 rounded border-border-subtle text-primary focus:ring-primary/30" type="checkbox">
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-3">
+<img alt="Charlotte De Monceaux" class="w-10 h-10 rounded-full object-cover ring-1 ring-border-subtle" data-alt="Close up elegance portrait of an executive client named Charlotte De Monceaux wearing fine jewelry and silk collar in Geneva, framed with clean studio daylight." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7b9mLY5ypve11XaJCXSN78hDdEbxBOiXZqCZ9OeKBH9VJfgNef6QhzCJKs5xAbNCgwftuuSwgGUd-_juuXcxMvWz4Q9xCQaRvwblAup_9AoXx2VuzQmRTh2IK6xrUQohk7v193AUP9KX3t7vnldbRZyKss6ogC-3LU2_sHeBszXAcoxfghO7J789BcS3fmYMx_BKs0DMrOh5-eX33x_mFKyLU6YOBKzZ87Wzh1-ivWLqf9AuHWVg">
+<div>
+<div class="font-semibold text-text-headline group-hover:text-primary transition-colors">Charlotte De Monceaux</div>
+<div class="text-[11px] text-text-muted font-mono tracking-tight">CUST-84910</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-4">
+<div class="text-text-headline">c.monceaux@genevaholdings.ch</div>
+<div class="text-text-muted text-[12px]">+41 22 819 4022</div>
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-1.5 text-text-headline">
+<span class="material-symbols-outlined text-[16px] text-text-muted">pin_drop</span>
+<span class="">Geneva, Switzerland</span>
+</div>
+</td>
+<td class="py-4 px-4 text-center font-medium text-text-headline">
+                  24 orders
+                </td>
+<td class="py-4 px-4 text-right">
+<div class="font-bold text-text-headline font-mono">$14,820.00</div>
+<div class="text-[11px] text-text-muted">AOV $617.50</div>
+</td>
+<td class="py-4 px-4">
+<div class="text-text-headline">Oct 24, 2024</div>
+<div class="text-[11px] text-text-muted">2 hours ago</div>
+</td>
+<td class="py-4 px-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-warning-light text-warning">
+                    VIP
+                  </span>
+</td>
+<td class="py-4 pl-4 pr-6 text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-text-muted hover:text-primary hover:bg-primary-light transition-colors" title="View Customer Details" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-text-muted hover:text-text-headline hover:bg-page-bg transition-colors" title="Edit Customer" type="button">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-text-muted hover:text-text-headline hover:bg-page-bg transition-colors" title="More Options" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2: Active London -->
+<tr class="hover:bg-page-bg transition-colors duration-150 group">
+<td class="py-4 pl-6 pr-3">
+<input class="w-4 h-4 rounded border-border-subtle text-primary focus:ring-primary/30" type="checkbox">
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-[#e8f7ff] text-secondary flex items-center justify-center font-bold text-[14px] ring-1 ring-border-subtle">
+                      AH
+                    </div>
+<div>
+<div class="font-semibold text-text-headline group-hover:text-primary transition-colors">Alistair Harrington</div>
+<div class="text-[11px] text-text-muted font-mono tracking-tight">CUST-72104</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-4">
+<div class="text-text-headline">a.harrington@kensington.co.uk</div>
+<div class="text-text-muted text-[12px]">+44 20 7946 0912</div>
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-1.5 text-text-headline">
+<span class="material-symbols-outlined text-[16px] text-text-muted">pin_drop</span>
+<span class="">London, UK</span>
+</div>
+</td>
+<td class="py-4 px-4 text-center font-medium text-text-headline">
+                  16 orders
+                </td>
+<td class="py-4 px-4 text-right">
+<div class="font-bold text-text-headline font-mono">$8,940.00</div>
+<div class="text-[11px] text-text-muted">AOV $558.75</div>
+</td>
+<td class="py-4 px-4">
+<div class="text-text-headline">Oct 22, 2024</div>
+<div class="text-[11px] text-text-muted">2 days ago</div>
+</td>
+<td class="py-4 px-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-success-light text-success">
+                    Active
+                  </span>
+</td>
+<td class="py-4 pl-4 pr-6 text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-text-muted hover:text-primary hover:bg-primary-light transition-colors" title="View Customer Details" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-text-muted hover:text-text-headline hover:bg-page-bg transition-colors" title="Edit Customer" type="button">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-text-muted hover:text-text-headline hover:bg-page-bg transition-colors" title="More Options" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3: VIP New York -->
+<tr class="hover:bg-page-bg transition-colors duration-150 group">
+<td class="py-4 pl-6 pr-3">
+<input class="w-4 h-4 rounded border-border-subtle text-primary focus:ring-primary/30" type="checkbox">
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-3">
+<img alt="Julian Sterling" class="w-10 h-10 rounded-full object-cover ring-1 ring-border-subtle" data-alt="High fashion portrait of a sophisticated modern art curator in New York wearing an architectonic cream cashmere sweater against light slate background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBuj_K_w-Pof_agOkEYYFfErj6gbQ2A1KmJv1KCpXZMz9fkq2NQ9hDRLUPfOc5Tcigfyvev-d6DQEVu5EVL76s9JUCftRCCfp9fM9lgjwkjQkfGBZ-eDT-NDGp5NFTcUBZNHvB8VeOUsv6IeAgdYmdxLqHbuFV0cB6UqPRAV5O9O-CT-G7gM2h0dFci5uHjn1kn5gJA_bY4fnkFIDmQlDTKDqRmntdafDLDppAOYsNhQjoTVJlip0w">
+<div>
+<div class="font-semibold text-text-headline group-hover:text-primary transition-colors">Julian Sterling</div>
+<div class="text-[11px] text-text-muted font-mono tracking-tight">CUST-90142</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-4">
+<div class="text-text-headline">julian.sterling@tribecastudio.io</div>
+<div class="text-text-muted text-[12px]">+1 (212) 555-0198</div>
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-1.5 text-text-headline">
+<span class="material-symbols-outlined text-[16px] text-text-muted">pin_drop</span>
+<span class="">New York, USA</span>
+</div>
+</td>
+<td class="py-4 px-4 text-center font-medium text-text-headline">
+                  19 orders
+                </td>
+<td class="py-4 px-4 text-right">
+<div class="font-bold text-text-headline font-mono">$12,450.00</div>
+<div class="text-[11px] text-text-muted">AOV $655.26</div>
+</td>
+<td class="py-4 px-4">
+<div class="text-text-headline">Oct 20, 2024</div>
+<div class="text-[11px] text-text-muted">4 days ago</div>
+</td>
+<td class="py-4 px-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-warning-light text-warning">
+                    VIP
+                  </span>
+</td>
+<td class="py-4 pl-4 pr-6 text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-text-muted hover:text-primary hover:bg-primary-light transition-colors" title="View Customer Details" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-text-muted hover:text-text-headline hover:bg-page-bg transition-colors" title="Edit Customer" type="button">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-text-muted hover:text-text-headline hover:bg-page-bg transition-colors" title="More Options" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4: New Paris -->
+<tr class="hover:bg-page-bg transition-colors duration-150 group">
+<td class="py-4 pl-6 pr-3">
+<input class="w-4 h-4 rounded border-border-subtle text-primary focus:ring-primary/30" type="checkbox">
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-3">
+<img alt="Amélie Fontaine" class="w-10 h-10 rounded-full object-cover ring-1 ring-border-subtle" data-alt="Natural lifestyle portrait of a chic Parisian woman in a crisp white shirt smiling softly with soft morning light illuminating her face against a minimalist apartment background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrrzThteDiybY7KhHYe8MlJizv1dWmuvGnQyqYlSj0hNLpychAz2RF966y8eEpsP1A_wzJtU_zVQUdGPvr75G3x9UQ2GF19bceEaRu1iJUaaWl0g-qSzwRdgCbPacOQSaxJPlR-lkq7uokUwb3ySMZHcZ0ljWIMt76r-baP1htLReTwf4oyu7o-DweKbGjwiNyJVDOciqNBYsihyD6GmHGA8upl2Y3_UBIhma7wonwKdXoZXlJqFU">
+<div>
+<div class="font-semibold text-text-headline group-hover:text-primary transition-colors">Amélie Fontaine</div>
+<div class="text-[11px] text-text-muted font-mono tracking-tight">CUST-10492</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-4">
+<div class="text-text-headline">amelie.fontaine@maraisdesign.fr</div>
+<div class="text-text-muted text-[12px]">+33 1 42 68 55 00</div>
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-1.5 text-text-headline">
+<span class="material-symbols-outlined text-[16px] text-text-muted">pin_drop</span>
+<span class="">Paris, France</span>
+</div>
+</td>
+<td class="py-4 px-4 text-center font-medium text-text-headline">
+                  1 order
+                </td>
+<td class="py-4 px-4 text-right">
+<div class="font-bold text-text-headline font-mono">$1,280.00</div>
+<div class="text-[11px] text-text-muted">First purchase</div>
+</td>
+<td class="py-4 px-4">
+<div class="text-text-headline">Oct 19, 2024</div>
+<div class="text-[11px] text-text-muted">5 days ago</div>
+</td>
+<td class="py-4 px-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-primary-light text-primary">
+                    New
+                  </span>
+</td>
+<td class="py-4 pl-4 pr-6 text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-text-muted hover:text-primary hover:bg-primary-light transition-colors" title="View Customer Details" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-text-muted hover:text-text-headline hover:bg-page-bg transition-colors" title="Edit Customer" type="button">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-text-muted hover:text-text-headline hover:bg-page-bg transition-colors" title="More Options" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 5: Active Tokyo -->
+<tr class="hover:bg-page-bg transition-colors duration-150 group">
+<td class="py-4 pl-6 pr-3">
+<input class="w-4 h-4 rounded border-border-subtle text-primary focus:ring-primary/30" type="checkbox">
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-success-light text-success flex items-center justify-center font-bold text-[14px] ring-1 ring-border-subtle">
+                      KT
+                    </div>
+<div>
+<div class="font-semibold text-text-headline group-hover:text-primary transition-colors">Kenjiro Takahashi</div>
+<div class="text-[11px] text-text-muted font-mono tracking-tight">CUST-65231</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-4">
+<div class="text-text-headline">kenjiro.t@ginza-atelier.jp</div>
+<div class="text-text-muted text-[12px]">+81 3 5555 0143</div>
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-1.5 text-text-headline">
+<span class="material-symbols-outlined text-[16px] text-text-muted">pin_drop</span>
+<span class="">Tokyo, Japan</span>
+</div>
+</td>
+<td class="py-4 px-4 text-center font-medium text-text-headline">
+                  9 orders
+                </td>
+<td class="py-4 px-4 text-right">
+<div class="font-bold text-text-headline font-mono">$6,720.00</div>
+<div class="text-[11px] text-text-muted">AOV $746.66</div>
+</td>
+<td class="py-4 px-4">
+<div class="text-text-headline">Oct 17, 2024</div>
+<div class="text-[11px] text-text-muted">1 week ago</div>
+</td>
+<td class="py-4 px-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-success-light text-success">
+                    Active
+                  </span>
+</td>
+<td class="py-4 pl-4 pr-6 text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-text-muted hover:text-primary hover:bg-primary-light transition-colors" title="View Customer Details" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-text-muted hover:text-text-headline hover:bg-page-bg transition-colors" title="Edit Customer" type="button">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-text-muted hover:text-text-headline hover:bg-page-bg transition-colors" title="More Options" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 6: Inactive Milan -->
+<tr class="hover:bg-page-bg transition-colors duration-150 group">
+<td class="py-4 pl-6 pr-3">
+<input class="w-4 h-4 rounded border-border-subtle text-primary focus:ring-primary/30" type="checkbox">
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-3">
+<img alt="Matteo Bellini" class="w-10 h-10 rounded-full object-cover ring-1 ring-border-subtle" data-alt="Sophisticated portrait of an Italian architect in Milan with tailored charcoal suit in a modernist marble studio bathed in natural diffused daylight." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDu-e4Gz9H9pEkq-YgOhpiRAeZisNEikrolB2Rpqbvqx2DqPpU9tUbW5GAq656sk62jqbKDgs4E-Q7NzOnZSfLAcNgrBGE_LkwVBtYXPK5egLOKH-PcVaY-P41vuDwt79J0QMrkKmrtI4sFzIxgrE3uaGe_Umjr4oFr62yfkgUjaWCNykKBvK-d086WRwQVLurJ1RvEXioun8eQ_Cgo8Z9S9bM08FaBEe_OnKsel-kYcl49C_3qAfk">
+<div>
+<div class="font-semibold text-text-headline group-hover:text-primary transition-colors">Matteo Bellini</div>
+<div class="text-[11px] text-text-muted font-mono tracking-tight">CUST-38914</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-4">
+<div class="text-text-headline">matteo.b@bellini-arch.it</div>
+<div class="text-text-muted text-[12px]">+39 02 8794 3210</div>
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-1.5 text-text-headline">
+<span class="material-symbols-outlined text-[16px] text-text-muted">pin_drop</span>
+<span class="">Milan, Italy</span>
+</div>
+</td>
+<td class="py-4 px-4 text-center font-medium text-text-headline">
+                  3 orders
+                </td>
+<td class="py-4 px-4 text-right">
+<div class="font-bold text-text-headline font-mono">$2,190.00</div>
+<div class="text-[11px] text-text-muted">AOV $730.00</div>
+</td>
+<td class="py-4 px-4">
+<div class="text-text-headline">May 14, 2024</div>
+<div class="text-[11px] text-text-muted">5 months ago</div>
+</td>
+<td class="py-4 px-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-danger-light text-danger">
+                    Inactive
+                  </span>
+</td>
+<td class="py-4 pl-4 pr-6 text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-text-muted hover:text-primary hover:bg-primary-light transition-colors" title="View Customer Details" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-text-muted hover:text-text-headline hover:bg-page-bg transition-colors" title="Edit Customer" type="button">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-text-muted hover:text-text-headline hover:bg-page-bg transition-colors" title="More Options" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 7: VIP Sydney -->
+<tr class="hover:bg-page-bg transition-colors duration-150 group">
+<td class="py-4 pl-6 pr-3">
+<input class="w-4 h-4 rounded border-border-subtle text-primary focus:ring-primary/30" type="checkbox">
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-light text-primary flex items-center justify-center font-bold text-[14px] ring-1 ring-border-subtle">
+                      SV
+                    </div>
+<div>
+<div class="font-semibold text-text-headline group-hover:text-primary transition-colors">Sienna Vance</div>
+<div class="text-[11px] text-text-muted font-mono tracking-tight">CUST-88402</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-4">
+<div class="text-text-headline">s.vance@harbourcreative.com.au</div>
+<div class="text-text-muted text-[12px]">+61 2 9251 4410</div>
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-1.5 text-text-headline">
+<span class="material-symbols-outlined text-[16px] text-text-muted">pin_drop</span>
+<span class="">Sydney, Australia</span>
+</div>
+</td>
+<td class="py-4 px-4 text-center font-medium text-text-headline">
+                  21 orders
+                </td>
+<td class="py-4 px-4 text-right">
+<div class="font-bold text-text-headline font-mono">$11,350.00</div>
+<div class="text-[11px] text-text-muted">AOV $540.47</div>
+</td>
+<td class="py-4 px-4">
+<div class="text-text-headline">Oct 14, 2024</div>
+<div class="text-[11px] text-text-muted">10 days ago</div>
+</td>
+<td class="py-4 px-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-warning-light text-warning">
+                    VIP
+                  </span>
+</td>
+<td class="py-4 pl-4 pr-6 text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-text-muted hover:text-primary hover:bg-primary-light transition-colors" title="View Customer Details" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-text-muted hover:text-text-headline hover:bg-page-bg transition-colors" title="Edit Customer" type="button">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-text-muted hover:text-text-headline hover:bg-page-bg transition-colors" title="More Options" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Clean Pagination Footer Controls -->
+<div class="px-6 py-4 border-t border-border-subtle flex flex-col sm:flex-row items-center justify-between gap-4 bg-card-bg">
+<div class="flex items-center gap-2 text-body-sm font-body-sm text-text-muted">
+<span class="">Showing</span>
+<select class="bg-card-bg border border-border-subtle rounded-lg px-2 py-1 text-text-headline text-body-sm font-body-sm focus:outline-none focus:border-primary">
+<option>7</option>
+<option>15</option>
+<option>25</option>
+<option>50</option>
+</select>
+<span class="">of <strong class="text-text-headline font-semibold">14,290</strong> customers</span>
+</div>
+<div class="flex items-center gap-1">
+<!-- Prev Page -->
+<button class="w-9 h-9 rounded-lg border border-border-subtle flex items-center justify-center text-text-muted hover:bg-page-bg hover:text-text-headline disabled:opacity-40 disabled:cursor-not-allowed transition-colors" disabled="" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<!-- Page numbers -->
+<button class="w-9 h-9 rounded-lg bg-primary text-on-primary font-semibold text-body-sm flex items-center justify-center shadow-sm" type="button">
+              1
+            </button>
+<button class="w-9 h-9 rounded-lg border border-border-subtle text-text-body hover:bg-page-bg hover:text-text-headline text-body-sm font-medium flex items-center justify-center transition-colors" type="button">
+              2
+            </button>
+<button class="w-9 h-9 rounded-lg border border-border-subtle text-text-body hover:bg-page-bg hover:text-text-headline text-body-sm font-medium flex items-center justify-center transition-colors" type="button">
+              3
+            </button>
+<span class="w-7 text-center text-text-muted">...</span>
+<button class="w-9 h-9 rounded-lg border border-border-subtle text-text-body hover:bg-page-bg hover:text-text-headline text-body-sm font-medium flex items-center justify-center transition-colors" type="button">
+              572
+            </button>
+<!-- Next Page -->
+<button class="w-9 h-9 rounded-lg border border-border-subtle flex items-center justify-center text-text-muted hover:bg-page-bg hover:text-text-headline transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+
+
+</body></html>

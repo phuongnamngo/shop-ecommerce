@@ -4,9 +4,25 @@ import { FormEvent, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Pencil, Trash2 } from "lucide-react";
 
 import { ConfirmDeleteButton } from "@/components/admin/catalog/confirm-delete-button";
+import { ProductFormDialog } from "@/components/admin/catalog/product-form-dialog";
 import { RequireCatalogManage } from "@/components/admin/require-catalog-manage";
+import {
+  AdminPagination,
+  DataTableShell,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/admin/layout/data-table";
+import { EmptyState, LoadingState } from "@/components/admin/layout/empty-state";
+import { FilterBar } from "@/components/admin/layout/filter-bar";
+import { PageHeader } from "@/components/admin/layout/page-header";
+import { StatusBadge } from "@/components/admin/layout/status-badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -24,14 +40,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import { useAdminMe } from "@/hooks/use-admin-me";
 import { canManageCatalog } from "@/lib/admin/can-manage-catalog";
@@ -79,6 +87,7 @@ function countDefaults(variants: VariantDraft[]): number {
 
 export function ProductsListPage() {
   const me = useAdminMe();
+  const queryClient = useQueryClient();
   const manage =
     me.isSuccess && me.data ? canManageCatalog(me.data.roles) : false;
   const [page, setPage] = useState(1);
@@ -87,6 +96,8 @@ export function ProductsListPage() {
   const [status, setStatus] = useState<string>("all");
   const [brandId, setBrandId] = useState("all");
   const [categoryId, setCategoryId] = useState("all");
+  const [createOpen, setCreateOpen] = useState(false);
+  const [editId, setEditId] = useState<number | null>(null);
 
   const brands = useQuery({
     queryKey: ["admin", "catalog", "brands", "filter"],
@@ -124,23 +135,21 @@ export function ProductsListPage() {
   const meta = query.data?.meta;
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <h1 className="text-xl font-semibold">Products</h1>
-          <p className="text-sm text-muted-foreground">
-            Catalog sản phẩm + variants.
-          </p>
-        </div>
-        {manage ? (
-          <Button asChild>
-            <Link href="/admin/catalog/products/new">Thêm product</Link>
-          </Button>
-        ) : null}
-      </div>
+    <div className="space-y-6">
+      <PageHeader
+        title="Product Management"
+        description="Catalog items, SKUs, and publication status."
+        actions={
+          manage ? (
+            <Button type="button" onClick={() => setCreateOpen(true)}>
+              + Add Product
+            </Button>
+          ) : null
+        }
+      />
 
-      <Card>
-        <CardContent className="space-y-4 pt-6">
+      <DataTableShell>
+        <FilterBar>
           <form
             className="flex flex-wrap gap-2"
             onSubmit={(e) => {
@@ -150,8 +159,8 @@ export function ProductsListPage() {
             }}
           >
             <Input
-              className="max-w-xs"
-              placeholder="Tìm tên…"
+              className="h-9 max-w-xs"
+              placeholder="Search by product name, SKU..."
               value={q}
               onChange={(e) => setQ(e.target.value)}
             />
@@ -193,77 +202,152 @@ export function ProductsListPage() {
               </SelectContent>
             </Select>
             <Button type="submit" variant="outline">
-              Lọc
+              Filter
             </Button>
           </form>
+        </FilterBar>
 
-          {query.isPending ? (
-            <p className="text-sm text-muted-foreground">Đang tải…</p>
-          ) : query.isError ? (
-            <p className="text-sm text-destructive">
-              {catalogErrorMessage(query.error)}
-            </p>
-          ) : (
-            <>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>ID</TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Brand</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {rows.map((p) => (
+        {query.isPending ? (
+          <LoadingState />
+        ) : query.isError ? (
+          <p className="px-4 py-6 text-sm text-[#ba1a1a]">
+            {catalogErrorMessage(query.error)}
+          </p>
+        ) : rows.length === 0 ? (
+          <EmptyState title="No products match this filter" />
+        ) : (
+          <>
+            <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Product</TableHead>
+                  <TableHead>Brand</TableHead>
+                  <TableHead>Categories</TableHead>
+                  <TableHead className="text-right">Price</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {rows.map((p) => {
+                  const sku =
+                    p.variants.find((v) => v.is_default)?.sku ??
+                    p.variants[0]?.sku;
+                  const price =
+                    p.variants.find((v) => v.is_default)?.price ??
+                    p.variants[0]?.price;
+                  const thumb =
+                    p.images.find((img) => img.is_primary)?.thumbnail_url ??
+                    p.images[0]?.thumbnail_url ??
+                    p.images[0]?.url;
+                  return (
                     <TableRow key={p.id}>
-                      <TableCell>{p.id}</TableCell>
-                      <TableCell>{p.name}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <div className="flex size-11 overflow-hidden rounded-lg bg-[#f8fafc]">
+                            {thumb ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img
+                                src={thumb}
+                                alt=""
+                                className="size-11 object-cover transition-transform duration-200 hover:scale-110"
+                              />
+                            ) : (
+                              <span className="m-auto text-[10px] font-bold text-[#64748b]">
+                                SKU
+                              </span>
+                            )}
+                          </div>
+                          <div>
+                            <div className="font-medium text-[#0f172a]">{p.name}</div>
+                            <div className="font-mono text-[11px] text-[#64748b]">
+                              SKU: {sku ?? "—"}
+                            </div>
+                          </div>
+                        </div>
+                      </TableCell>
                       <TableCell>{p.brand?.name ?? "—"}</TableCell>
-                      <TableCell>{p.status}</TableCell>
+                      <TableCell className="max-w-[180px] truncate text-[#64748b]">
+                        {p.categories.map((c) => c.name).join(", ") || "—"}
+                      </TableCell>
+                      <TableCell className="text-right font-semibold tabular-nums">
+                        {price ?? "—"}
+                      </TableCell>
+                      <TableCell>
+                        <StatusBadge status={p.status} />
+                      </TableCell>
                       <TableCell className="text-right">
-                        <Button asChild variant="outline" size="sm">
-                          <Link href={`/admin/catalog/products/${p.id}`}>
-                            {manage ? "Sửa" : "Xem"}
-                          </Link>
-                        </Button>
+                        <div className="flex justify-end gap-1">
+                          {manage ? (
+                            <>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                className="size-8"
+                                onClick={() => setEditId(p.id)}
+                                aria-label="Edit product"
+                              >
+                                <Pencil className="size-4" />
+                              </Button>
+                              <ConfirmDeleteButton
+                                title="Confirm Catalog Item Deletion"
+                                description="This removes the product from catalog channels. Soft-delete is applied by the API."
+                                onConfirm={async () => {
+                                  await deleteProduct(p.id);
+                                  await queryClient.invalidateQueries({
+                                    queryKey: ["admin", "catalog", "products"],
+                                  });
+                                }}
+                                trigger={
+                                  <span className="inline-flex size-8 items-center justify-center rounded-md text-[#fa896b] hover:bg-[#fdede8]">
+                                    <Trash2 className="size-4" />
+                                  </span>
+                                }
+                              />
+                              <Button asChild variant="ghost" size="sm">
+                                <Link href={`/admin/catalog/products/${p.id}`}>
+                                  Full editor
+                                </Link>
+                              </Button>
+                            </>
+                          ) : (
+                            <Button asChild variant="outline" size="sm">
+                              <Link href={`/admin/catalog/products/${p.id}`}>
+                                View
+                              </Link>
+                            </Button>
+                          )}
+                        </div>
                       </TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-              {meta ? (
-                <div className="flex items-center justify-between text-sm">
-                  <span>
-                    Trang {meta.current_page}/{meta.last_page} · {meta.total}
-                  </span>
-                  <div className="flex gap-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      disabled={page <= 1}
-                      onClick={() => setPage((p) => p - 1)}
-                    >
-                      Trước
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      disabled={page >= meta.last_page}
-                      onClick={() => setPage((p) => p + 1)}
-                    >
-                      Sau
-                    </Button>
-                  </div>
-                </div>
-              ) : null}
-            </>
-          )}
-        </CardContent>
-      </Card>
+                  );
+                })}
+              </TableBody>
+            </Table>
+            </div>
+            {meta ? (
+              <AdminPagination
+                page={page}
+                lastPage={meta.last_page}
+                total={meta.total}
+                onPrev={() => setPage((p) => p - 1)}
+                onNext={() => setPage((p) => p + 1)}
+              />
+            ) : null}
+          </>
+        )}
+      </DataTableShell>
+
+      <ProductFormDialog open={createOpen} onOpenChange={setCreateOpen} />
+      <ProductFormDialog
+        open={editId !== null}
+        onOpenChange={(open) => {
+          if (!open) setEditId(null);
+        }}
+        productId={editId ?? undefined}
+      />
     </div>
   );
 }

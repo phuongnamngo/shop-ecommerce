@@ -1,0 +1,755 @@
+<!DOCTYPE html><html lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Category Management - Atelier Commerce</title>
+<!-- Fonts & Material Icons -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "tertiary-container": "#00855b",
+            "on-surface-variant": "#434654",
+            "on-secondary-container": "#004a6b",
+            "danger": "#fa896b",
+            "primary-container": "#406de4",
+            "on-surface": "#0b1c30",
+            "surface-bright": "#f8f9ff",
+            "surface-tint": "#2355cc",
+            "on-primary-fixed-variant": "#003daa",
+            "card-bg": "#ffffff",
+            "on-background": "#0b1c30",
+            "secondary": "#00658f",
+            "on-error-container": "#93000a",
+            "primary": "#1f53c9",
+            "text-body": "#334155",
+            "secondary-fixed-dim": "#86ceff",
+            "tertiary-fixed-dim": "#4edea3",
+            "surface-container-lowest": "#ffffff",
+            "surface-container-high": "#dce9ff",
+            "text-muted": "#64748b",
+            "primary-fixed-dim": "#b4c5ff",
+            "inverse-surface": "#213145",
+            "success-light": "#e6fffa",
+            "on-primary": "#ffffff",
+            "border-subtle": "#e2e8f0",
+            "surface-container": "#e5eeff",
+            "on-tertiary-container": "#f5fff6",
+            "outline-variant": "#c3c6d6",
+            "tertiary": "#006947",
+            "secondary-container": "#48bdfe",
+            "text-headline": "#0f172a",
+            "danger-light": "#fdede8",
+            "on-tertiary-fixed": "#002113",
+            "on-primary-fixed": "#00174c",
+            "outline": "#747685",
+            "surface-container-highest": "#d3e4fe",
+            "error": "#ba1a1a",
+            "surface-container-low": "#eff4ff",
+            "error-container": "#ffdad6",
+            "surface": "#f8f9ff",
+            "success": "#13deb9",
+            "tertiary-fixed": "#6ffbbe",
+            "on-secondary": "#ffffff",
+            "warning-light": "#fef5e5",
+            "background": "#f8f9ff",
+            "primary-light": "#ecf2ff",
+            "page-bg": "#f8fafc",
+            "surface-variant": "#d3e4fe",
+            "on-tertiary": "#ffffff",
+            "surface-dim": "#cbdbf5",
+            "on-secondary-fixed-variant": "#004c6d",
+            "on-secondary-fixed": "#001e2e",
+            "on-primary-container": "#fefcff",
+            "secondary-fixed": "#c8e6ff",
+            "secondary-light": "#e8f7ff",
+            "on-tertiary-fixed-variant": "#005236",
+            "warning": "#f59e0b",
+            "on-error": "#ffffff",
+            "primary-fixed": "#dbe1ff",
+            "inverse-on-surface": "#eaf1ff",
+            "inverse-primary": "#b4c5ff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "gutter-xs": "0.25rem",
+            "card-padding": "1.5rem",
+            "card-padding-sm": "1rem",
+            "sidebar-width": "260px",
+            "header-height": "70px",
+            "gutter-md": "1rem",
+            "gutter-xl": "2rem",
+            "gutter-lg": "1.5rem",
+            "gutter-sm": "0.5rem",
+            "container-margin-desktop": "1.5rem",
+            "container-margin-mobile": "1rem",
+            "sidebar-collapsed-width": "80px"
+          },
+          "fontFamily": {
+            "body-sm": ["Plus Jakarta Sans"],
+            "headline-md": ["Plus Jakarta Sans"],
+            "label-sm": ["Plus Jakarta Sans"],
+            "headline-lg": ["Plus Jakarta Sans"],
+            "metric-xl": ["Plus Jakarta Sans"],
+            "display-lg-mobile": ["Plus Jakarta Sans"],
+            "body-lg": ["Plus Jakarta Sans"],
+            "headline-sm": ["Plus Jakarta Sans"],
+            "title-md": ["Plus Jakarta Sans"],
+            "body-md": ["Plus Jakarta Sans"],
+            "display-lg": ["Plus Jakarta Sans"],
+            "label-md": ["Plus Jakarta Sans"]
+          },
+          "fontSize": {
+            "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "metric-xl": ["28px", { "lineHeight": "34px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "display-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.015em", "fontWeight": "700" }],
+            "body-lg": ["15px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "600" }],
+            "title-md": ["15px", { "lineHeight": "22px", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-page-bg text-text-body font-body-md antialiased min-h-screen">
+<!-- ======================= SIDEBAR (Shared Component: SideNavBar) ======================= -->
+<aside class="fixed top-0 left-0 h-screen w-sidebar-width flex flex-col justify-between p-4 z-50 overflow-y-auto bg-card-bg border-r border-border-subtle shadow-none">
+<!-- Brand / Header -->
+<div class="flex flex-col gap-6">
+<div class="flex items-center gap-3 px-2 py-1">
+<div class="w-10 h-10 rounded-xl bg-primary-light flex items-center justify-center text-primary shadow-sm">
+<span class="material-symbols-outlined text-2xl" data-icon="storefront">storefront</span>
+</div>
+<div>
+<h1 class="text-title-md font-title-md font-bold text-text-headline tracking-tight">Atelier Commerce</h1>
+<p class="text-label-sm font-label-sm text-text-muted">Retail Management</p>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav aria-label="Main Navigation" class="flex flex-col gap-1.5">
+<!-- Dashboard -->
+<a class="text-text-body hover:bg-page-bg hover:text-text-headline rounded-xl flex items-center px-4 py-2.5 gap-3 transition-all duration-150 ease-in-out active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="dashboard">dashboard</span>
+<span class="text-body-sm font-body-sm font-medium">Dashboard</span>
+</a>
+<!-- Products (Active Section with Nested Navigation) -->
+<div class="flex flex-col gap-1">
+<a class="bg-primary-light text-primary font-semibold rounded-xl flex items-center justify-between px-4 py-2.5 transition-all duration-150 ease-in-out" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px]" data-icon="inventory_2" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+<span class="text-body-sm font-body-sm font-semibold">Products</span>
+</div>
+<span class="material-symbols-outlined text-[16px] transform rotate-180 text-primary" data-icon="expand_more">expand_more</span>
+</a>
+<!-- Nested links under Products -->
+<div class="pl-9 pr-2 py-1 flex flex-col gap-1 border-l-2 border-primary/20 ml-6">
+<a class="text-text-muted hover:text-text-headline text-body-sm font-body-sm py-1.5 px-3 rounded-lg hover:bg-page-bg transition-colors" href="#">
+              Product Catalog
+            </a>
+<a class="bg-primary/10 text-primary font-semibold text-body-sm font-body-sm py-1.5 px-3 rounded-lg flex items-center justify-between" href="#">
+<span class="">Categories</span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+</a>
+<a class="text-text-muted hover:text-text-headline text-body-sm font-body-sm py-1.5 px-3 rounded-lg hover:bg-page-bg transition-colors" href="#">
+              Attributes &amp; Tags
+            </a>
+<a class="text-text-muted hover:text-text-headline text-body-sm font-body-sm py-1.5 px-3 rounded-lg hover:bg-page-bg transition-colors" href="#">
+              Collections
+            </a>
+</div>
+</div>
+<!-- Orders -->
+<a class="text-text-body hover:bg-page-bg hover:text-text-headline rounded-xl flex items-center px-4 py-2.5 gap-3 transition-all duration-150 ease-in-out active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="shopping_cart">shopping_cart</span>
+<span class="text-body-sm font-body-sm font-medium">Orders</span>
+</a>
+<!-- Customers -->
+<a class="text-text-body hover:bg-page-bg hover:text-text-headline rounded-xl flex items-center px-4 py-2.5 gap-3 transition-all duration-150 ease-in-out active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="people">people</span>
+<span class="text-body-sm font-body-sm font-medium">Customers</span>
+</a>
+<!-- Inventory -->
+<a class="text-text-body hover:bg-page-bg hover:text-text-headline rounded-xl flex items-center px-4 py-2.5 gap-3 transition-all duration-150 ease-in-out active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="warehouse">warehouse</span>
+<span class="text-body-sm font-body-sm font-medium">Inventory</span>
+</a>
+<!-- Settings -->
+<a class="text-text-body hover:bg-page-bg hover:text-text-headline rounded-xl flex items-center px-4 py-2.5 gap-3 transition-all duration-150 ease-in-out active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="settings">settings</span>
+<span class="text-body-sm font-body-sm font-medium">Settings</span>
+</a>
+<!-- Storefront Preview -->
+
+</nav>
+</div>
+<!-- Footer Actions & CTA -->
+
+</aside>
+<!-- ======================= MAIN CONTENT WRAPPER ======================= -->
+<div class="pl-sidebar-width flex flex-col min-h-screen">
+<!-- ======================= TOPNAVBAR (Shared Component: TopNavBar) ======================= -->
+<header class="flex justify-between items-center h-[70px] px-gutter-lg w-full sticky top-0 z-40 bg-card-bg border-b border-border-subtle shadow-sm">
+<!-- Search on Left -->
+<div class="flex items-center gap-6 w-1/3">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted text-[20px]" data-icon="search">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-page-bg text-text-headline placeholder:text-text-muted text-body-sm font-body-sm rounded-xl border border-border-subtle focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-light transition-all" placeholder="Search categories, SKU tags, slug..." type="text">
+<span class="absolute right-3 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[10px] font-semibold text-text-muted bg-card-bg border border-border-subtle rounded">⌘K</span>
+</div>
+</div>
+<!-- Center Nav Links -->
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-text-muted hover:text-text-headline text-body-md font-body-md transition-colors" href="#">Dashboard</a>
+<a class="text-primary font-semibold text-body-md font-body-md transition-colors flex items-center gap-1.5" href="#">
+<span class="">Analytics</span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+</a>
+<a class="text-text-muted hover:text-text-headline text-body-md font-body-md transition-colors" href="#">Reports</a>
+</nav>
+<!-- Trailing Actions & Profile -->
+<div class="flex items-center gap-3">
+<button class="w-10 h-10 rounded-xl flex items-center justify-center text-text-muted hover:bg-page-bg hover:text-text-headline transition-colors" title="Calendar">
+<span class="material-symbols-outlined text-[20px]" data-icon="calendar_today">calendar_today</span>
+</button>
+<button class="w-10 h-10 rounded-xl flex items-center justify-center text-text-muted hover:bg-page-bg hover:text-text-headline transition-colors relative" title="Notifications">
+<span class="material-symbols-outlined text-[20px]" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-danger rounded-full ring-2 ring-card-bg"></span>
+</button>
+<button class="w-10 h-10 rounded-xl flex items-center justify-center text-text-muted hover:bg-page-bg hover:text-text-headline transition-colors" title="Toggle Theme">
+<span class="material-symbols-outlined text-[20px]" data-icon="dark_mode">dark_mode</span>
+</button>
+<div class="h-6 w-[1px] bg-border-subtle mx-1"></div>
+<!-- Administrator Avatar / User Dropdown -->
+<div class="flex items-center gap-3 pl-1 cursor-pointer group">
+<img alt="Administrator Avatar" class="w-9 h-9 rounded-full object-cover ring-2 ring-primary/20 group-hover:ring-primary transition-all" data-alt="Modern professional portrait of a store administrator in business attire against a soft neutral studio background, crisp lighting with subtle blue highlights." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-V5bBgU3xY_KX8IiQH-VHxkfu5T6D_ll-UCYxiwj2D5lIiy-HSLcajp3ZNrGNyLQyFUZJJ_ekn2SyGYi82gb_3GH5NrgmUXWN1gvYp5x11XUz05-WPyqmgQ4lPi5vvIeMOaTC0M2VkiI27M5mr8NRd3Jp1CSFEEm_OZ6ZI7SYTLiCBS1UAI75GlOo3OYL4tXXlEGI567_BnKrHY_7Yj3xBeqhP5GIKjYdd2wL04yvBImJmQNkAwU">
+<div class="hidden lg:flex flex-col text-left">
+<span class="text-label-md font-label-md font-semibold text-text-headline leading-tight">Sophia Brooks</span>
+<span class="text-label-sm font-label-sm text-text-muted">Catalog Lead</span>
+</div>
+<span class="material-symbols-outlined text-text-muted text-[18px] group-hover:text-text-headline transition-colors" data-icon="keyboard_arrow_down">keyboard_arrow_down</span>
+</div>
+</div>
+</header>
+<!-- ======================= MAIN CONTENT CANVAS ======================= -->
+<main class="flex-1 p-gutter-lg flex flex-col gap-6 max-w-[1600px] w-full mx-auto">
+<!-- Breadcrumb & Top Bar -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div>
+<nav aria-label="Breadcrumb" class="flex items-center gap-2 text-label-sm font-label-sm text-text-muted mb-1">
+<a class="hover:text-text-headline transition-colors" href="#">Catalog</a>
+<span class="material-symbols-outlined text-[14px]" data-icon="chevron_right">chevron_right</span>
+<span class="text-text-headline font-medium">Categories</span>
+</nav>
+<div class="flex items-center gap-3">
+<h2 class="text-headline-lg font-headline-lg text-text-headline">Categories</h2>
+<span class="px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-primary-light text-primary font-semibold">
+              28 total categories
+            </span>
+</div>
+<p class="text-body-sm font-body-sm text-text-muted mt-1">
+            Organize catalog taxonomy, store navigation hierarchies, and nested collection slugs.
+          </p>
+</div>
+<!-- Primary Action Cluster -->
+<div class="flex items-center gap-3">
+<button class="px-4 py-2.5 bg-card-bg border border-border-subtle rounded-xl text-text-body hover:bg-page-bg hover:text-text-headline text-label-md font-label-md font-medium transition-all shadow-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="account_tree">account_tree</span>
+<span class="">Reorder Hierarchy Tree</span>
+</button>
+<button class="px-4 py-2.5 bg-primary text-on-primary rounded-xl text-label-md font-label-md font-semibold hover:bg-primary-container transition-all flex items-center gap-2 shadow-sm active:scale-[0.98]" id="openModalBtn">
+<span class="material-symbols-outlined text-[18px]" data-icon="add">add</span>
+<span class="">+ Add Category</span>
+</button>
+</div>
+</div>
+<!-- KPI Summary Metrics (Bento Row) -->
+
+<!-- Controls & Filter Toolbar -->
+<div class="bg-card-bg p-4 rounded-xl border border-border-subtle shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+<!-- Search & Filter Badges -->
+<div class="flex flex-wrap items-center gap-3">
+<!-- Category Search -->
+<div class="relative w-full sm:w-72">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[18px]" data-icon="filter_list">filter_list</span>
+<input class="w-full pl-9 pr-3 py-1.5 bg-page-bg text-text-headline placeholder:text-text-muted text-body-sm font-body-sm rounded-lg border border-border-subtle focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary" placeholder="Filter by name or slug..." type="text">
+</div>
+<!-- Status Segmented Controls -->
+<div class="flex items-center bg-page-bg p-1 rounded-lg border border-border-subtle">
+<button class="px-3 py-1 rounded-md bg-card-bg shadow-sm text-text-headline font-semibold text-label-sm font-label-sm transition-all">
+              All (28)
+            </button>
+<button class="px-3 py-1 rounded-md text-text-muted hover:text-text-headline text-label-sm font-label-sm transition-all">
+              Active (24)
+            </button>
+<button class="px-3 py-1 rounded-md text-text-muted hover:text-text-headline text-label-sm font-label-sm transition-all">
+              Hidden (4)
+            </button>
+</div>
+<!-- Division Selector -->
+<div class="relative">
+<select class="appearance-none bg-page-bg border border-border-subtle rounded-lg px-3 py-1.5 pr-8 text-body-sm font-body-sm text-text-headline focus:outline-none focus:border-primary">
+<option>All Divisions</option>
+<option>Apparel &amp; Fashion</option>
+<option>Footwear &amp; Gear</option>
+<option>Accessories &amp; Bags</option>
+<option>Home &amp; Living</option>
+</select>
+<span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-text-muted text-[16px] pointer-events-none" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+<!-- View Mode Switcher -->
+<div class="flex items-center gap-2 self-end lg:self-auto">
+<span class="text-label-sm font-label-sm text-text-muted mr-1">View Format:</span>
+<div class="flex items-center bg-page-bg p-1 rounded-lg border border-border-subtle">
+<button class="px-3 py-1 rounded-md bg-card-bg shadow-sm text-primary flex items-center gap-1.5 text-label-sm font-label-sm font-semibold">
+<span class="material-symbols-outlined text-[16px]" data-icon="format_list_bulleted">format_list_bulleted</span>
+<span class="">Table List</span>
+</button>
+<button class="px-3 py-1 rounded-md text-text-muted hover:text-text-headline flex items-center gap-1.5 text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-[16px]" data-icon="account_tree">account_tree</span>
+<span class="">Hierarchy Tree</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Category Management Data Table -->
+<div class="bg-card-bg rounded-xl border border-border-subtle shadow-sm overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-page-bg border-b border-border-subtle text-text-muted text-label-sm font-label-sm">
+<th class="py-3 px-4 w-12 text-center">
+<span class="material-symbols-outlined text-[16px] text-text-muted cursor-grab" data-icon="drag_indicator">drag_indicator</span>
+</th>
+<th class="py-3 px-4">CATEGORY NAME</th>
+<th class="py-3 px-4">URL SLUG</th>
+<th class="py-3 px-4">PARENT CATEGORY</th>
+<th class="py-3 px-4 text-center">PRODUCT COUNT</th>
+<th class="py-3 px-4 text-center">STATUS</th>
+<th class="py-3 px-4 text-center">ORDER RANK</th>
+<th class="py-3 px-6 text-right">ACTIONS</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-subtle/50 text-body-sm font-body-sm">
+<!-- Row 1: Root Apparel -->
+<tr class="hover:bg-page-bg/80 transition-colors group">
+<td class="py-3.5 px-4 text-center text-text-muted cursor-grab">
+<span class="material-symbols-outlined text-[18px] opacity-40 group-hover:opacity-100 transition-opacity" data-icon="drag_indicator">drag_indicator</span>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-primary-light text-primary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[18px]" data-icon="apparel">apparel</span>
+</div>
+<div>
+<span class="font-semibold text-text-headline hover:text-primary cursor-pointer">Apparel</span>
+<div class="text-[11px] text-text-muted">Division: Core Lifestyle</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<code class="px-2 py-0.5 rounded bg-page-bg border border-border-subtle text-[12px] font-mono text-text-body">/apparel</code>
+</td>
+<td class="py-3.5 px-4">
+<span class="px-2.5 py-1 rounded-md text-[11px] font-semibold bg-page-bg border border-border-subtle text-text-muted">
+                    Root Division
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-primary-light text-primary">
+                    642 items
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-success-light text-success">
+                    Active
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-center font-mono text-text-muted">01</td>
+<td class="py-3.5 px-6 text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 hover:bg-page-bg rounded-lg text-text-muted hover:text-primary transition-colors" title="Add Subcategory">
+<span class="material-symbols-outlined text-[18px]" data-icon="add_circle">add_circle</span>
+</button>
+<button class="p-1.5 hover:bg-page-bg rounded-lg text-text-muted hover:text-text-headline transition-colors" title="Edit Category">
+<span class="material-symbols-outlined text-[18px]" data-icon="edit">edit</span>
+</button>
+<button class="p-1.5 hover:bg-danger-light rounded-lg text-text-muted hover:text-danger transition-colors" title="Delete">
+<span class="material-symbols-outlined text-[18px]" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2: Nested Men's Tops -->
+<tr class="hover:bg-page-bg/80 transition-colors group bg-page-bg/20">
+<td class="py-3.5 px-4 text-center text-text-muted cursor-grab">
+<span class="material-symbols-outlined text-[18px] opacity-40 group-hover:opacity-100 transition-opacity" data-icon="drag_indicator">drag_indicator</span>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3 pl-6 relative">
+<span class="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 border-l-2 border-b-2 border-border-subtle rounded-bl"></span>
+<div class="w-8 h-8 rounded-lg bg-surface-container-high text-primary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[16px]" data-icon="folder_open">folder_open</span>
+</div>
+<div>
+<span class="font-medium text-text-headline hover:text-primary cursor-pointer">Men's Tops</span>
+<div class="text-[11px] text-text-muted">14 Sub-attributes</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<code class="px-2 py-0.5 rounded bg-page-bg border border-border-subtle text-[12px] font-mono text-text-body">/apparel/mens-tops</code>
+</td>
+<td class="py-3.5 px-4">
+<span class="px-2.5 py-1 rounded-md text-[11px] font-semibold bg-primary-light text-primary">
+                    Apparel
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-page-bg text-text-body border border-border-subtle">
+                    285 items
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-success-light text-success">
+                    Active
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-center font-mono text-text-muted">02</td>
+<td class="py-3.5 px-6 text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 hover:bg-page-bg rounded-lg text-text-muted hover:text-primary transition-colors" title="Add Subcategory">
+<span class="material-symbols-outlined text-[18px]" data-icon="add_circle">add_circle</span>
+</button>
+<button class="p-1.5 hover:bg-page-bg rounded-lg text-text-muted hover:text-text-headline transition-colors" title="Edit Category">
+<span class="material-symbols-outlined text-[18px]" data-icon="edit">edit</span>
+</button>
+<button class="p-1.5 hover:bg-danger-light rounded-lg text-text-muted hover:text-danger transition-colors" title="Delete">
+<span class="material-symbols-outlined text-[18px]" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3: Nested Women's Outerwear -->
+<tr class="hover:bg-page-bg/80 transition-colors group bg-page-bg/20">
+<td class="py-3.5 px-4 text-center text-text-muted cursor-grab">
+<span class="material-symbols-outlined text-[18px] opacity-40 group-hover:opacity-100 transition-opacity" data-icon="drag_indicator">drag_indicator</span>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3 pl-6 relative">
+<span class="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 border-l-2 border-b-2 border-border-subtle rounded-bl"></span>
+<div class="w-8 h-8 rounded-lg bg-surface-container-high text-primary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[16px]" data-icon="folder_open">folder_open</span>
+</div>
+<div>
+<span class="font-medium text-text-headline hover:text-primary cursor-pointer">Women's Outerwear</span>
+<div class="text-[11px] text-text-muted">Autumn / Winter Release</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<code class="px-2 py-0.5 rounded bg-page-bg border border-border-subtle text-[12px] font-mono text-text-body">/apparel/womens-outerwear</code>
+</td>
+<td class="py-3.5 px-4">
+<span class="px-2.5 py-1 rounded-md text-[11px] font-semibold bg-primary-light text-primary">
+                    Apparel
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-page-bg text-text-body border border-border-subtle">
+                    198 items
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-success-light text-success">
+                    Active
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-center font-mono text-text-muted">03</td>
+<td class="py-3.5 px-6 text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 hover:bg-page-bg rounded-lg text-text-muted hover:text-primary transition-colors" title="Add Subcategory">
+<span class="material-symbols-outlined text-[18px]" data-icon="add_circle">add_circle</span>
+</button>
+<button class="p-1.5 hover:bg-page-bg rounded-lg text-text-muted hover:text-text-headline transition-colors" title="Edit Category">
+<span class="material-symbols-outlined text-[18px]" data-icon="edit">edit</span>
+</button>
+<button class="p-1.5 hover:bg-danger-light rounded-lg text-text-muted hover:text-danger transition-colors" title="Delete">
+<span class="material-symbols-outlined text-[18px]" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4: Footwear Root -->
+<tr class="hover:bg-page-bg/80 transition-colors group">
+<td class="py-3.5 px-4 text-center text-text-muted cursor-grab">
+<span class="material-symbols-outlined text-[18px] opacity-40 group-hover:opacity-100 transition-opacity" data-icon="drag_indicator">drag_indicator</span>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-secondary-light text-secondary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[18px]" data-icon="roller_skating">roller_skating</span>
+</div>
+<div>
+<span class="font-semibold text-text-headline hover:text-primary cursor-pointer">Footwear</span>
+<div class="text-[11px] text-text-muted">Division: Performance &amp; Street</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<code class="px-2 py-0.5 rounded bg-page-bg border border-border-subtle text-[12px] font-mono text-text-body">/footwear</code>
+</td>
+<td class="py-3.5 px-4">
+<span class="px-2.5 py-1 rounded-md text-[11px] font-semibold bg-page-bg border border-border-subtle text-text-muted">
+                    Root Division
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-primary-light text-primary">
+                    312 items
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-success-light text-success">
+                    Active
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-center font-mono text-text-muted">04</td>
+<td class="py-3.5 px-6 text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 hover:bg-page-bg rounded-lg text-text-muted hover:text-primary transition-colors" title="Add Subcategory">
+<span class="material-symbols-outlined text-[18px]" data-icon="add_circle">add_circle</span>
+</button>
+<button class="p-1.5 hover:bg-page-bg rounded-lg text-text-muted hover:text-text-headline transition-colors" title="Edit Category">
+<span class="material-symbols-outlined text-[18px]" data-icon="edit">edit</span>
+</button>
+<button class="p-1.5 hover:bg-danger-light rounded-lg text-text-muted hover:text-danger transition-colors" title="Delete">
+<span class="material-symbols-outlined text-[18px]" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 5: Leather Accessories (Draft State) -->
+<tr class="hover:bg-page-bg/80 transition-colors group">
+<td class="py-3.5 px-4 text-center text-text-muted cursor-grab">
+<span class="material-symbols-outlined text-[18px] opacity-40 group-hover:opacity-100 transition-opacity" data-icon="drag_indicator">drag_indicator</span>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-warning-light text-warning flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[18px]" data-icon="wallet">wallet</span>
+</div>
+<div>
+<span class="font-semibold text-text-headline hover:text-primary cursor-pointer">Leather Goods &amp; Belts</span>
+<div class="text-[11px] text-text-muted">Awaiting product imagery</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<code class="px-2 py-0.5 rounded bg-page-bg border border-border-subtle text-[12px] font-mono text-text-body">/accessories/leather</code>
+</td>
+<td class="py-3.5 px-4">
+<span class="px-2.5 py-1 rounded-md text-[11px] font-semibold bg-page-bg border border-border-subtle text-text-body">
+                    Accessories
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-page-bg text-text-muted border border-border-subtle">
+                    0 items
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-semibold bg-warning-light text-warning">
+                    Draft
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-center font-mono text-text-muted">05</td>
+<td class="py-3.5 px-6 text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 hover:bg-page-bg rounded-lg text-text-muted hover:text-primary transition-colors" title="Add Subcategory">
+<span class="material-symbols-outlined text-[18px]" data-icon="add_circle">add_circle</span>
+</button>
+<button class="p-1.5 hover:bg-page-bg rounded-lg text-text-muted hover:text-text-headline transition-colors" title="Edit Category">
+<span class="material-symbols-outlined text-[18px]" data-icon="edit">edit</span>
+</button>
+<button class="p-1.5 hover:bg-danger-light rounded-lg text-text-muted hover:text-danger transition-colors" title="Delete">
+<span class="material-symbols-outlined text-[18px]" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Bar -->
+<div class="p-4 bg-card-bg border-t border-border-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-body-sm font-body-sm">
+<span class="text-text-muted">Showing <span class="font-semibold text-text-headline">1 to 5</span> of <span class="font-semibold text-text-headline">28</span> categories</span>
+<div class="flex items-center gap-1.5">
+<button class="px-3 py-1.5 border border-border-subtle rounded-lg text-text-muted hover:bg-page-bg disabled:opacity-40" disabled="">
+              Previous
+            </button>
+<button class="w-8 h-8 rounded-lg bg-primary text-on-primary font-semibold text-label-sm font-label-sm flex items-center justify-center">
+              1
+            </button>
+<button class="w-8 h-8 rounded-lg hover:bg-page-bg text-text-headline font-medium text-label-sm font-label-sm flex items-center justify-center">
+              2
+            </button>
+<button class="w-8 h-8 rounded-lg hover:bg-page-bg text-text-headline font-medium text-label-sm font-label-sm flex items-center justify-center">
+              3
+            </button>
+<button class="px-3 py-1.5 border border-border-subtle rounded-lg text-text-headline hover:bg-page-bg">
+              Next
+            </button>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- ======================= STRUCTURED 'ADD / EDIT CATEGORY' MODAL ======================= -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden transition-all duration-200" id="categoryModal">
+<div class="bg-card-bg rounded-2xl border border-border-subtle shadow-2xl w-full max-w-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+<!-- Modal Header -->
+<div class="flex items-center justify-between px-6 py-5 border-b border-border-subtle">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-primary-light text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]" data-icon="category">category</span>
+</div>
+<div>
+<h3 class="text-headline-sm font-headline-sm text-text-headline">Add New Category</h3>
+<p class="text-label-sm font-label-sm text-text-muted">Define slug, taxonomy level, and store visual elements</p>
+</div>
+</div>
+<button class="text-text-muted hover:text-text-headline p-1 rounded-lg hover:bg-page-bg transition-colors" id="closeModalBtn">
+<span class="material-symbols-outlined text-[22px]" data-icon="close">close</span>
+</button>
+</div>
+<!-- Modal Body -->
+<form class="p-6 flex flex-col gap-4 text-body-sm font-body-sm">
+<!-- Category Name & Auto Slug -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="flex flex-col gap-1.5">
+<label class="text-label-sm font-label-sm font-semibold text-text-headline">Category Name *</label>
+<input class="w-full px-3.5 py-2 bg-card-bg border border-border-subtle rounded-lg text-text-headline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-light transition-all" placeholder="e.g. Trail Running Shoes" type="text" value="Trail Running Shoes">
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-label-sm font-label-sm font-semibold text-text-headline">URL Slug (Auto)</label>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-[12px] font-mono">/</span>
+<input class="w-full pl-6 pr-3 py-2 bg-page-bg border border-border-subtle rounded-lg text-text-headline font-mono text-[12px] focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-light transition-all" placeholder="trail-running-shoes" type="text" value="footwear/trail-running-shoes">
+</div>
+</div>
+</div>
+<!-- Parent Category & Display Rank -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="flex flex-col gap-1.5">
+<label class="text-label-sm font-label-sm font-semibold text-text-headline">Parent Category</label>
+<div class="relative">
+<select class="w-full appearance-none bg-card-bg border border-border-subtle rounded-lg px-3.5 py-2 pr-8 text-text-headline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-light">
+<option>None (Root Category)</option>
+<option selected="">Footwear</option>
+<option>Apparel</option>
+<option>Accessories</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-text-muted text-[18px] pointer-events-none" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-label-sm font-label-sm font-semibold text-text-headline">Status &amp; Visibility</label>
+<div class="flex items-center justify-between p-2 border border-border-subtle rounded-lg bg-page-bg">
+<span class="text-label-sm font-label-sm font-semibold text-text-headline pl-1">Publish to Storefront</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox">
+<div class="w-9 h-5 bg-border-subtle peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</div>
+<!-- Description Textarea -->
+<div class="flex flex-col gap-1.5">
+<label class="text-label-sm font-label-sm font-semibold text-text-headline">Category Description</label>
+<textarea class="w-full px-3.5 py-2 bg-card-bg border border-border-subtle rounded-lg text-text-headline placeholder:text-text-muted focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-light transition-all resize-none" placeholder="Write a brief search engine description and storefront category hero summary..." rows="3">High-performance outdoor trail and ultra-marathon terrain shoes engineered with vibram outsoles and water-resistant membranes.</textarea>
+</div>
+<!-- Thumbnail Image Dropzone with Preview -->
+<div class="flex flex-col gap-1.5">
+<label class="text-label-sm font-label-sm font-semibold text-text-headline">Thumbnail Image &amp; Banner</label>
+<div class="border-2 border-dashed border-border-subtle hover:border-primary/50 rounded-xl p-4 flex items-center gap-4 bg-page-bg/50 transition-colors">
+<img alt="Category Thumbnail Preview" class="w-16 h-16 rounded-lg object-cover border border-border-subtle shadow-sm flex-shrink-0" data-alt="Modern stylish trail running shoes product still life shot in an ultra-clean studio setting with warm directional studio lighting, pastel background, premium ecommerce aesthetics." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvdt7grK5garWC4yfdBSMTONvReBqZIhMyQ-RGQw3dyEbBNQW1gZzVe8e_6ElhObLP7IiZD3AjhPkT70u-mBni2jBIHEshFky5nqz7Yysz_VpaTA4SuL2Cb9VJyRaotzvR8Iy69OH9GhcAWoctmqs9_X_z72vYeyRhJU3fOGwIO5OE5L4NeEpde-F8Cj697219wQ2K8cNtmpI3TcvS2h0f-W-2XQN2ntmB_HbkG9DQ2aj_8PoWAMg">
+<div class="flex-1">
+<div class="flex items-center gap-2">
+<span class="text-label-sm font-label-sm font-semibold text-text-headline">trail_running_hero.png</span>
+<span class="text-[11px] text-text-muted">(1.2 MB)</span>
+</div>
+<p class="text-[11px] text-text-muted mt-0.5">Recommended 800x800px PNG or WebP with clear background</p>
+<div class="flex items-center gap-3 mt-2">
+<button class="text-primary hover:underline text-label-sm font-label-sm font-medium" type="button">Replace Image</button>
+<span class="text-border-subtle">•</span>
+<button class="text-danger hover:underline text-label-sm font-label-sm font-medium" type="button">Remove</button>
+</div>
+</div>
+</div>
+</div>
+</form>
+<!-- Modal Footer -->
+<div class="flex items-center justify-end gap-3 px-6 py-4 bg-page-bg border-t border-border-subtle">
+<button class="px-4 py-2 rounded-xl text-label-md font-label-md font-semibold text-text-body bg-card-bg border border-border-subtle hover:bg-page-bg transition-colors" id="cancelModalBtn">
+          Cancel
+        </button>
+<button class="px-5 py-2 rounded-xl text-label-md font-label-md font-semibold text-on-primary bg-primary hover:bg-primary-container transition-all shadow-sm active:scale-[0.98]" id="saveModalBtn">
+          Save Category
+        </button>
+</div>
+</div>
+</div>
+<!-- Inline Vanilla Script for Interactive Polish -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const modal = document.getElementById('categoryModal');
+      const openBtn = document.getElementById('openModalBtn');
+      const closeBtn = document.getElementById('closeModalBtn');
+      const cancelBtn = document.getElementById('cancelModalBtn');
+      const saveBtn = document.getElementById('saveModalBtn');
+
+      const openModal = () => {
+        modal.classList.remove('hidden');
+      };
+
+      const closeModal = () => {
+        modal.classList.add('hidden');
+      };
+
+      if (openBtn) openBtn.addEventListener('click', openModal);
+      if (closeBtn) closeBtn.addEventListener('click', closeModal);
+      if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+      if (saveBtn) saveBtn.addEventListener('click', closeModal);
+
+      // Close on backdrop click
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+      });
+    });
+  </script>
+
+
+
+
+</body></html>

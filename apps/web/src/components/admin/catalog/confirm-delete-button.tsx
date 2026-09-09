@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -13,15 +14,19 @@ import {
 } from "@/components/ui/dialog";
 
 export function ConfirmDeleteButton({
-  label = "Xóa",
-  title = "Xác nhận xóa",
-  description = "Hành động này không hoàn tác từ UI (soft-delete phía API).",
+  label = "Delete",
+  title = "Confirm deletion",
+  description = "This action applies a soft-delete on the API.",
   onConfirm,
+  variant = "destructive",
+  trigger,
 }: {
   label?: string;
   title?: string;
   description?: string;
   onConfirm: () => Promise<void>;
+  variant?: "destructive" | "ghost" | "outline";
+  trigger?: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -34,7 +39,7 @@ export function ConfirmDeleteButton({
       await onConfirm();
       setOpen(false);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Xóa thất bại");
+      setError(err instanceof Error ? err.message : "Delete failed");
     } finally {
       setBusy(false);
     }
@@ -42,16 +47,22 @@ export function ConfirmDeleteButton({
 
   return (
     <>
-      <Button
-        type="button"
-        variant="destructive"
-        size="sm"
-        onClick={() => setOpen(true)}
-      >
-        {label}
-      </Button>
+      {trigger ? (
+        <button type="button" onClick={() => setOpen(true)}>
+          {trigger}
+        </button>
+      ) : (
+        <Button
+          type="button"
+          variant={variant}
+          size="sm"
+          onClick={() => setOpen(true)}
+        >
+          {label}
+        </Button>
+      )}
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
+        <DialogContent className="sm:rounded-xl">
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
             <DialogDescription>{description}</DialogDescription>
@@ -68,7 +79,7 @@ export function ConfirmDeleteButton({
               onClick={() => setOpen(false)}
               disabled={busy}
             >
-              Hủy
+              Cancel
             </Button>
             <Button
               type="button"
@@ -76,7 +87,7 @@ export function ConfirmDeleteButton({
               onClick={() => void confirm()}
               disabled={busy}
             >
-              {busy ? "Đang xóa…" : "Xóa"}
+              {busy ? "Deleting…" : "Delete"}
             </Button>
           </DialogFooter>
         </DialogContent>

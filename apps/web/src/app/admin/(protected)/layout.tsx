@@ -81,11 +81,13 @@ export default function AdminProtectedLayout({
   }
 
   return (
-    <div className="flex min-h-screen bg-muted/20">
+    <div className="min-h-screen bg-[#f8fafc]">
       <AdminSidebar />
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-h-screen min-w-0 flex-1 flex-col md:pl-[260px]">
         <AdminTopbar user={me.data} />
-        <main className="flex-1 p-4 md:p-6">{children}</main>
+        <main className="flex w-full flex-1 flex-col gap-6 p-4 md:p-8">
+          {children}
+        </main>
       </div>
     </div>
   );

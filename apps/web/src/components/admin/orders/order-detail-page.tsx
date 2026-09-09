@@ -4,6 +4,9 @@ import { FormEvent, useState } from "react";
 import Link from "next/link";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
+import { StatusBadge } from "@/components/admin/layout/status-badge";
+import { PageHeader } from "@/components/admin/layout/page-header";
+import { LoadingState } from "@/components/admin/layout/empty-state";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -86,7 +89,7 @@ export function OrderDetailPage({ orderId }: { orderId: number }) {
   });
 
   if (orderQuery.isPending) {
-    return <p className="text-sm text-muted-foreground">Đang tải…</p>;
+    return <LoadingState />;
   }
   if (orderQuery.isError || !orderQuery.data?.data) {
     return (
@@ -104,18 +107,19 @@ export function OrderDetailPage({ orderId }: { orderId: number }) {
   const shipments = order.shipments ?? [];
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <h1 className="text-xl font-semibold">{order.number}</h1>
-          <p className="text-sm text-muted-foreground">
-            Status: {order.status} · Customer #{order.customer_id ?? "—"}
-          </p>
-        </div>
-        <Button asChild variant="outline">
-          <Link href="/admin/orders">Danh sách</Link>
-        </Button>
-      </div>
+    <div className="space-y-6">
+      <PageHeader
+        title={order.number}
+        description={`Customer #${order.customer_id ?? "—"}`}
+        actions={
+          <div className="flex items-center gap-2">
+            <StatusBadge status={String(order.status)} />
+            <Button asChild variant="outline">
+              <Link href="/admin/orders">Back to orders</Link>
+            </Button>
+          </div>
+        }
+      />
 
       {error ? (
         <p className="text-sm text-destructive" role="alert">
