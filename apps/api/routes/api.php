@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\V1\Admin\Inventory\StockMovementController as Admin
 use App\Http\Controllers\Api\V1\Admin\Inventory\WarehouseController as AdminWarehouseController;
 use App\Http\Controllers\Api\V1\Admin\MeController as AdminMeController;
 use App\Http\Controllers\Api\V1\Admin\Customer\CustomerController as AdminCustomerController;
+use App\Http\Controllers\Api\V1\Admin\Dashboard\MetricsController as AdminDashboardMetricsController;
 use App\Http\Controllers\Api\V1\Admin\Order\OrderController as AdminOrderController;
 use App\Http\Controllers\Api\V1\Admin\Order\ShipmentController as AdminShipmentController;
 use App\Http\Controllers\Api\V1\Cart\CartController;
@@ -98,6 +99,7 @@ Route::prefix('v1')->group(function () {
             });
             Route::post('inventory/movements', [AdminStockMovementController::class, 'store'])->middleware('permission:inventory.manage,admin');
             Route::middleware('permission:orders.view,admin')->group(function () {
+                Route::get('dashboard/metrics', AdminDashboardMetricsController::class);
                 Route::get('orders', [AdminOrderController::class, 'index']);
                 Route::get('orders/{id}', [AdminOrderController::class, 'show']);
             });
