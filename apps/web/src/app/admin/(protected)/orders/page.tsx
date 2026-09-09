@@ -1,21 +1,5 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { OrdersListPage } from "@/components/admin/orders/orders-list-page";
 
-export default function AdminOrdersStubPage() {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Orders</CardTitle>
-        <CardDescription>List / detail / status / shipment — sắp có.</CardDescription>
-      </CardHeader>
-      <CardContent className="text-sm text-muted-foreground">
-        Coming soon
-      </CardContent>
-    </Card>
-  );
+export default function AdminOrdersPage() {
+  return <OrdersListPage />;
 }

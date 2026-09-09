@@ -98,3 +98,24 @@ it('accepts each documented order state transition', function (string $from, str
     ['pending', 'paid'], ['pending', 'cancelled'], ['paid', 'fulfilling'], ['paid', 'cancelled'],
     ['fulfilling', 'cancelled'], ['shipped', 'completed'],
 ]);
+
+it('admin order show includes shipments array and mapped status history', function () {
+    $admin = AdminUser::factory()->create(['status' => 'active']);
+    $admin->assignRole('admin');
+    $order = Order::factory()->create(['status' => 'pending']);
+    $this->actingAs($admin, 'admin')
+        ->patchJson('/api/v1/admin/orders/'.$order->id.'/status', ['status' => 'paid', 'note' => 'cod'])
+        ->assertOk();
+    $res = $this->actingAs($admin, 'admin')
+        ->getJson('/api/v1/admin/orders/'.$order->id)
+        ->assertOk()
+        ->assertJsonPath('data.status', 'paid')
+        ->assertJsonStructure([
+            'data' => [
+                'shipments',
+                'status_history' => [['from_status', 'to_status', 'created_at']],
+            ],
+        ]);
+    expect($res->json('data.shipments'))->toBeArray();
+    expect($res->json('data.status_history.0'))->not->toHaveKeys(['order_id', 'changed_by_admin_id']);
+});

@@ -33,7 +33,9 @@ final class OrderController extends Controller
     #[Response(200, 'Order detail.', type: 'array{data: AdminOrderResource, meta: object}')]
     public function show(int $id): JsonResponse
     {
-        return ApiResponse::success((new AdminOrderResource(Order::query()->with('items', 'statusHistories')->findOrFail($id)))->resolve());
+        return ApiResponse::success((new AdminOrderResource(
+            Order::query()->with(['items', 'statusHistories', 'shipments'])->findOrFail($id),
+        ))->resolve());
     }
 
     #[Response(200, 'Updated order.', type: 'array{data: AdminOrderResource, meta: object}')]
