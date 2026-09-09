@@ -1,18 +1,18 @@
 import type { Metadata } from "next";
 
-import { LoginForm } from "@/components/storefront/login-form";
+import { RegisterForm } from "@/components/storefront/register-form";
 
 export const metadata: Metadata = {
-  title: "Đăng nhập",
+  title: "Đăng ký",
   robots: { index: false, follow: false },
 };
 
-export default function LoginPage() {
+export default function RegisterPage() {
   return (
     <main className="mx-auto max-w-md px-4 py-16">
-      <h1 className="text-2xl font-semibold">Đăng nhập</h1>
+      <h1 className="text-2xl font-semibold">Đăng ký</h1>
       <div className="mt-8">
-        <LoginForm />
+        <RegisterForm />
       </div>
     </main>
   );

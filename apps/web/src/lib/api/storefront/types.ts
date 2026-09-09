@@ -137,6 +137,82 @@ export type GuestCheckoutBody = {
   coupon_code?: string;
 };
 
+export type CheckoutBody = {
+  customer_address_id?: number;
+  shipping_address?: GuestCheckoutBody["shipping_address"];
+  shipping_method_id: number;
+  shipping_rate_id: number;
+  payment_method_code: "cod" | "vnpay";
+  coupon_code?: string;
+};
+
+export type CustomerProfile = {
+  id: number;
+  code: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  status: string;
+};
+
+export type CustomerAddress = {
+  id: number;
+  label: string | null;
+  recipient_name: string;
+  phone: string;
+  province_code: string;
+  district_code: string;
+  ward_code: string;
+  address_line: string;
+  postal_code: string | null;
+  is_default: boolean;
+};
+
+export type CustomerAddressBody = {
+  label?: string | null;
+  recipient_name: string;
+  phone: string;
+  province_code: string;
+  district_code: string;
+  ward_code: string;
+  address_line: string;
+  postal_code?: string | null;
+  is_default?: boolean;
+};
+
+export type CustomerOrderItem = {
+  id?: number;
+  sku: string;
+  name: string;
+  qty: number;
+  unit_price: string;
+  line_total: string;
+};
+
+export type CustomerOrder = {
+  id: number;
+  number: string;
+  status: string;
+  currency: string;
+  subtotal: string;
+  discount_total: string;
+  shipping_total: string;
+  tax_total: string;
+  grand_total: string;
+  shipping_address:
+    | (GuestCheckoutBody["shipping_address"] & {
+        postal_code?: string | null;
+      })
+    | null;
+  items?: CustomerOrderItem[];
+  status_history?: Array<{
+    from_status: string | null;
+    to_status: string;
+    created_at: string | null;
+  }>;
+  created_at: string | null;
+};
+
 export type CheckoutCreated = {
   id: number;
   number: string;

@@ -12,7 +12,7 @@ import {
 } from "@/lib/api/storefront/browser";
 import {
   clearCartToken,
-  fetchCart,
+  fetchActiveCart,
   getCartToken,
   postCheckout,
 } from "@/lib/api/storefront/cart";
@@ -22,8 +22,15 @@ import {
   listShippingMethods,
   listWards,
 } from "@/lib/api/storefront/commerce";
+import {
+  createCustomerAddress,
+  fetchCustomerMeOrNull,
+  listCustomerAddresses,
+} from "@/lib/api/storefront/customer";
 import { formatVnd } from "@/lib/api/storefront/money";
 import type {
+  CustomerAddress,
+  CustomerProfile,
   GeoNode,
   ShippingMethod,
   StorefrontCart,
@@ -44,6 +51,11 @@ function rateFits(
 
 export function CheckoutForm() {
   const router = useRouter();
+  const [me, setMe] = useState<CustomerProfile | null>(null);
+  const [addresses, setAddresses] = useState<CustomerAddress[]>([]);
+  const [addressMode, setAddressMode] = useState<"saved" | "new">("new");
+  const [savedId, setSavedId] = useState<number | null>(null);
+  const [saveToBook, setSaveToBook] = useState(false);
   const [cart, setCart] = useState<StorefrontCart | null>(null);
   const [methods, setMethods] = useState<ShippingMethod[]>([]);
   const [provinces, setProvinces] = useState<GeoNode[]>([]);
@@ -62,32 +74,46 @@ export function CheckoutForm() {
   const [pending, setPending] = useState(false);
   const [ready, setReady] = useState(false);
 
+  const showNewForm = !me || addressMode === "new";
+
   useEffect(() => {
-    if (!getCartToken()) {
-      router.replace("/cart");
-      return;
-    }
     void (async () => {
       try {
-        const [nextCart, nextMethods, nextProvinces] = await Promise.all([
-          fetchCart(),
-          listShippingMethods(),
-          listProvinces(),
-        ]);
+        const profile = await fetchCustomerMeOrNull();
+        setMe(profile);
+        if (!profile && !getCartToken()) {
+          router.replace("/cart");
+          return;
+        }
+        const nextCart = await fetchActiveCart();
         if (nextCart.items.length === 0) {
           router.replace("/cart");
           return;
         }
+        const [nextMethods, nextProvinces] = await Promise.all([
+          listShippingMethods(),
+          listProvinces(),
+        ]);
         setCart(nextCart);
         setMethods(nextMethods);
         setProvinces(nextProvinces);
+        if (profile) {
+          const book = await listCustomerAddresses();
+          setAddresses(book);
+          if (book.length > 0) {
+            const preferred =
+              book.find((row) => row.is_default)?.id ?? book[0].id;
+            setAddressMode("saved");
+            setSavedId(preferred);
+          }
+        }
         setReady(true);
       } catch (e) {
         if (
           e instanceof StorefrontBrowserError &&
-          e.code === "CART_INVALID_TOKEN"
+          (e.code === "CART_INVALID_TOKEN" || e.status === 401)
         ) {
-          router.replace("/cart");
+          router.replace(e.status === 401 ? "/login" : "/cart");
           return;
         }
         setError(storefrontErrorMessage(e));
@@ -119,23 +145,52 @@ export function CheckoutForm() {
     setPending(true);
     setError(null);
     try {
-      const created = await postCheckout({
-        shipping_address: {
-          recipient_name: recipientName,
-          phone,
-          province_code: provinceCode,
-          district_code: districtCode,
-          ward_code: wardCode,
-          address_line: addressLine,
-        },
+      const shipping = {
         shipping_method_id: selected.methodId,
         shipping_rate_id: selected.rateId,
         payment_method_code: payment,
         ...(coupon.trim() !== "" ? { coupon_code: coupon.trim() } : {}),
-      });
-      clearCartToken();
+      };
+      const newAddress = {
+        recipient_name: recipientName,
+        phone,
+        province_code: provinceCode,
+        district_code: districtCode,
+        ward_code: wardCode,
+        address_line: addressLine,
+      };
+
+      let created;
+      if (me && addressMode === "saved" && savedId) {
+        created = await postCheckout({
+          customer_address_id: savedId,
+          ...shipping,
+        });
+      } else if (me && saveToBook) {
+        const saved = await createCustomerAddress({
+          ...newAddress,
+          is_default: addresses.length === 0,
+        });
+        created = await postCheckout({
+          customer_address_id: saved.id,
+          ...shipping,
+        });
+      } else {
+        created = await postCheckout({
+          shipping_address: newAddress,
+          ...shipping,
+        });
+      }
+
+      if (!me) {
+        clearCartToken();
+      }
       if (payment === "vnpay" && created.payment.redirect_url) {
         window.location.assign(created.payment.redirect_url);
+        return;
+      }
+      if (me) {
+        router.push(`/account/orders/${created.id}`);
         return;
       }
       const token = created.lookup_token;
@@ -174,109 +229,156 @@ export function CheckoutForm() {
         <div className="space-y-6">
           <fieldset className="space-y-3">
             <legend className="text-sm font-medium">Địa chỉ giao hàng</legend>
-            <div>
-              <Label htmlFor="recipient_name">Người nhận</Label>
-              <Input
-                id="recipient_name"
-                className="mt-1"
-                required
-                value={recipientName}
-                onChange={(e) => setRecipientName(e.target.value)}
-              />
-            </div>
-            <div>
-              <Label htmlFor="phone">Số điện thoại</Label>
-              <Input
-                id="phone"
-                className="mt-1"
-                required
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-              />
-            </div>
-            <div>
-              <Label htmlFor="province">Tỉnh / thành</Label>
-              <select
-                id="province"
-                required
-                className="mt-1 flex h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm"
-                value={provinceCode}
-                onChange={(e) => {
-                  const code = e.target.value;
-                  setProvinceCode(code);
-                  setDistrictCode("");
-                  setWardCode("");
-                  setDistricts([]);
-                  setWards([]);
-                  if (!code) return;
-                  void listDistricts(code)
-                    .then(setDistricts)
-                    .catch((err) => setError(storefrontErrorMessage(err)));
-                }}
-              >
-                <option value="">Chọn tỉnh / thành</option>
-                {provinces.map((row) => (
-                  <option key={row.code} value={row.code}>
-                    {row.name}
-                  </option>
+            {me && addresses.length > 0 ? (
+              <div className="space-y-2">
+                {addresses.map((row) => (
+                  <label key={row.id} className="flex items-start gap-2 text-sm">
+                    <input
+                      type="radio"
+                      name="address_mode"
+                      checked={addressMode === "saved" && savedId === row.id}
+                      onChange={() => {
+                        setAddressMode("saved");
+                        setSavedId(row.id);
+                      }}
+                    />
+                    <span>
+                      {row.recipient_name} · {row.phone}
+                      <br />
+                      {row.address_line}
+                      {row.is_default ? " (mặc định)" : ""}
+                    </span>
+                  </label>
                 ))}
-              </select>
-            </div>
-            <div>
-              <Label htmlFor="district">Quận / huyện</Label>
-              <select
-                id="district"
-                required
-                disabled={!provinceCode}
-                className="mt-1 flex h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm"
-                value={districtCode}
-                onChange={(e) => {
-                  const code = e.target.value;
-                  setDistrictCode(code);
-                  setWardCode("");
-                  setWards([]);
-                  if (!code) return;
-                  void listWards(code)
-                    .then(setWards)
-                    .catch((err) => setError(storefrontErrorMessage(err)));
-                }}
-              >
-                <option value="">Chọn quận / huyện</option>
-                {districts.map((row) => (
-                  <option key={row.code} value={row.code}>
-                    {row.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <Label htmlFor="ward">Phường / xã</Label>
-              <select
-                id="ward"
-                required
-                disabled={!districtCode}
-                className="mt-1 flex h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm"
-                value={wardCode}
-                onChange={(e) => setWardCode(e.target.value)}
-              >
-                <option value="">Chọn phường / xã</option>
-                {wards.map((row) => (
-                  <option key={row.code} value={row.code}>
-                    {row.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <Label htmlFor="address_line">Địa chỉ</Label>
-              <Input
-                id="address_line"
-                className="mt-1"
-                required
-                value={addressLine}
-                onChange={(e) => setAddressLine(e.target.value)}
-              />
-            </div>
+                <label className="flex items-center gap-2 text-sm">
+                  <input
+                    type="radio"
+                    name="address_mode"
+                    checked={addressMode === "new"}
+                    onChange={() => setAddressMode("new")}
+                  />
+                  Dùng địa chỉ mới
+                </label>
+              </div>
+            ) : null}
+
+            {showNewForm ? (
+              <>
+                <div>
+                  <Label htmlFor="recipient_name">Người nhận</Label>
+                  <Input
+                    id="recipient_name"
+                    className="mt-1"
+                    required
+                    value={recipientName}
+                    onChange={(e) => setRecipientName(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="phone">Số điện thoại</Label>
+                  <Input
+                    id="phone"
+                    className="mt-1"
+                    required
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="province">Tỉnh / thành</Label>
+                  <select
+                    id="province"
+                    required
+                    className="mt-1 flex h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm"
+                    value={provinceCode}
+                    onChange={(e) => {
+                      const code = e.target.value;
+                      setProvinceCode(code);
+                      setDistrictCode("");
+                      setWardCode("");
+                      setDistricts([]);
+                      setWards([]);
+                      if (!code) return;
+                      void listDistricts(code)
+                        .then(setDistricts)
+                        .catch((err) => setError(storefrontErrorMessage(err)));
+                    }}
+                  >
+                    <option value="">Chọn tỉnh / thành</option>
+                    {provinces.map((row) => (
+                      <option key={row.code} value={row.code}>
+                        {row.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <Label htmlFor="district">Quận / huyện</Label>
+                  <select
+                    id="district"
+                    required
+                    disabled={!provinceCode}
+                    className="mt-1 flex h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm"
+                    value={districtCode}
+                    onChange={(e) => {
+                      const code = e.target.value;
+                      setDistrictCode(code);
+                      setWardCode("");
+                      setWards([]);
+                      if (!code) return;
+                      void listWards(code)
+                        .then(setWards)
+                        .catch((err) => setError(storefrontErrorMessage(err)));
+                    }}
+                  >
+                    <option value="">Chọn quận / huyện</option>
+                    {districts.map((row) => (
+                      <option key={row.code} value={row.code}>
+                        {row.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <Label htmlFor="ward">Phường / xã</Label>
+                  <select
+                    id="ward"
+                    required
+                    disabled={!districtCode}
+                    className="mt-1 flex h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm"
+                    value={wardCode}
+                    onChange={(e) => setWardCode(e.target.value)}
+                  >
+                    <option value="">Chọn phường / xã</option>
+                    {wards.map((row) => (
+                      <option key={row.code} value={row.code}>
+                        {row.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <Label htmlFor="address_line">Địa chỉ</Label>
+                  <Input
+                    id="address_line"
+                    className="mt-1"
+                    required
+                    value={addressLine}
+                    onChange={(e) => setAddressLine(e.target.value)}
+                  />
+                </div>
+                {me ? (
+                  <label className="flex items-center gap-2 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={saveToBook}
+                      onChange={(e) => setSaveToBook(e.target.checked)}
+                    />
+                    Lưu vào sổ
+                  </label>
+                ) : null}
+              </>
+            ) : null}
           </fieldset>
 
           <fieldset className="space-y-3">

@@ -1,5 +1,5 @@
-import { ComingSoon } from "@/components/storefront/coming-soon";
+import { AccountProfileForm } from "@/components/storefront/account-profile-form";
 
-export default function AccountStubPage() {
-  return <ComingSoon title="Tài khoản" />;
+export default function AccountPage() {
+  return <AccountProfileForm />;
 }

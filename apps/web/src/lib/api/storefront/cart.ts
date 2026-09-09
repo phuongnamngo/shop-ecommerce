@@ -2,9 +2,18 @@ import {
   StorefrontBrowserError,
   storefrontBrowserFetch,
 } from "@/lib/api/storefront/browser";
+import {
+  addCustomerCartItem,
+  fetchCustomerCart,
+  fetchCustomerMeOrNull,
+  mergeGuestCart,
+  postCustomerCheckout,
+  removeCustomerCartItem,
+  updateCustomerCartItem,
+} from "@/lib/api/storefront/customer";
 import type {
+  CheckoutBody,
   CheckoutCreated,
-  GuestCheckoutBody,
   StorefrontCart,
 } from "@/lib/api/storefront/types";
 import { emitCartChanged } from "@/lib/storefront/cart-events";
@@ -75,10 +84,25 @@ export async function fetchCart(): Promise<StorefrontCart> {
   }
 }
 
+export async function fetchActiveCart(): Promise<StorefrontCart> {
+  const me = await fetchCustomerMeOrNull();
+  if (me) {
+    return fetchCustomerCart();
+  }
+  return fetchCart();
+}
+
 export async function addCartItem(
   product_variant_id: number,
   qty: number,
 ): Promise<StorefrontCart> {
+  const me = await fetchCustomerMeOrNull();
+  if (me) {
+    const cart = await addCustomerCartItem(product_variant_id, qty);
+    emitCartChanged();
+    return cart;
+  }
+
   const run = async (): Promise<StorefrontCart> => {
     const token = await ensureCartToken();
     const { data } = await storefrontBrowserFetch<StorefrontCart>(
@@ -108,6 +132,13 @@ export async function updateCartItem(
   itemId: number,
   qty: number,
 ): Promise<StorefrontCart> {
+  const me = await fetchCustomerMeOrNull();
+  if (me) {
+    const cart = await updateCustomerCartItem(itemId, qty);
+    emitCartChanged();
+    return cart;
+  }
+
   const token = getCartToken();
   if (!token) throw missingCartToken();
   try {
@@ -130,6 +161,13 @@ export async function updateCartItem(
 }
 
 export async function removeCartItem(itemId: number): Promise<void> {
+  const me = await fetchCustomerMeOrNull();
+  if (me) {
+    await removeCustomerCartItem(itemId);
+    emitCartChanged();
+    return;
+  }
+
   const token = getCartToken();
   if (!token) throw missingCartToken();
   try {
@@ -147,8 +185,13 @@ export async function removeCartItem(itemId: number): Promise<void> {
 }
 
 export async function postCheckout(
-  body: GuestCheckoutBody,
+  body: CheckoutBody,
 ): Promise<CheckoutCreated> {
+  const me = await fetchCustomerMeOrNull();
+  if (me) {
+    return postCustomerCheckout(body);
+  }
+
   const token = getCartToken();
   if (!token) throw missingCartToken();
   try {
@@ -167,4 +210,15 @@ export async function postCheckout(
     }
     throw error;
   }
+}
+
+export async function mergeGuestCartIfPresent(): Promise<void> {
+  const token = getCartToken();
+  if (!token) return;
+  try {
+    await mergeGuestCart(token);
+  } catch {
+    // Login already succeeded; invalid or failed merge must not fail the session.
+  }
+  clearCartToken();
 }

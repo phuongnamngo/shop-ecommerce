@@ -12,7 +12,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { fetchCart, getCartToken } from "@/lib/api/storefront/cart";
+import { fetchActiveCart } from "@/lib/api/storefront/cart";
+import { fetchCustomerMeOrNull } from "@/lib/api/storefront/customer";
 import { CART_CHANGED_EVENT } from "@/lib/storefront/cart-events";
 
 type NavCategory = { name: string; slug: string };
@@ -22,12 +23,8 @@ function useCartQty(): number {
 
   const refresh = useCallback(async () => {
     await Promise.resolve();
-    if (!getCartToken()) {
-      setQty(0);
-      return;
-    }
     try {
-      const cart = await fetchCart();
+      const cart = await fetchActiveCart();
       setQty(cart.items.reduce((sum, item) => sum + item.qty, 0));
     } catch {
       setQty(0);
@@ -65,6 +62,16 @@ export function StorefrontHeader({
   categories: NavCategory[];
 }) {
   const cartQty = useCartQty();
+  const [accountHref, setAccountHref] = useState("/login");
+
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      void fetchCustomerMeOrNull()
+        .then((me) => setAccountHref(me ? "/account" : "/login"))
+        .catch(() => setAccountHref("/login"));
+    });
+    return () => cancelAnimationFrame(frame);
+  }, []);
   return (
     <header className="border-b bg-zinc-950 text-zinc-50">
       <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3">
@@ -101,7 +108,7 @@ export function StorefrontHeader({
                 Giỏ hàng
                 <QtyBadge qty={cartQty} />
               </Link>
-              <Link href="/account" className="hover:underline">
+              <Link href={accountHref} className="hover:underline">
                 Tài khoản
               </Link>
             </nav>
@@ -156,7 +163,7 @@ export function StorefrontHeader({
             className="text-zinc-50 hover:bg-zinc-800"
             asChild
           >
-            <Link href="/account">Tài khoản</Link>
+            <Link href={accountHref}>Tài khoản</Link>
           </Button>
         </div>
       </div>

@@ -15,6 +15,191 @@
         }
     ],
     "paths": {
+        "/api/v1/customer/addresses": {
+            "get": {
+                "operationId": "address.index",
+                "tags": [
+                    "Address"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Customer addresses.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/CustomerAddressResource"
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            },
+            "post": {
+                "operationId": "address.store",
+                "tags": [
+                    "Address"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreCustomerAddressRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created customer address.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/CustomerAddressResource"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/api/v1/customer/addresses/{id}": {
+            "patch": {
+                "operationId": "address.update",
+                "tags": [
+                    "Address"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateCustomerAddressRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Updated customer address.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/CustomerAddressResource"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "address.destroy",
+                "tags": [
+                    "Address"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted customer address.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "null"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
         "/api/v1/admin/catalog/attributes": {
             "get": {
                 "operationId": "attribute.index",
@@ -3548,7 +3733,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "",
+                        "description": "Customer profile.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -3589,7 +3774,7 @@
                                             ]
                                         },
                                         "meta": {
-                                            "type": "string"
+                                            "type": "object"
                                         }
                                     },
                                     "required": [
@@ -3602,6 +3787,83 @@
                     },
                     "401": {
                         "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            },
+            "patch": {
+                "operationId": "me.update",
+                "tags": [
+                    "Me"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateMeRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Updated customer profile.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer"
+                                                },
+                                                "code": {
+                                                    "type": "string"
+                                                },
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "email": {
+                                                    "type": "string"
+                                                },
+                                                "phone": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "status": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": [
+                                                "id",
+                                                "code",
+                                                "name",
+                                                "email",
+                                                "phone",
+                                                "status"
+                                            ]
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
                     }
                 }
             }
@@ -6895,6 +7157,60 @@
                 ],
                 "title": "CheckoutRequest"
             },
+            "CustomerAddressResource": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "label": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "recipient_name": {
+                        "type": "string"
+                    },
+                    "phone": {
+                        "type": "string"
+                    },
+                    "province_code": {
+                        "type": "string"
+                    },
+                    "district_code": {
+                        "type": "string"
+                    },
+                    "ward_code": {
+                        "type": "string"
+                    },
+                    "address_line": {
+                        "type": "string"
+                    },
+                    "postal_code": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "is_default": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "id",
+                    "label",
+                    "recipient_name",
+                    "phone",
+                    "province_code",
+                    "district_code",
+                    "ward_code",
+                    "address_line",
+                    "postal_code",
+                    "is_default"
+                ],
+                "title": "CustomerAddressResource"
+            },
             "ForgotPasswordRequest": {
                 "type": "object",
                 "properties": {
@@ -7450,6 +7766,61 @@
                 ],
                 "title": "StoreCategoryRequest"
             },
+            "StoreCustomerAddressRequest": {
+                "type": "object",
+                "properties": {
+                    "label": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 255
+                    },
+                    "recipient_name": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "phone": {
+                        "type": "string",
+                        "maxLength": 32
+                    },
+                    "province_code": {
+                        "type": "string",
+                        "maxLength": 32
+                    },
+                    "district_code": {
+                        "type": "string",
+                        "maxLength": 32
+                    },
+                    "ward_code": {
+                        "type": "string",
+                        "maxLength": 32
+                    },
+                    "address_line": {
+                        "type": "string",
+                        "maxLength": 500
+                    },
+                    "postal_code": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 16
+                    },
+                    "is_default": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "recipient_name",
+                    "phone",
+                    "province_code",
+                    "district_code",
+                    "ward_code",
+                    "address_line"
+                ],
+                "title": "StoreCustomerAddressRequest"
+            },
             "StoreProductRequest": {
                 "type": "object",
                 "properties": {
@@ -7822,6 +8193,81 @@
                     }
                 },
                 "title": "UpdateCategoryRequest"
+            },
+            "UpdateCustomerAddressRequest": {
+                "type": "object",
+                "properties": {
+                    "label": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 255
+                    },
+                    "recipient_name": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "phone": {
+                        "type": "string",
+                        "maxLength": 32
+                    },
+                    "province_code": {
+                        "type": "string",
+                        "maxLength": 32
+                    },
+                    "district_code": {
+                        "type": "string",
+                        "maxLength": 32
+                    },
+                    "ward_code": {
+                        "type": "string",
+                        "maxLength": 32
+                    },
+                    "address_line": {
+                        "type": "string",
+                        "maxLength": 500
+                    },
+                    "postal_code": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 16
+                    },
+                    "is_default": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "recipient_name",
+                    "phone",
+                    "province_code",
+                    "district_code",
+                    "ward_code",
+                    "address_line"
+                ],
+                "title": "UpdateCustomerAddressRequest"
+            },
+            "UpdateMeRequest": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "phone": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 32
+                    }
+                },
+                "required": [
+                    "name"
+                ],
+                "title": "UpdateMeRequest"
             },
             "UpdateOrderStatusRequest": {
                 "type": "object",

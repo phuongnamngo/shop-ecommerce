@@ -1,12 +1,19 @@
 export class StorefrontBrowserError extends Error {
   status: number;
   code?: string;
+  field?: string | null;
 
-  constructor(status: number, message: string, code?: string) {
+  constructor(
+    status: number,
+    message: string,
+    code?: string,
+    field?: string | null,
+  ) {
     super(message);
     this.name = "StorefrontBrowserError";
     this.status = status;
     this.code = code;
+    this.field = field;
   }
 }
 
@@ -62,6 +69,7 @@ export async function storefrontBrowserFetch<T>(
       res.status,
       primary?.message ?? `Request failed (${res.status})`,
       primary?.code,
+      primary?.field,
     );
   }
 
@@ -74,6 +82,9 @@ export async function storefrontBrowserFetch<T>(
 
 export function storefrontErrorMessage(error: unknown): string {
   if (error instanceof StorefrontBrowserError) {
+    if (error.field === "phone" && error.code === "VALIDATION_FAILED") {
+      return "Số điện thoại đã được dùng.";
+    }
     switch (error.code) {
       case "CART_INVALID_TOKEN":
         return "Giỏ hàng không còn hiệu lực. Thêm lại sản phẩm.";
@@ -87,6 +98,18 @@ export function storefrontErrorMessage(error: unknown): string {
         return "Không tìm thấy đơn hàng.";
       case "PAYMENT_METHOD_INVALID":
         return "Phương thức thanh toán không khả dụng.";
+      case "AUTH_INVALID_CREDENTIALS":
+        return "Email hoặc mật khẩu không đúng.";
+      case "AUTH_ACCOUNT_INACTIVE":
+        return "Tài khoản đang inactive.";
+      case "AUTH_ACCOUNT_BANNED":
+        return "Tài khoản đã bị khóa.";
+      case "AUTH_THROTTLED":
+        return "Thử quá nhiều lần. Đợi một lát rồi thử lại.";
+      case "AUTH_RESET_TOKEN_INVALID":
+        return "Link đặt lại mật khẩu không hợp lệ hoặc đã hết hạn.";
+      case "AUTH_UNAUTHENTICATED":
+        return "Phiên đăng nhập đã hết. Đăng nhập lại.";
       default:
         return error.message || `Lỗi ${error.status}`;
     }

@@ -34,6 +34,7 @@ use App\Http\Controllers\Api\V1\Customer\Auth\LoginController as CustomerLoginCo
 use App\Http\Controllers\Api\V1\Customer\Auth\LogoutController as CustomerLogoutController;
 use App\Http\Controllers\Api\V1\Customer\Auth\RegisterController as CustomerRegisterController;
 use App\Http\Controllers\Api\V1\Customer\Auth\ResetPasswordController as CustomerResetPasswordController;
+use App\Http\Controllers\Api\V1\Customer\AddressController as CustomerAddressController;
 use App\Http\Controllers\Api\V1\Customer\MeController as CustomerMeController;
 use App\Http\Controllers\Api\V1\Customer\OrderController as CustomerOrderController;
 use App\Http\Controllers\Api\V1\Payment\VnPayController;
@@ -73,6 +74,11 @@ Route::prefix('v1')->group(function () {
         ->prefix('customer')
         ->group(function () {
             Route::get('me', CustomerMeController::class);
+            Route::patch('me', [CustomerMeController::class, 'update']);
+            Route::get('addresses', [CustomerAddressController::class, 'index']);
+            Route::post('addresses', [CustomerAddressController::class, 'store']);
+            Route::patch('addresses/{id}', [CustomerAddressController::class, 'update']);
+            Route::delete('addresses/{id}', [CustomerAddressController::class, 'destroy']);
             Route::get('cart', [CartController::class, 'customerShow']);
             Route::post('cart/items', [CartController::class, 'customerStoreItem']);
             Route::patch('cart/items/{itemId}', [CartController::class, 'customerUpdateItem']);

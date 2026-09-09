@@ -18,7 +18,8 @@ it('registers customer with 201 and session', function () {
     $this->getJson('/api/v1/customer/me')
         ->assertOk()
         ->assertJsonPath('data.email', 'ada@example.com')
-        ->assertJsonPath('data.phone', null);
+        ->assertJsonPath('data.phone', null)
+        ->assertJsonMissingPath('data.password');
 });
 
 it('logs in and logs out customer', function () {
@@ -81,6 +82,39 @@ it('rejects inactive customer with AUTH_ACCOUNT_INACTIVE', function () {
     ])
         ->assertForbidden()
         ->assertJsonFragment(['code' => ErrorCode::AUTH_ACCOUNT_INACTIVE]);
+});
+
+it('patches customer name and phone on me', function () {
+    $customer = Customer::factory()->create([
+        'name' => 'Old',
+        'email' => 'me@example.com',
+        'phone' => '0900000001',
+        'password' => 'password123',
+    ]);
+
+    $this->actingAs($customer, 'customer')
+        ->patchJson('/api/v1/customer/me', ['name' => 'New Name', 'phone' => '0900000002'])
+        ->assertOk()
+        ->assertJsonPath('data.name', 'New Name')
+        ->assertJsonPath('data.phone', '0900000002')
+        ->assertJsonPath('data.email', 'me@example.com')
+        ->assertJsonMissingPath('data.password');
+
+    expect($customer->fresh()->email)->toBe('me@example.com');
+});
+
+it('rejects duplicate phone on patch me', function () {
+    Customer::factory()->create(['phone' => '0900111222']);
+    $customer = Customer::factory()->create(['phone' => '0900333444']);
+
+    $this->actingAs($customer, 'customer')
+        ->patchJson('/api/v1/customer/me', ['name' => $customer->name, 'phone' => '0900111222'])
+        ->assertUnprocessable()
+        ->assertJsonPath('errors.0.field', 'phone');
+});
+
+it('rejects unauthenticated patch me', function () {
+    $this->patchJson('/api/v1/customer/me', ['name' => 'X'])->assertUnauthorized();
 });
 
 it('throttles customer login', function () {

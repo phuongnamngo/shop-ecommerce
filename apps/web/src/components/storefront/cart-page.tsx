@@ -12,8 +12,7 @@ import {
   storefrontMediaUrl,
 } from "@/lib/api/storefront/browser";
 import {
-  fetchCart,
-  getCartToken,
+  fetchActiveCart,
   removeCartItem,
   updateCartItem,
 } from "@/lib/api/storefront/cart";
@@ -28,14 +27,9 @@ export function CartPage() {
 
   const load = useCallback(async () => {
     await Promise.resolve();
-    if (!getCartToken()) {
-      setCart(null);
-      setLoading(false);
-      return;
-    }
     setError(null);
     try {
-      setCart(await fetchCart());
+      setCart(await fetchActiveCart());
     } catch (e) {
       if (e instanceof StorefrontBrowserError && e.code === "CART_INVALID_TOKEN") {
         setCart(null);
