@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
     'subtotal', 'discount_total', 'shipping_total', 'tax_total', 'grand_total',
     'shipping_address_snapshot', 'billing_address_snapshot',
     'shipping_method_id', 'coupon_id',
+    'guest_lookup_token_hash', 'guest_lookup_token_cipher', 'guest_lookup_token_expires_at',
 ])]
 class Order extends Model
 {
@@ -31,6 +32,7 @@ class Order extends Model
             'grand_total' => 'decimal:2',
             'shipping_address_snapshot' => 'array',
             'billing_address_snapshot' => 'array',
+            'guest_lookup_token_expires_at' => 'datetime',
         ];
     }
 

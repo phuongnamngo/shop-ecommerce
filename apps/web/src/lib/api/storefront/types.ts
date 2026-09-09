@@ -83,3 +83,96 @@ export type PublicProductDetail = PublicProductListItem & {
   images: PublicVariant["images"];
   variants: PublicVariant[];
 };
+
+export type StorefrontCartItem = {
+  id: number;
+  product_variant_id: number;
+  qty: number;
+  unit_price: string;
+  line_total: string;
+  product: { name: string; slug: string } | null;
+  sku: string | null;
+  attributes: PublicVariant["attributes"];
+  thumbnail: PublicImage | null;
+};
+
+export type StorefrontCart = {
+  id: number;
+  currency: string;
+  items: StorefrontCartItem[];
+  subtotal: string;
+};
+
+export type ShippingRate = {
+  id: number;
+  price: string;
+  min_order_amount: string | null;
+  max_order_amount: string | null;
+};
+
+export type ShippingMethod = {
+  id: number;
+  code: string;
+  name: string;
+  rates: ShippingRate[];
+};
+
+export type GeoNode = {
+  code: string;
+  name: string;
+};
+
+export type GuestCheckoutBody = {
+  shipping_address: {
+    recipient_name: string;
+    phone: string;
+    province_code: string;
+    district_code: string;
+    ward_code: string;
+    address_line: string;
+  };
+  shipping_method_id: number;
+  shipping_rate_id: number;
+  payment_method_code: "cod" | "vnpay";
+  coupon_code?: string;
+};
+
+export type CheckoutCreated = {
+  id: number;
+  number: string;
+  status: string;
+  subtotal: string;
+  discount_total: string;
+  shipping_total: string;
+  tax_total: string;
+  grand_total: string;
+  items: unknown[];
+  next_action: string;
+  payment: {
+    provider: string;
+    status: string;
+    redirect_url?: string;
+  };
+  lookup_token?: string;
+};
+
+export type GuestOrderItem = {
+  name: string;
+  sku: string;
+  qty: number;
+  unit_price: string;
+  line_total: string;
+};
+
+export type GuestOrder = {
+  number: string;
+  status: string;
+  currency: string;
+  subtotal: string;
+  discount_total: string;
+  shipping_total: string;
+  tax_total: string;
+  grand_total: string;
+  items: GuestOrderItem[];
+  shipping_address: GuestCheckoutBody["shipping_address"] | null;
+};

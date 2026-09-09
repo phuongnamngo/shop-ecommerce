@@ -46,6 +46,8 @@ final class ErrorCode
 
     public const ORDER_INVALID_TRANSITION = 'ORDER_INVALID_TRANSITION';
 
+    public const ORDER_LOOKUP_INVALID = 'ORDER_LOOKUP_INVALID';
+
     public const COUPON_INVALID = 'COUPON_INVALID';
 
     public const PAYMENT_METHOD_INVALID = 'PAYMENT_METHOD_INVALID';

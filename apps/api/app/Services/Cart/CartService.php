@@ -53,7 +53,7 @@ final class CartService
         $item->unit_price = $variant->price;
         $item->save();
 
-        return $cart->refresh()->load('items.variant');
+        return $this->present($cart->refresh());
     }
 
     public function update(Cart $cart, int $itemId, int $qty): Cart
@@ -73,7 +73,7 @@ final class CartService
 
         $item->update(['qty' => $qty, 'unit_price' => $variant->price]);
 
-        return $cart->refresh()->load('items.variant');
+        return $this->present($cart->refresh());
     }
 
     public function merge(Customer $customer, string $token): Cart
@@ -95,7 +95,16 @@ final class CartService
             }
             $guest->update(['status' => 'merged']);
 
-            return $cart->refresh()->load('items');
+            return $this->present($cart->refresh());
         });
+    }
+
+    public function present(Cart $cart): Cart
+    {
+        return $cart->load([
+            'items.variant.product.images',
+            'items.variant.images',
+            'items.variant.attributeOptions.attribute',
+        ]);
     }
 }

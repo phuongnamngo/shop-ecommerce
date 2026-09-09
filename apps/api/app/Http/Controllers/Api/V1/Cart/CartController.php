@@ -21,17 +21,17 @@ final class CartController extends Controller
     #[Response(200, 'Guest cart.', type: 'array{data: CartResource, meta: array{cart_token: string}}')]
     public function show(Request $request): JsonResponse
     {
-        $cart = $this->carts->guest($request->header('X-Cart-Token'));
+        $cart = $this->carts->present($this->carts->guest($request->header('X-Cart-Token')));
 
-        return ApiResponse::success((new CartResource($cart->load('items.variant')))->resolve(), ['cart_token' => $cart->session_id]);
+        return ApiResponse::success((new CartResource($cart))->resolve(), ['cart_token' => $cart->session_id]);
     }
 
     #[Response(201, 'Created guest cart.', type: 'array{data: CartResource, meta: array{cart_token: string}}')]
     public function createGuest(): JsonResponse
     {
-        $cart = $this->carts->createGuest();
+        $cart = $this->carts->present($this->carts->createGuest());
 
-        return ApiResponse::success((new CartResource($cart->load('items.variant')))->resolve(), ['cart_token' => $cart->session_id], 201);
+        return ApiResponse::success((new CartResource($cart))->resolve(), ['cart_token' => $cart->session_id], 201);
     }
 
     #[HeaderParameter('X-Cart-Token', description: 'Opaque guest cart token.', type: 'string', format: 'uuid', required: true)]
@@ -47,9 +47,9 @@ final class CartController extends Controller
     #[Response(200, 'Customer cart.', type: 'array{data: CartResource, meta: object}')]
     public function customerShow(Request $request): JsonResponse
     {
-        $cart = $this->carts->customer($request->user('customer'));
+        $cart = $this->carts->present($this->carts->customer($request->user('customer')));
 
-        return ApiResponse::success((new CartResource($cart->load('items.variant')))->resolve());
+        return ApiResponse::success((new CartResource($cart))->resolve());
     }
 
     #[Response(201, 'Updated customer cart.', type: 'array{data: CartResource, meta: object}')]

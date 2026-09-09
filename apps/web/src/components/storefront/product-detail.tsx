@@ -1,12 +1,16 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import Link from "next/link";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { storefrontErrorMessage } from "@/lib/api/storefront/browser";
 import { absoluteMediaUrl } from "@/lib/api/storefront/client";
+import { addCartItem } from "@/lib/api/storefront/cart";
 import { formatVnd } from "@/lib/api/storefront/money";
 import type { PublicProductDetail } from "@/lib/api/storefront/types";
+import { emitCartChanged } from "@/lib/storefront/cart-events";
 
 export function ProductDetail({ product }: { product: PublicProductDetail }) {
   const initialId =
@@ -18,19 +22,37 @@ export function ProductDetail({ product }: { product: PublicProductDetail }) {
   const selected =
     product.variants.find((v) => v.id === selectedId) ?? product.variants[0];
 
-  const gallery = useMemo(() => {
-    const fromVariant = selected?.images?.length ? selected.images : product.images;
-    return [...(fromVariant ?? [])].sort((a, b) => {
+  const gallery = [...(selected?.images?.length ? selected.images : product.images)].sort(
+    (a, b) => {
       const pa = a.is_primary ? 0 : 1;
       const pb = b.is_primary ? 0 : 1;
       if (pa !== pb) return pa - pb;
       return (a.position ?? 0) - (b.position ?? 0);
-    });
-  }, [product.images, selected]);
+    },
+  );
 
   const [active, setActive] = useState(0);
+  const [pending, setPending] = useState(false);
+  const [added, setAdded] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const main = gallery[Math.min(active, Math.max(gallery.length - 1, 0))];
   const mainSrc = absoluteMediaUrl(main?.url ?? main?.thumbnail_url);
+
+  async function onAddToCart() {
+    if (!selected) return;
+    setPending(true);
+    setError(null);
+    try {
+      await addCartItem(selected.id, 1);
+      emitCartChanged();
+      setAdded(true);
+    } catch (e) {
+      setAdded(false);
+      setError(storefrontErrorMessage(e));
+    } finally {
+      setPending(false);
+    }
+  }
 
   return (
     <div className="grid gap-10 md:grid-cols-2">
@@ -134,10 +156,26 @@ export function ProductDetail({ product }: { product: PublicProductDetail }) {
         ) : null}
 
         <div className="mt-8 space-y-2">
-          <Button disabled className="w-full sm:w-auto">
-            Thêm vào giỏ
+          <Button
+            className="w-full sm:w-auto"
+            disabled={!selected || pending}
+            onClick={() => void onAddToCart()}
+          >
+            {pending ? "Đang thêm…" : "Thêm vào giỏ"}
           </Button>
-          <p className="text-xs text-zinc-500">Sắp mở bán — chưa thể đặt hàng.</p>
+          {added ? (
+            <p className="text-sm text-zinc-700">
+              Đã thêm vào giỏ.{" "}
+              <Link href="/cart" className="underline">
+                Xem giỏ hàng
+              </Link>
+            </p>
+          ) : null}
+          {error ? (
+            <p className="text-sm text-red-700" role="alert">
+              {error}
+            </p>
+          ) : null}
         </div>
       </div>
     </div>

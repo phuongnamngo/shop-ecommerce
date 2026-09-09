@@ -96,6 +96,11 @@ it('discovers every inventory cart checkout and order operation', function () {
         '/api/v1/customer/cart/items/{itemId}' => ['delete', 'patch'],
         '/api/v1/customer/cart/merge' => ['post'],
         '/api/v1/checkout' => ['post'],
+        '/api/v1/orders/lookup' => ['get'],
+        '/api/v1/shipping/methods' => ['get'],
+        '/api/v1/geo/provinces' => ['get'],
+        '/api/v1/geo/provinces/{code}/districts' => ['get'],
+        '/api/v1/geo/districts/{code}/wards' => ['get'],
         '/api/v1/payments/vnpay/ipn' => ['get'],
         '/api/v1/payments/vnpay/return' => ['get'],
         '/api/v1/customer/orders' => ['get'],
@@ -121,7 +126,7 @@ it('documents commerce response resource shapes and cardinality', function () {
     expect($cart['type'])->toBe('object')
         ->and(array_keys($cart['properties']))->toContain('id', 'currency', 'items', 'subtotal');
     $cartItem = resolveCommerceSchema($document, $cart['properties']['items']['items']);
-    expect(array_keys($cartItem['properties']))->toContain('id', 'product_variant_id', 'qty', 'unit_price', 'line_total');
+    expect(array_keys($cartItem['properties']))->toContain('id', 'product_variant_id', 'qty', 'unit_price', 'line_total', 'product', 'sku', 'attributes', 'thumbnail');
 
     $movement = commerceSuccessDataSchema($document, 'post', '/api/v1/admin/inventory/movements', '201');
     expect($movement['type'])->toBe('object')
@@ -131,6 +136,11 @@ it('documents commerce response resource shapes and cardinality', function () {
     $order = commerceSuccessDataSchema($document, 'get', '/api/v1/customer/orders/{id}');
     expect($order['type'])->toBe('object')
         ->and(array_keys($order['properties']))->toContain('id', 'number', 'status', 'items');
+
+    $checkoutCreated = commerceSuccessDataSchema($document, 'post', '/api/v1/checkout', '201');
+    expect(array_keys($checkoutCreated['properties']))->toContain('lookup_token');
+    $lookup = commerceSuccessDataSchema($document, 'get', '/api/v1/orders/lookup');
+    expect(array_keys($lookup['properties']))->toContain('number', 'status', 'grand_total', 'items', 'shipping_address');
 
     foreach ([
         ['/api/v1/admin/inventory/warehouses', 'id'],
@@ -197,7 +207,7 @@ it('documents order snapshots and conditional nested detail fields', function ()
     expect($adminDetail['properties']['items']['type'])->toBe('array')
         ->and(array_keys($item['properties']))->toContain('id', 'sku', 'qty', 'unit_price', 'line_total')
         ->and($adminDetail['properties']['status_history']['type'])->toBe('array')
-        ->and(array_keys($history['properties']))->toContain('id', 'from_status', 'to_status', 'note');
+        ->and(array_keys($history['properties']))->toContain('from_status', 'to_status', 'created_at');
 });
 
 it('documents empty success metadata as an object', function () {

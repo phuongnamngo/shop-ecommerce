@@ -27,7 +27,7 @@ final class CheckoutController extends Controller
     #[BodyParameter('shipping_address', description: 'Provide exactly one address source: this inline address or customer_address_id.', type: 'array{recipient_name: string, phone: string, province_code: string, district_code: string, ward_code: string, address_line: string}|null')]
     #[HeaderParameter('X-Cart-Token', description: 'Opaque guest cart token; omit for authenticated customer checkout.', type: 'string', format: 'uuid')]
     #[BodyParameter('payment_method_code', description: 'Active payment method code: cod or vnpay.', type: 'string', required: true, example: 'cod')]
-    #[Response(201, 'Created pending order.', type: 'array{data: array{id: int, number: string, status: string, subtotal: string, discount_total: string, shipping_total: string, tax_total: string, grand_total: string, items: list<\App\Models\OrderItem>, next_action: string, payment: array{provider: string, status: string, redirect_url?: string}}, meta: object}')]
+    #[Response(201, 'Created pending order.', type: 'array{data: array{id: int, number: string, status: string, subtotal: string, discount_total: string, shipping_total: string, tax_total: string, grand_total: string, items: list<\App\Models\OrderItem>, next_action: string, payment: array{provider: string, status: string, redirect_url?: string}, lookup_token?: string}, meta: object}')]
     public function store(CheckoutRequest $request): JsonResponse
     {
         $data = $request->validated();
@@ -74,7 +74,7 @@ final class CheckoutController extends Controller
         $payment = $result['payment'];
         $nextAction = ($payment['provider'] ?? '') === 'vnpay' ? 'redirect_payment' : 'payment_pending';
 
-        return ApiResponse::success([
+        $payload = [
             'id' => $order->id,
             'number' => $order->number,
             'status' => $order->status,
@@ -86,6 +86,11 @@ final class CheckoutController extends Controller
             'items' => $order->items,
             'next_action' => $nextAction,
             'payment' => $payment,
-        ], status: 201);
+        ];
+        if (isset($result['lookup_token'])) {
+            $payload['lookup_token'] = $result['lookup_token'];
+        }
+
+        return ApiResponse::success($payload, status: 201);
     }
 }

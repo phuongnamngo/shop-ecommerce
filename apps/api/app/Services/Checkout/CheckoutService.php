@@ -15,6 +15,7 @@ use App\Models\StockItem;
 use App\Models\Warehouse;
 use App\Support\CommerceException;
 use App\Support\ErrorCode;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -24,7 +25,7 @@ final class CheckoutService
 
     /**
      * @param  array<string, mixed>  $payload
-     * @return array{order: Order, payment: array{provider: string, status: string, redirect_url?: string}}
+     * @return array{order: Order, payment: array{provider: string, status: string, redirect_url?: string}, lookup_token?: string}
      */
     public function checkout(Cart $cart, ?Customer $customer, array $payload): array
     {
@@ -88,6 +89,7 @@ final class CheckoutService
                 'grand_total' => $subtotal - $discount + $shipping, 'shipping_address_snapshot' => $address,
                 'billing_address_snapshot' => $address, 'shipping_method_id' => $payload['shipping_method_id'], 'coupon_id' => $coupon?->id,
             ]);
+            $lookupToken = $customer === null ? $this->issueGuestLookupToken($order) : null;
 
             $expiresAt = now()->addMinutes((int) config('commerce.reservation_ttl_minutes', 30));
             foreach ($lines as $line) {
@@ -133,11 +135,28 @@ final class CheckoutService
                 $payment['redirect_url'] = $initiation['redirect_url'];
             }
 
-            return [
+            $result = [
                 'order' => $order->load('items', 'statusHistories'),
                 'payment' => $payment,
             ];
+            if ($lookupToken !== null) {
+                $result['lookup_token'] = $lookupToken;
+            }
+
+            return $result;
         }, 3);
+    }
+
+    private function issueGuestLookupToken(Order $order): string
+    {
+        $plain = bin2hex(random_bytes(32));
+        $order->update([
+            'guest_lookup_token_hash' => hash('sha256', $plain),
+            'guest_lookup_token_cipher' => Crypt::encryptString($plain),
+            'guest_lookup_token_expires_at' => now()->addDays(30),
+        ]);
+
+        return $plain;
     }
 
     private function coupon(?string $code, ?Customer $customer, int $subtotal): array

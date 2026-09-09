@@ -4,13 +4,16 @@ namespace App\Http\Controllers\Api\V1\Payment;
 
 use App\Contracts\PaymentGateway;
 use App\Http\Controllers\Controller;
+use App\Models\Order;
 use App\Services\Payment\PaymentService;
 use App\Support\CommerceException;
 use App\Support\ErrorCode;
 use Dedoc\Scramble\Attributes\Response;
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response as HttpResponse;
+use Illuminate\Support\Facades\Crypt;
 
 final class VnPayController extends Controller
 {
@@ -55,6 +58,7 @@ final class VnPayController extends Controller
         $frontend = rtrim((string) config('app.frontend_url'), '/');
         $status = 'failed';
         $number = (string) $request->query('vnp_TxnRef', '');
+        $token = null;
 
         try {
             $payload = $request->query();
@@ -75,10 +79,24 @@ final class VnPayController extends Controller
             if ($txn?->order?->status === 'cancelled') {
                 $status = 'cancelled';
             }
+
+            $order = Order::query()->where('number', $result->orderRef)->first();
+            $cipher = $order?->guest_lookup_token_cipher;
+            $expiresAt = $order?->guest_lookup_token_expires_at;
+            if (is_string($cipher) && $cipher !== '' && $expiresAt !== null && $expiresAt->isFuture()) {
+                $token = Crypt::decryptString($cipher);
+            }
         } catch (CommerceException) {
             $status = 'failed';
+        } catch (DecryptException) {
+            $token = null;
         }
 
-        return redirect()->away($frontend.'/checkout/result?number='.urlencode($number).'&status='.urlencode($status));
+        $query = 'number='.urlencode($number).'&status='.urlencode($status);
+        if (is_string($token) && $token !== '') {
+            $query .= '&token='.urlencode($token);
+        }
+
+        return redirect()->away($frontend.'/checkout/result?'.$query);
     }
 }

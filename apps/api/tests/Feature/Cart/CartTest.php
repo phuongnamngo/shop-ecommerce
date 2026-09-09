@@ -1,8 +1,11 @@
 <?php
 
+use App\Models\Attribute;
+use App\Models\AttributeOption;
 use App\Models\Cart;
 use App\Models\Customer;
 use App\Models\Product;
+use App\Models\ProductImage;
 use App\Models\ProductVariant;
 use Illuminate\Support\Str;
 
@@ -72,6 +75,45 @@ it('merges a guest cart into the authenticated customer cart without duplicate v
     $this->actingAs($customer, 'customer')->postJson('/api/v1/customer/cart/merge', ['guest_token' => $guestToken])->assertOk();
     $this->actingAs($customer, 'customer')->getJson('/api/v1/customer/cart')->assertOk()->assertJsonCount(1, 'data.items')->assertJsonPath('data.items.0.qty', 3)->assertJsonPath('data.items.0.unit_price', '100000.00');
     expect(Cart::where('session_id', $guestToken)->firstOrFail()->status)->toBe('merged');
+});
+
+it('includes catalog fields on guest cart lines', function () {
+    $product = Product::factory()->published()->create(['name' => 'Watch Alpha', 'slug' => 'watch-alpha']);
+    $variant = $product->variants()->firstOrFail();
+    $variant->update(['status' => 'active', 'sku' => 'WA-1', 'price' => 100000]);
+    ProductImage::query()->create([
+        'product_id' => $product->id,
+        'path' => 'catalog/p.jpg',
+        'alt' => 'p',
+        'position' => 0,
+        'is_primary' => true,
+    ]);
+    $token = cartToken();
+
+    $this->withHeader('X-Cart-Token', $token)
+        ->postJson('/api/v1/cart/items', ['product_variant_id' => $variant->id, 'qty' => 1])
+        ->assertCreated()
+        ->assertJsonPath('data.items.0.product.slug', 'watch-alpha')
+        ->assertJsonPath('data.items.0.sku', 'WA-1')
+        ->assertJsonPath('data.items.0.attributes', [])
+        ->assertJsonPath('data.items.0.thumbnail.alt', 'p');
+});
+
+it('maps variant attribute options like PublicProductResource', function () {
+    $attribute = Attribute::factory()->create(['name' => 'Color', 'slug' => 'color']);
+    $option = AttributeOption::factory()->create(['attribute_id' => $attribute->id, 'label' => 'Red']);
+    $product = Product::factory()->published()->create();
+    $variant = $product->variants()->firstOrFail();
+    $variant->update(['status' => 'active']);
+    $variant->attributeOptions()->attach($option->id, ['attribute_id' => $attribute->id]);
+    $token = cartToken();
+
+    $this->withHeader('X-Cart-Token', $token)
+        ->postJson('/api/v1/cart/items', ['product_variant_id' => $variant->id, 'qty' => 1])
+        ->assertCreated()
+        ->assertJsonPath('data.items.0.attributes.0.name', 'Color')
+        ->assertJsonPath('data.items.0.attributes.0.slug', 'color')
+        ->assertJsonPath('data.items.0.attributes.0.option.label', 'Red');
 });
 
 it('keeps customer cart mutations scoped to the authenticated customer', function () {

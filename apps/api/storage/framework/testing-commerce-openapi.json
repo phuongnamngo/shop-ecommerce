@@ -2437,6 +2437,9 @@
                                                         "provider",
                                                         "status"
                                                     ]
+                                                },
+                                                "lookup_token": {
+                                                    "type": "string"
                                                 }
                                             },
                                             "required": [
@@ -2796,6 +2799,419 @@
                     },
                     "422": {
                         "$ref": "#/components/responses/ValidationException"
+                    }
+                },
+                "security": []
+            }
+        },
+        "/api/v1/geo/provinces": {
+            "get": {
+                "operationId": "geo.provinces",
+                "tags": [
+                    "Geo"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Provinces.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "code": {
+                                                        "type": "string"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "code",
+                                                    "name"
+                                                ]
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": []
+            }
+        },
+        "/api/v1/geo/provinces/{code}/districts": {
+            "get": {
+                "operationId": "geo.districts",
+                "tags": [
+                    "Geo"
+                ],
+                "parameters": [
+                    {
+                        "name": "code",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Districts in a province.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "code": {
+                                                        "type": "string"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "code",
+                                                    "name"
+                                                ]
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "null"
+                                        },
+                                        "meta": {
+                                            "type": "string"
+                                        },
+                                        "errors": {
+                                            "type": "array",
+                                            "prefixItems": [
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "code": {
+                                                            "type": "string",
+                                                            "const": "CATALOG_NOT_FOUND"
+                                                        },
+                                                        "message": {
+                                                            "type": "string",
+                                                            "const": "Not found."
+                                                        },
+                                                        "field": {
+                                                            "type": "null"
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "code",
+                                                        "message",
+                                                        "field"
+                                                    ]
+                                                }
+                                            ],
+                                            "minItems": 1,
+                                            "maxItems": 1,
+                                            "additionalItems": false
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta",
+                                        "errors"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": []
+            }
+        },
+        "/api/v1/geo/districts/{code}/wards": {
+            "get": {
+                "operationId": "geo.wards",
+                "tags": [
+                    "Geo"
+                ],
+                "parameters": [
+                    {
+                        "name": "code",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Wards in a district.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "code": {
+                                                        "type": "string"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "code",
+                                                    "name"
+                                                ]
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "null"
+                                        },
+                                        "meta": {
+                                            "type": "string"
+                                        },
+                                        "errors": {
+                                            "type": "array",
+                                            "prefixItems": [
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "code": {
+                                                            "type": "string",
+                                                            "const": "CATALOG_NOT_FOUND"
+                                                        },
+                                                        "message": {
+                                                            "type": "string",
+                                                            "const": "Not found."
+                                                        },
+                                                        "field": {
+                                                            "type": "null"
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "code",
+                                                        "message",
+                                                        "field"
+                                                    ]
+                                                }
+                                            ],
+                                            "minItems": 1,
+                                            "maxItems": 1,
+                                            "additionalItems": false
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta",
+                                        "errors"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": []
+            }
+        },
+        "/api/v1/orders/lookup": {
+            "get": {
+                "operationId": "guestOrderLookup.show",
+                "tags": [
+                    "GuestOrderLookup"
+                ],
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "query",
+                        "description": "Guest lookup token issued once at checkout.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Guest order lookup.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "number": {
+                                                    "type": "string"
+                                                },
+                                                "status": {
+                                                    "type": "string"
+                                                },
+                                                "currency": {
+                                                    "type": "string"
+                                                },
+                                                "subtotal": {
+                                                    "type": "string"
+                                                },
+                                                "discount_total": {
+                                                    "type": "string"
+                                                },
+                                                "shipping_total": {
+                                                    "type": "string"
+                                                },
+                                                "tax_total": {
+                                                    "type": "string"
+                                                },
+                                                "grand_total": {
+                                                    "type": "string"
+                                                },
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "name": {
+                                                                "type": "string"
+                                                            },
+                                                            "sku": {
+                                                                "type": "string"
+                                                            },
+                                                            "qty": {
+                                                                "type": "integer"
+                                                            },
+                                                            "unit_price": {
+                                                                "type": "string"
+                                                            },
+                                                            "line_total": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "name",
+                                                            "sku",
+                                                            "qty",
+                                                            "unit_price",
+                                                            "line_total"
+                                                        ]
+                                                    }
+                                                },
+                                                "shipping_address": {
+                                                    "type": [
+                                                        "object",
+                                                        "null"
+                                                    ],
+                                                    "properties": {
+                                                        "recipient_name": {
+                                                            "type": "string"
+                                                        },
+                                                        "phone": {
+                                                            "type": "string"
+                                                        },
+                                                        "province_code": {
+                                                            "type": "string"
+                                                        },
+                                                        "district_code": {
+                                                            "type": "string"
+                                                        },
+                                                        "ward_code": {
+                                                            "type": "string"
+                                                        },
+                                                        "address_line": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "recipient_name",
+                                                        "phone",
+                                                        "province_code",
+                                                        "district_code",
+                                                        "ward_code",
+                                                        "address_line"
+                                                    ]
+                                                }
+                                            },
+                                            "required": [
+                                                "number",
+                                                "status",
+                                                "currency",
+                                                "subtotal",
+                                                "discount_total",
+                                                "shipping_total",
+                                                "tax_total",
+                                                "grand_total",
+                                                "items",
+                                                "shipping_address"
+                                            ]
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
                     }
                 },
                 "security": []
@@ -3253,6 +3669,89 @@
                                                 "email",
                                                 "status",
                                                 "roles"
+                                            ]
+                                        },
+                                        "meta": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/dashboard/metrics": {
+            "get": {
+                "operationId": "dashboard.metrics",
+                "tags": [
+                    "Metrics"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "today": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "order_count": {
+                                                            "type": "integer"
+                                                        },
+                                                        "revenue": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "order_count",
+                                                        "revenue"
+                                                    ]
+                                                },
+                                                "month": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "order_count": {
+                                                            "type": "integer"
+                                                        },
+                                                        "revenue": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "order_count",
+                                                        "revenue"
+                                                    ]
+                                                },
+                                                "currency": {
+                                                    "type": "string",
+                                                    "const": "VND"
+                                                },
+                                                "as_of": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
+                                                }
+                                            },
+                                            "required": [
+                                                "today",
+                                                "month",
+                                                "currency",
+                                                "as_of"
                                             ]
                                         },
                                         "meta": {
@@ -5559,6 +6058,91 @@
                 }
             }
         },
+        "/api/v1/shipping/methods": {
+            "get": {
+                "operationId": "shippingMethod.index",
+                "tags": [
+                    "ShippingMethod"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Active shipping methods with nationwide rates.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "code": {
+                                                        "type": "string"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "rates": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "price": {
+                                                                    "type": "string"
+                                                                },
+                                                                "min_order_amount": {
+                                                                    "type": [
+                                                                        "string",
+                                                                        "null"
+                                                                    ]
+                                                                },
+                                                                "max_order_amount": {
+                                                                    "type": [
+                                                                        "string",
+                                                                        "null"
+                                                                    ]
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "id",
+                                                                "price",
+                                                                "min_order_amount",
+                                                                "max_order_amount"
+                                                            ]
+                                                        }
+                                                    }
+                                                },
+                                                "required": [
+                                                    "id",
+                                                    "code",
+                                                    "name",
+                                                    "rates"
+                                                ]
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": []
+            }
+        },
         "/api/v1/admin/inventory/stock-items": {
             "get": {
                 "operationId": "stockItem.index",
@@ -6116,6 +6700,93 @@
                     },
                     "line_total": {
                         "type": "string"
+                    },
+                    "product": {
+                        "type": [
+                            "object",
+                            "null"
+                        ],
+                        "properties": {
+                            "name": {
+                                "type": "string"
+                            },
+                            "slug": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "name",
+                            "slug"
+                        ]
+                    },
+                    "sku": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "attributes": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "integer"
+                                },
+                                "name": {
+                                    "type": "string"
+                                },
+                                "slug": {
+                                    "type": "string"
+                                },
+                                "option": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer"
+                                        },
+                                        "label": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "id",
+                                        "label"
+                                    ]
+                                }
+                            },
+                            "required": [
+                                "id",
+                                "name",
+                                "slug",
+                                "option"
+                            ]
+                        }
+                    },
+                    "thumbnail": {
+                        "type": [
+                            "object",
+                            "null"
+                        ],
+                        "properties": {
+                            "url": {
+                                "type": "string"
+                            },
+                            "thumbnail_url": {
+                                "type": "string"
+                            },
+                            "alt": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "url",
+                            "thumbnail_url",
+                            "alt"
+                        ]
                     }
                 },
                 "required": [
@@ -6123,7 +6794,11 @@
                     "product_variant_id",
                     "qty",
                     "unit_price",
-                    "line_total"
+                    "line_total",
+                    "product",
+                    "sku",
+                    "attributes",
+                    "thumbnail"
                 ],
                 "title": "CartItemResource"
             },

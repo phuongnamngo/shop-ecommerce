@@ -26,6 +26,9 @@ use App\Http\Controllers\Api\V1\Catalog\BrandController as PublicBrandController
 use App\Http\Controllers\Api\V1\Catalog\CategoryController as PublicCategoryController;
 use App\Http\Controllers\Api\V1\Catalog\ProductController as PublicProductController;
 use App\Http\Controllers\Api\V1\Checkout\CheckoutController;
+use App\Http\Controllers\Api\V1\Geo\GeoController;
+use App\Http\Controllers\Api\V1\Order\GuestOrderLookupController;
+use App\Http\Controllers\Api\V1\Shipping\ShippingMethodController as PublicShippingMethodController;
 use App\Http\Controllers\Api\V1\Customer\Auth\ForgotPasswordController as CustomerForgotPasswordController;
 use App\Http\Controllers\Api\V1\Customer\Auth\LoginController as CustomerLoginController;
 use App\Http\Controllers\Api\V1\Customer\Auth\LogoutController as CustomerLogoutController;
@@ -49,6 +52,11 @@ Route::prefix('v1')->group(function () {
     Route::get('catalog/products/{slug}', [PublicProductController::class, 'show']);
     Route::get('catalog/brands', [PublicBrandController::class, 'index']);
     Route::get('catalog/categories', [PublicCategoryController::class, 'index']);
+    Route::get('shipping/methods', [PublicShippingMethodController::class, 'index']);
+    Route::get('geo/provinces', [GeoController::class, 'provinces']);
+    Route::get('geo/provinces/{code}/districts', [GeoController::class, 'districts']);
+    Route::get('geo/districts/{code}/wards', [GeoController::class, 'wards']);
+    Route::get('orders/lookup', [GuestOrderLookupController::class, 'show'])->middleware('throttle:60,1');
 
     Route::prefix('customer/auth')->group(function () {
         Route::post('register', CustomerRegisterController::class);

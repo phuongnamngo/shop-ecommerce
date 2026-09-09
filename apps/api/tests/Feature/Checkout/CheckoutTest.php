@@ -174,7 +174,7 @@ it('checks out the authenticated customer cart with an owned address', function 
     $address = CustomerAddress::query()->create(['customer_id' => $customer->id, 'recipient_name' => 'Customer', 'phone' => '0900000000', 'province_code' => 'P', 'district_code' => 'D', 'ward_code' => 'W', 'address_line' => 'Road', 'is_default' => true]);
 
     $this->actingAs($customer, 'customer')->postJson('/api/v1/customer/cart/items', ['product_variant_id' => $variant->id, 'qty' => 1])->assertCreated();
-    $this->actingAs($customer, 'customer')->postJson('/api/v1/checkout', ['customer_address_id' => $address->id, 'shipping_method_id' => $method->id, 'shipping_rate_id' => $rate->id, 'payment_method_code' => 'cod'])->assertCreated()->assertJsonPath('data.status', 'pending');
+    $this->actingAs($customer, 'customer')->postJson('/api/v1/checkout', ['customer_address_id' => $address->id, 'shipping_method_id' => $method->id, 'shipping_rate_id' => $rate->id, 'payment_method_code' => 'cod'])->assertCreated()->assertJsonPath('data.status', 'pending')->assertJsonMissingPath('data.lookup_token');
     $this->assertDatabaseHas('orders', ['customer_id' => $customer->id]);
 });
 

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Menu } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,14 +12,59 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { fetchCart, getCartToken } from "@/lib/api/storefront/cart";
+import { CART_CHANGED_EVENT } from "@/lib/storefront/cart-events";
 
 type NavCategory = { name: string; slug: string };
+
+function useCartQty(): number {
+  const [qty, setQty] = useState(0);
+
+  const refresh = useCallback(async () => {
+    await Promise.resolve();
+    if (!getCartToken()) {
+      setQty(0);
+      return;
+    }
+    try {
+      const cart = await fetchCart();
+      setQty(cart.items.reduce((sum, item) => sum + item.qty, 0));
+    } catch {
+      setQty(0);
+    }
+  }, []);
+
+  useEffect(() => {
+    const onChange = () => {
+      void refresh();
+    };
+    const frame = requestAnimationFrame(onChange);
+    window.addEventListener(CART_CHANGED_EVENT, onChange);
+    window.addEventListener("storage", onChange);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener(CART_CHANGED_EVENT, onChange);
+      window.removeEventListener("storage", onChange);
+    };
+  }, [refresh]);
+
+  return qty;
+}
+
+function QtyBadge({ qty }: { qty: number }) {
+  return (
+    <span className="ml-1 inline-flex min-w-5 items-center justify-center rounded-full bg-zinc-50 px-1.5 text-xs font-medium text-zinc-950">
+      {qty}
+    </span>
+  );
+}
 
 export function StorefrontHeader({
   categories,
 }: {
   categories: NavCategory[];
 }) {
+  const cartQty = useCartQty();
   return (
     <header className="border-b bg-zinc-950 text-zinc-50">
       <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3">
@@ -53,6 +99,7 @@ export function StorefrontHeader({
               ))}
               <Link href="/cart" className="hover:underline">
                 Giỏ hàng
+                <QtyBadge qty={cartQty} />
               </Link>
               <Link href="/account" className="hover:underline">
                 Tài khoản
@@ -99,7 +146,10 @@ export function StorefrontHeader({
             className="text-zinc-50 hover:bg-zinc-800"
             asChild
           >
-            <Link href="/cart">Giỏ</Link>
+            <Link href="/cart">
+              Giỏ
+              <QtyBadge qty={cartQty} />
+            </Link>
           </Button>
           <Button
             variant="ghost"
