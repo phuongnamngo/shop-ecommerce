@@ -85,3 +85,22 @@ it('attaches a variant image and exposes url on public detail', function () {
         ->assertJsonPath('data.primary_image.url', fn (string $url) => str_contains($url, 'catalog/pdp.jpg'))
         ->assertJsonPath('data.variants.0.images.0.url', fn (string $url) => str_contains($url, 'catalog/pdp.jpg'));
 });
+
+it('attaches a demo gallery path already on the product to a variant', function () {
+    Storage::disk('public')->put('demo/products/1.jpg', 'img');
+    $product = Product::factory()->published()->create();
+    $variant = $product->variants()->first();
+    ProductImage::query()->create([
+        'product_id' => $product->id,
+        'path' => 'demo/products/1.jpg',
+        'is_primary' => true,
+        'position' => 0,
+    ]);
+
+    $this->actingAs(catalogAdmin(), 'admin')
+        ->postJson('/api/v1/admin/catalog/products/'.$product->id.'/variants/'.$variant->id.'/images', [
+            'path' => 'demo/products/1.jpg',
+        ])
+        ->assertCreated()
+        ->assertJsonPath('data.path', 'demo/products/1.jpg');
+});

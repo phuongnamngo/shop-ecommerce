@@ -153,3 +153,30 @@ export async function deleteProductImage(
     { method: "DELETE" },
   );
 }
+
+export function attachVariantImage(
+  productId: number,
+  variantId: number,
+  body: {
+    path: string;
+    alt?: string | null;
+    position?: number;
+    is_primary?: boolean;
+  },
+): Promise<ApiSuccess<CatalogImage>> {
+  return apiFetch(
+    `/api/v1/admin/catalog/products/${productId}/variants/${variantId}/images`,
+    { method: "POST", json: body },
+  );
+}
+
+export async function deleteVariantImage(
+  productId: number,
+  variantId: number,
+  imageId: number,
+): Promise<void> {
+  await apiFetch(
+    `/api/v1/admin/catalog/products/${productId}/variants/${variantId}/images/${imageId}`,
+    { method: "DELETE" },
+  );
+}

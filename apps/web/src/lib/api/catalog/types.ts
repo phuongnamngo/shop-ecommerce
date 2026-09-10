@@ -28,16 +28,6 @@ export type Category = {
   meta_description?: string | null;
 };
 
-export type ProductVariant = {
-  id: number;
-  sku: string;
-  barcode: string | null;
-  price: string | number;
-  compare_at_price: string | number | null;
-  is_default: boolean;
-  status: CatalogStatus;
-};
-
 export type CatalogImage = {
   id: number;
   path: string;
@@ -46,6 +36,17 @@ export type CatalogImage = {
   is_primary: boolean;
   url: string | null;
   thumbnail_url: string | null;
+};
+
+export type ProductVariant = {
+  id: number;
+  sku: string;
+  barcode: string | null;
+  price: string | number;
+  compare_at_price: string | number | null;
+  is_default: boolean;
+  status: CatalogStatus;
+  images?: CatalogImage[];
 };
 
 export type Product = {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Api\V1\Admin\Catalog;
 
+use App\Models\ProductImage;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Validator;
@@ -34,7 +35,14 @@ class StoreCatalogImageRequest extends FormRequest
                 return;
             }
 
-            if (! str_starts_with($path, 'catalog/') || str_contains($path, '..')) {
+            if (str_contains($path, '..')) {
+                $validator->errors()->add('path', 'Image path must be under catalog/.');
+
+                return;
+            }
+
+            $onProductGallery = $this->pathOnProductGallery($path);
+            if (! $onProductGallery && ! str_starts_with($path, 'catalog/')) {
                 $validator->errors()->add('path', 'Image path must be under catalog/.');
 
                 return;
@@ -44,5 +52,18 @@ class StoreCatalogImageRequest extends FormRequest
                 $validator->errors()->add('path', 'Image path does not exist.');
             }
         });
+    }
+
+    private function pathOnProductGallery(string $path): bool
+    {
+        $productId = $this->route('id');
+        if (! is_numeric($productId)) {
+            return false;
+        }
+
+        return ProductImage::query()
+            ->where('product_id', (int) $productId)
+            ->where('path', $path)
+            ->exists();
     }
 }

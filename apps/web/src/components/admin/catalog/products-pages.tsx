@@ -48,11 +48,13 @@ import { listCategories } from "@/lib/api/catalog/categories";
 import { catalogErrorMessage } from "@/lib/api/catalog/errors";
 import {
   attachProductImage,
+  attachVariantImage,
   createProduct,
   createVariant,
   deleteProduct,
   deleteProductImage,
   deleteVariant,
+  deleteVariantImage,
   getProduct,
   listProducts,
   updateProduct,
@@ -61,8 +63,10 @@ import {
   type CreateVariantInput,
 } from "@/lib/api/catalog/products";
 import type {
+  CatalogImage,
   CatalogStatus,
   Product,
+  ProductVariant,
 } from "@/lib/api/catalog/types";
 
 type VariantDraft = {
@@ -867,110 +871,11 @@ function ProductEditView({
 
       <Card>
         <CardHeader>
-          <CardTitle>Variants</CardTitle>
-          <CardDescription>
-            Sửa qua endpoint riêng (không nested trong PATCH product).
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>SKU</TableHead>
-                <TableHead>Price</TableHead>
-                <TableHead>Default</TableHead>
-                {manage ? <TableHead /> : null}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {product.variants.map((v) => (
-                <TableRow key={v.id}>
-                  <TableCell>{v.sku}</TableCell>
-                  <TableCell>{v.price}</TableCell>
-                  <TableCell>{v.is_default ? "yes" : "no"}</TableCell>
-                  {manage ? (
-                    <TableCell className="space-x-2 text-right">
-                      {!v.is_default ? (
-                        <Button
-                          type="button"
-                          size="sm"
-                          variant="outline"
-                          onClick={() =>
-                            void updateVariant(productId, v.id, {
-                              is_default: true,
-                            })
-                              .then(invalidate)
-                              .catch((err) =>
-                                setError(catalogErrorMessage(err)),
-                              )
-                          }
-                        >
-                          Set default
-                        </Button>
-                      ) : null}
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="ghost"
-                        onClick={() =>
-                          void deleteVariant(productId, v.id)
-                            .then(invalidate)
-                            .catch((err) =>
-                              setError(catalogErrorMessage(err)),
-                            )
-                        }
-                      >
-                        Xóa
-                      </Button>
-                    </TableCell>
-                  ) : null}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          {manage ? (
-            <div className="flex flex-wrap gap-2">
-              <Input
-                className="max-w-[140px]"
-                placeholder="SKU"
-                value={variantSku}
-                onChange={(e) => setVariantSku(e.target.value)}
-              />
-              <Input
-                className="max-w-[120px]"
-                type="number"
-                min={0}
-                step="0.01"
-                placeholder="Price"
-                value={variantPrice}
-                onChange={(e) => setVariantPrice(e.target.value)}
-              />
-              <Button
-                type="button"
-                onClick={() =>
-                  void createVariant(productId, {
-                    sku: variantSku,
-                    price: Number(variantPrice),
-                    is_default: product.variants.length === 0,
-                  })
-                    .then(() => {
-                      setVariantSku("");
-                      setVariantPrice("0");
-                      return invalidate();
-                    })
-                    .catch((err) => setError(catalogErrorMessage(err)))
-                }
-              >
-                Thêm variant
-              </Button>
-            </div>
-          ) : null}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
           <CardTitle>Images</CardTitle>
+          <CardDescription>
+            Gallery sản phẩm: listing, primary, và PDP khi variant không có ảnh
+            riêng.
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-3 sm:grid-cols-3">
@@ -1029,6 +934,261 @@ function ProductEditView({
           ) : null}
         </CardContent>
       </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Variants</CardTitle>
+          <CardDescription>
+            Ảnh riêng là tùy chọn — để trống thì PDP dùng gallery sản phẩm. Gắn
+            từ gallery không upload lại file.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-3">
+            {product.variants.map((v) => (
+              <div key={v.id} className="rounded-md border p-3">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="text-sm">
+                    <span className="font-medium">{v.sku}</span>
+                    <span className="text-muted-foreground"> · {v.price}</span>
+                    {v.is_default ? (
+                      <span className="ml-2 text-xs text-muted-foreground">
+                        default
+                      </span>
+                    ) : null}
+                  </div>
+                  {manage ? (
+                    <div className="space-x-2">
+                      {!v.is_default ? (
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            void updateVariant(productId, v.id, {
+                              is_default: true,
+                            })
+                              .then(invalidate)
+                              .catch((err) =>
+                                setError(catalogErrorMessage(err)),
+                              )
+                          }
+                        >
+                          Set default
+                        </Button>
+                      ) : null}
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="ghost"
+                        onClick={() =>
+                          void deleteVariant(productId, v.id)
+                            .then(invalidate)
+                            .catch((err) =>
+                              setError(catalogErrorMessage(err)),
+                            )
+                        }
+                      >
+                        Xóa
+                      </Button>
+                    </div>
+                  ) : null}
+                </div>
+                <VariantImageSection
+                  productId={productId}
+                  variant={v}
+                  productImages={images}
+                  manage={manage}
+                  onDone={invalidate}
+                  onError={(message) => setError(message)}
+                />
+              </div>
+            ))}
+          </div>
+          {manage ? (
+            <div className="flex flex-wrap gap-2">
+              <Input
+                className="max-w-[140px]"
+                placeholder="SKU"
+                value={variantSku}
+                onChange={(e) => setVariantSku(e.target.value)}
+              />
+              <Input
+                className="max-w-[120px]"
+                type="number"
+                min={0}
+                step="0.01"
+                placeholder="Price"
+                value={variantPrice}
+                onChange={(e) => setVariantPrice(e.target.value)}
+              />
+              <Button
+                type="button"
+                onClick={() =>
+                  void createVariant(productId, {
+                    sku: variantSku,
+                    price: Number(variantPrice),
+                    is_default: product.variants.length === 0,
+                  })
+                    .then(() => {
+                      setVariantSku("");
+                      setVariantPrice("0");
+                      return invalidate();
+                    })
+                    .catch((err) => setError(catalogErrorMessage(err)))
+                }
+              >
+                Thêm variant
+              </Button>
+            </div>
+          ) : null}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+function VariantImageSection({
+  productId,
+  variant,
+  productImages,
+  manage,
+  onDone,
+  onError,
+}: {
+  productId: number;
+  variant: ProductVariant;
+  productImages: CatalogImage[];
+  manage: boolean;
+  onDone: () => Promise<void>;
+  onError: (message: string) => void;
+}) {
+  const [busy, setBusy] = useState(false);
+  const variantImages = variant.images ?? [];
+  const attachedPaths = new Set(variantImages.map((img) => img.path));
+  const galleryChoices = productImages.filter(
+    (img) => !attachedPaths.has(img.path),
+  );
+
+  const attachPath = async (path: string) => {
+    if (busy || attachedPaths.has(path)) return;
+    setBusy(true);
+    try {
+      await attachVariantImage(productId, variant.id, {
+        path,
+        is_primary: variantImages.length === 0,
+      });
+      await onDone();
+    } catch (err) {
+      onError(catalogErrorMessage(err));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="mt-3 space-y-2 border-t pt-3">
+      <p className="text-xs text-muted-foreground">
+        Ảnh riêng (tùy chọn). Để trống = PDP dùng gallery sản phẩm.
+      </p>
+      {variantImages.length > 0 ? (
+        <div className="grid gap-2 sm:grid-cols-4">
+          {variantImages.map((img) => (
+            <div key={img.id} className="rounded-md border p-2">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={img.thumbnail_url || img.url || undefined}
+                alt={img.alt ?? ""}
+                className="mb-1 h-20 w-full object-cover"
+              />
+              {manage ? (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  className="h-7 px-2 text-xs"
+                  onClick={() =>
+                    void deleteVariantImage(productId, variant.id, img.id)
+                      .then(onDone)
+                      .catch((err) => onError(catalogErrorMessage(err)))
+                  }
+                  disabled={busy}
+                >
+                  Gỡ
+                </Button>
+              ) : null}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="text-xs text-muted-foreground">
+          Đang inherit gallery sản phẩm.
+        </p>
+      )}
+      {manage ? (
+        <div className="space-y-2">
+          {productImages.length === 0 ? (
+            <p className="text-xs text-muted-foreground">
+              Upload gallery sản phẩm ở card Images rồi gắn vào đây, hoặc
+              upload ảnh mới chỉ cho SKU này.
+            </p>
+          ) : galleryChoices.length > 0 ? (
+            <div className="space-y-1">
+              <p className="text-xs font-medium">Gắn từ gallery</p>
+              <div className="flex flex-wrap gap-2">
+                {galleryChoices.map((img) => (
+                  <button
+                    key={img.id}
+                    type="button"
+                    className="overflow-hidden rounded-md border disabled:opacity-50"
+                    title={`Gắn ${img.path}`}
+                    disabled={busy}
+                    onClick={() => void attachPath(img.path)}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={img.thumbnail_url || img.url || undefined}
+                      alt={img.alt ?? ""}
+                      className="size-14 object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : null}
+          <div className="space-y-1">
+            <Label htmlFor={`variant-upload-${variant.id}`} className="text-xs">
+              Upload ảnh mới (chỉ gắn vào variant này)
+            </Label>
+            <Input
+              id={`variant-upload-${variant.id}`}
+              type="file"
+              accept="image/jpeg,image/jpg,image/png,image/webp"
+              disabled={busy}
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (!file || busy) return;
+                setBusy(true);
+                void (async () => {
+                  try {
+                    const uploaded = await uploadCatalogImage(file);
+                    await attachVariantImage(productId, variant.id, {
+                      path: uploaded.data.path,
+                      is_primary: variantImages.length === 0,
+                    });
+                    await onDone();
+                  } catch (err) {
+                    onError(catalogErrorMessage(err));
+                  } finally {
+                    e.target.value = "";
+                    setBusy(false);
+                  }
+                })();
+              }}
+            />
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
