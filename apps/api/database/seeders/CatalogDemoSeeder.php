@@ -10,6 +10,7 @@ use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\ProductVariant;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class CatalogDemoSeeder extends Seeder
@@ -118,10 +119,16 @@ class CatalogDemoSeeder extends Seeder
             $optM->id => ['attribute_id' => $size->id],
         ]);
 
+        $path = $this->storeDemoTeeImage();
+        ProductImage::query()
+            ->where('product_id', $product->id)
+            ->where('path', 'demo/products/1.jpg')
+            ->update(['path' => $path]);
+
         ProductImage::query()->firstOrCreate(
             [
                 'product_id' => $product->id,
-                'path' => 'demo/products/1.jpg',
+                'path' => $path,
             ],
             [
                 'alt' => 'Demo Tee',
@@ -129,5 +136,40 @@ class CatalogDemoSeeder extends Seeder
                 'is_primary' => true,
             ],
         );
+    }
+
+    private function storeDemoTeeImage(): string
+    {
+        $path = 'catalog/demo-tee.jpg';
+        $thumb = 'catalog/demo-tee_thumb.jpg';
+        $disk = Storage::disk('public');
+        if ($disk->exists($path) && $disk->exists($thumb)) {
+            return $path;
+        }
+
+        $bytes = $this->demoJpegBytes(800);
+        $disk->put($path, $bytes);
+        $disk->put($thumb, $this->demoJpegBytes(400));
+
+        return $path;
+    }
+
+    private function demoJpegBytes(int $size): string
+    {
+        if (! function_exists('imagecreatetruecolor')) {
+            return (string) base64_decode('R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==', true);
+        }
+
+        $canvas = imagecreatetruecolor($size, $size);
+        $bg = imagecolorallocate($canvas, 244, 244, 245);
+        $fg = imagecolorallocate($canvas, 24, 24, 27);
+        imagefill($canvas, 0, 0, $bg);
+        imagestring($canvas, 5, (int) ($size * 0.38), (int) ($size * 0.48), 'Demo Tee', $fg);
+        ob_start();
+        imagejpeg($canvas, null, 82);
+        $bytes = (string) ob_get_clean();
+        imagedestroy($canvas);
+
+        return $bytes;
     }
 }

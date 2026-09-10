@@ -10,7 +10,6 @@ export function ProductCard({ product }: { product: PublicProductListItem }) {
     product.primary_image?.thumbnail_url ?? product.primary_image?.url,
   );
   const price = product.default_variant?.price;
-
   return (
     <Link
       href={`/products/${product.slug}`}
