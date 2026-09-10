@@ -80,7 +80,7 @@ export async function generateMetadata({
   if (q) {
     return {
       title: `Tìm kiếm “${q}” — Watch`,
-      description: `Kết quả tìm kiếm đồng hồ Watch cho “${q}”.`,
+      description: `Kết quả tìm kiếm Watch cho “${q}”.`,
       alternates: { canonical },
       robots,
     };
@@ -88,7 +88,7 @@ export async function generateMetadata({
 
   return {
     title: "Sản phẩm — Watch",
-    description: "Danh sách đồng hồ Watch. Lọc theo danh mục, thương hiệu và giá.",
+    description: "Danh sách thời trang nam Watch. Lọc theo danh mục, thương hiệu và giá.",
     alternates: { canonical },
     robots,
   };

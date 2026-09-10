@@ -20,6 +20,7 @@ apps/api/storage/*.key
 apps/api/storage/pail
 apps/api/storage/logs/*
 !apps/api/storage/logs/.gitignore
+apps/api/database/seeders/fixtures/
 apps/api/bootstrap/cache/*.php
 .phpunit.result.cache
 .phpunit.cache

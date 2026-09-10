@@ -11,12 +11,35 @@ import { EmptyState } from "@/components/storefront/empty-state";
 import { ProductCard } from "@/components/storefront/product-card";
 import { listPublicCategories, listPublicProducts } from "@/lib/api/storefront/catalog";
 import { absoluteMediaUrl } from "@/lib/api/storefront/client";
+import { leafCategories } from "@/lib/api/storefront/resolve";
+import type { PublicProductListItem } from "@/lib/api/storefront/types";
 import { STORE_NAME, sfContainer } from "@/lib/storefront/ui";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
-  title: "Watch — Đồng hồ",
-  description: "Cửa hàng đồng hồ Watch. Xem danh mục và sản phẩm mới.",
+  title: "Watch — Thời trang nam",
+  description:
+    "Thời trang nam tối giản. Áo thun, polo, jean và phụ kiện — giá và tồn kho từ hệ thống.",
 };
+
+const CATEGORY_PRODUCT: Record<string, string> = {
+  "ao-thun": "demo-tee",
+  polo: "ao-polo-det-kim-navy",
+  "ao-ni": "hoodie-heavyweight-400gsm",
+  "so-mi": "so-mi-oxford-dai-tay",
+  "ao-khoac": "ao-khoac-denim-classic",
+  quan: "quan-jean-slim-fit",
+  "quan-short": "quan-short-kaki-easy-fit",
+  "phu-kien": "tui-tote-canvas-daily",
+};
+
+function pickProduct(
+  products: PublicProductListItem[],
+  slug: string,
+): PublicProductListItem | undefined {
+  return products.find((product) => product.slug === slug);
+}
 
 export default async function HomePage() {
   let categoryError = false;
@@ -41,20 +64,26 @@ export default async function HomePage() {
     productError = true;
   }
 
-  const heroProduct = products[0];
+  const heroProduct =
+    pickProduct(products, "demo-tee") ?? products[0];
   const heroSrc = heroProduct
     ? absoluteMediaUrl(
         heroProduct.primary_image?.url ??
           heroProduct.primary_image?.thumbnail_url,
       )
     : null;
-  const look = products.slice(0, 2);
-  const featured = products[0];
+  const look = [
+    pickProduct(products, "ao-khoac-denim-classic"),
+    pickProduct(products, "ao-polo-det-kim-navy"),
+  ].filter((item): item is PublicProductListItem => Boolean(item));
+  const featured =
+    pickProduct(products, "hoodie-heavyweight-400gsm") ?? products[1] ?? products[0];
   const featuredSrc = featured
     ? absoluteMediaUrl(
         featured.primary_image?.url ?? featured.primary_image?.thumbnail_url,
       )
     : null;
+  const shopCategories = leafCategories(categories).slice(0, 8);
 
   return (
     <main>
@@ -67,11 +96,11 @@ export default async function HomePage() {
               Bộ sưu tập mới
             </p>
             <h1 className="mt-3 max-w-xl text-4xl font-bold leading-tight tracking-tight text-slate-950 sm:text-[44px] sm:leading-[1.15]">
-              NEW SEASON / TIME ESSENTIALS
+              NEW SEASON / URBAN ESSENTIALS
             </h1>
             <p className="mt-4 max-w-lg text-base leading-relaxed text-slate-500">
-              Đồng hồ cho nhịp sống hiện đại. Khám phá hàng mới — giá và tồn kho
-              luôn lấy từ hệ thống.
+              Thời trang nam tối giản, dễ mặc mỗi ngày. Khám phá hàng mới — giá
+              và tồn kho luôn lấy từ hệ thống.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
@@ -172,31 +201,46 @@ export default async function HomePage() {
           <p className="mt-4 text-sm text-red-700" role="alert">
             Không tải được danh mục. Thử lại sau.
           </p>
-        ) : categories.length === 0 ? (
+        ) : shopCategories.length === 0 ? (
           <p className="mt-4 text-sm text-slate-500">Chưa có danh mục.</p>
         ) : (
-          <ul className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-            {categories.slice(0, 6).map((c, i) => (
-              <li key={c.id}>
-                <Link
-                  href={`/products?category=${encodeURIComponent(c.slug)}`}
-                  className="group flex aspect-[3/4] flex-col justify-end overflow-hidden rounded-xl p-4 text-white"
-                  style={{
-                    background:
-                      i % 3 === 0
-                        ? "#0f172a"
-                        : i % 3 === 1
-                          ? "#1e3a8a"
-                          : "#334155",
-                  }}
-                >
-                  <span className="text-sm font-semibold group-hover:underline">
-                    {c.name}
-                  </span>
-                  <span className="mt-1 text-xs text-white/70">Mua ngay</span>
-                </Link>
-              </li>
-            ))}
+          <ul className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+            {shopCategories.map((c) => {
+              const cover =
+                pickProduct(products, CATEGORY_PRODUCT[c.slug] ?? "") ??
+                products[0];
+              const src = cover
+                ? absoluteMediaUrl(
+                    cover.primary_image?.url ??
+                      cover.primary_image?.thumbnail_url,
+                  )
+                : null;
+              return (
+                <li key={c.id}>
+                  <Link
+                    href={`/products?category=${encodeURIComponent(c.slug)}`}
+                    className="group relative flex aspect-[3/4] flex-col justify-end overflow-hidden rounded-xl bg-slate-900 p-4 text-white"
+                  >
+                    {src ? (
+                      <Image
+                        src={src}
+                        alt={c.name}
+                        fill
+                        sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
+                        className="object-cover motion-safe:transition-transform motion-safe:duration-500 group-hover:scale-[1.04]"
+                      />
+                    ) : null}
+                    <span className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+                    <span className="relative z-10 text-sm font-semibold group-hover:underline">
+                      {c.name}
+                    </span>
+                    <span className="relative z-10 mt-1 text-xs text-white/70">
+                      Mua ngay
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         )}
       </section>

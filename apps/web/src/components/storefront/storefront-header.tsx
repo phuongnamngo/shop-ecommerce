@@ -156,7 +156,7 @@ export function StorefrontHeader({
             <Input
               type="search"
               name="q"
-              placeholder="Tìm sản phẩm, đồng hồ..."
+              placeholder="Tìm áo thun, polo, jean..."
               className="h-11 rounded-full border-slate-200 bg-slate-50 pl-10"
             />
           </label>

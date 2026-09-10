@@ -23,12 +23,12 @@ export function AuthShell({
               {STORE_NAME} campaign
             </p>
             <p className="mt-16 text-4xl font-bold leading-tight">
-              TIME
+              NEW SEASON
               <br />
               ESSENTIALS
             </p>
             <p className="mt-4 max-w-sm text-sm text-white/70">
-              Đồng hồ cho nhịp sống hiện đại.
+              Thời trang nam tối giản, dễ mặc mỗi ngày.
             </p>
           </div>
           <ul className="space-y-2 text-sm text-white/80">

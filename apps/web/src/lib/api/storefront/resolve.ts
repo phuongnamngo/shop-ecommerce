@@ -16,6 +16,14 @@ export function findCategoryBySlug(
   return null;
 }
 
+export function leafCategories(
+  nodes: PublicCategoryNode[],
+): PublicCategoryNode[] {
+  return nodes.flatMap((node) =>
+    node.children && node.children.length > 0 ? node.children : [node],
+  );
+}
+
 export async function findBrandBySlug(
   slug: string,
 ): Promise<PublicBrand | null> {

@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
   ),
   title: "Watch",
-  description: "Cửa hàng đồng hồ Watch",
+  description: "Cửa hàng thời trang nam Watch",
 };
 
 export default function RootLayout({

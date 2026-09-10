@@ -10,8 +10,8 @@ export function StorefrontFooter() {
         <div>
           <p className="text-lg font-bold tracking-[0.18em]">{STORE_NAME}</p>
           <p className="mt-3 max-w-xs text-sm leading-relaxed text-slate-500">
-            Đồng hồ cho nhịp sống hiện đại. Giá, tồn kho và vận chuyển luôn lấy
-            từ hệ thống.
+            Thời trang nam tối giản, dễ mặc mỗi ngày. Giá, tồn kho và vận chuyển
+            luôn lấy từ hệ thống.
           </p>
         </div>
         <div>
