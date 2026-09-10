@@ -186,28 +186,30 @@ export function AccountAddresses() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">Địa chỉ</h1>
+      <h1 className="text-2xl font-bold tracking-tight">Sổ địa chỉ</h1>
       {error ? (
         <p className="text-sm text-red-700" role="alert">
           {error}
         </p>
       ) : null}
       {rows.length === 0 ? (
-        <p className="text-sm text-zinc-600">Chưa có địa chỉ lưu.</p>
+        <p className="text-sm text-slate-500">Chưa có địa chỉ lưu.</p>
       ) : (
-        <ul className="space-y-3">
+        <ul className="grid gap-3 sm:grid-cols-2">
           {rows.map((row) => (
-            <li key={row.id} className="rounded-lg border p-3 text-sm">
-              <p className="font-medium">
+            <li key={row.id} className="rounded-xl border border-slate-200 bg-white p-4 text-sm">
+              <p className="font-semibold">
                 {row.label ?? "Địa chỉ"}{" "}
                 {row.is_default ? (
-                  <span className="text-zinc-500">(mặc định)</span>
+                  <span className="ml-1 rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-semibold text-blue-700">
+                    Mặc định
+                  </span>
                 ) : null}
               </p>
-              <p className="mt-1 text-zinc-600">
+              <p className="mt-1 text-slate-600">
                 {row.recipient_name} · {row.phone}
               </p>
-              <p className="text-zinc-600">{row.address_line}</p>
+              <p className="text-slate-600">{row.address_line}</p>
               <div className="mt-2 flex gap-2">
                 <Button
                   type="button"
@@ -232,8 +234,8 @@ export function AccountAddresses() {
         </ul>
       )}
 
-      <form className="max-w-md space-y-3" onSubmit={(e) => void onSubmit(e)}>
-        <h2 className="font-medium">
+      <form className="max-w-xl space-y-3 rounded-xl border border-slate-200 bg-white p-5" onSubmit={(e) => void onSubmit(e)}>
+        <h2 className="font-semibold">
           {editingId ? "Sửa địa chỉ" : "Thêm địa chỉ"}
         </h2>
         <div>
@@ -272,7 +274,7 @@ export function AccountAddresses() {
           <select
             id="province"
             required
-            className="mt-1 flex h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm"
+            className="mt-1 flex h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm"
             value={form.province_code}
             onChange={(e) => void onProvince(e.target.value)}
           >
@@ -290,7 +292,7 @@ export function AccountAddresses() {
             id="district"
             required
             disabled={!form.province_code}
-            className="mt-1 flex h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm"
+            className="mt-1 flex h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm"
             value={form.district_code}
             onChange={(e) => void onDistrict(e.target.value)}
           >
@@ -308,7 +310,7 @@ export function AccountAddresses() {
             id="ward"
             required
             disabled={!form.district_code}
-            className="mt-1 flex h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm"
+            className="mt-1 flex h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm"
             value={form.ward_code}
             onChange={(e) =>
               setForm({ ...form, ward_code: e.target.value })
@@ -345,7 +347,7 @@ export function AccountAddresses() {
           Đặt làm mặc định
         </label>
         <div className="flex gap-2">
-          <Button type="submit" disabled={pending}>
+          <Button type="submit" className="h-11 rounded-lg bg-blue-600 hover:bg-blue-700" disabled={pending}>
             {pending ? "Đang lưu…" : editingId ? "Cập nhật" : "Thêm"}
           </Button>
           {editingId ? (

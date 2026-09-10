@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { storefrontErrorMessage } from "@/lib/api/storefront/browser";
 import { mergeGuestCartIfPresent } from "@/lib/api/storefront/cart";
 import { registerCustomer } from "@/lib/api/storefront/customer";
+import { sfInput } from "@/lib/storefront/ui";
 
 export function RegisterForm() {
   const router = useRouter();
@@ -48,7 +49,7 @@ export function RegisterForm() {
         <Input
           id="name"
           required
-          className="mt-1"
+          className={sfInput}
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
@@ -60,7 +61,7 @@ export function RegisterForm() {
           type="email"
           autoComplete="email"
           required
-          className="mt-1"
+          className={sfInput}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
@@ -69,7 +70,7 @@ export function RegisterForm() {
         <Label htmlFor="phone">Số điện thoại</Label>
         <Input
           id="phone"
-          className="mt-1"
+          className={sfInput}
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
         />
@@ -81,7 +82,7 @@ export function RegisterForm() {
           type="password"
           autoComplete="new-password"
           required
-          className="mt-1"
+          className={sfInput}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
@@ -93,7 +94,7 @@ export function RegisterForm() {
           type="password"
           autoComplete="new-password"
           required
-          className="mt-1"
+          className={sfInput}
           value={passwordConfirmation}
           onChange={(e) => setPasswordConfirmation(e.target.value)}
         />
@@ -103,12 +104,16 @@ export function RegisterForm() {
           {error}
         </p>
       ) : null}
-      <Button type="submit" className="w-full" disabled={pending}>
+      <Button
+        type="submit"
+        className="h-12 w-full rounded-lg bg-blue-600 font-semibold hover:bg-blue-700"
+        disabled={pending}
+      >
         {pending ? "Đang đăng ký…" : "Đăng ký"}
       </Button>
-      <p className="text-center text-sm text-zinc-600">
+      <p className="text-center text-sm text-slate-600">
         Đã có tài khoản?{" "}
-        <Link href="/login" className="underline">
+        <Link href="/login" className="font-semibold text-blue-600">
           Đăng nhập
         </Link>
       </p>

@@ -10,6 +10,7 @@ import {
   fetchCustomerMe,
   patchCustomerMe,
 } from "@/lib/api/storefront/customer";
+import { sfInput } from "@/lib/storefront/ui";
 
 export function AccountProfileForm() {
   const [name, setName] = useState("");
@@ -53,14 +54,14 @@ export function AccountProfileForm() {
   }
 
   return (
-    <form className="max-w-md space-y-4" onSubmit={(e) => void onSubmit(e)}>
-      <h1 className="text-2xl font-semibold">Hồ sơ</h1>
+    <form className="max-w-xl space-y-4 rounded-xl border border-slate-200 bg-white p-5" onSubmit={(e) => void onSubmit(e)}>
+      <h1 className="text-2xl font-bold tracking-tight">Thông tin cá nhân</h1>
       <div>
         <Label htmlFor="name">Họ tên</Label>
         <Input
           id="name"
           required
-          className="mt-1"
+          className={sfInput}
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
@@ -69,7 +70,7 @@ export function AccountProfileForm() {
         <Label htmlFor="email">Email</Label>
         <Input
           id="email"
-          className="mt-1"
+          className={sfInput}
           value={email}
           disabled
           readOnly
@@ -79,7 +80,7 @@ export function AccountProfileForm() {
         <Label htmlFor="phone">Số điện thoại</Label>
         <Input
           id="phone"
-          className="mt-1"
+          className={sfInput}
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
         />
@@ -90,9 +91,13 @@ export function AccountProfileForm() {
         </p>
       ) : null}
       {saved ? (
-        <p className="text-sm text-zinc-600">Đã lưu hồ sơ.</p>
+        <p className="text-sm text-emerald-700">Đã lưu hồ sơ.</p>
       ) : null}
-      <Button type="submit" disabled={pending}>
+      <Button
+        type="submit"
+        className="h-11 rounded-lg bg-blue-600 font-semibold hover:bg-blue-700"
+        disabled={pending}
+      >
         {pending ? "Đang lưu…" : "Lưu"}
       </Button>
     </form>

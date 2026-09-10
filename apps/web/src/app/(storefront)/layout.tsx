@@ -1,6 +1,13 @@
-import { StorefrontFooter } from "@/components/storefront/storefront-footer";
-import { StorefrontHeader } from "@/components/storefront/storefront-header";
+import { Be_Vietnam_Pro } from "next/font/google";
+
+import { StorefrontChrome } from "@/components/storefront/storefront-chrome";
 import { listPublicCategories } from "@/lib/api/storefront/catalog";
+
+const beVietnam = Be_Vietnam_Pro({
+  subsets: ["latin", "vietnamese"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-storefront-sans",
+});
 
 export default async function StorefrontLayout({
   children,
@@ -16,10 +23,8 @@ export default async function StorefrontLayout({
   }
 
   return (
-    <div className="flex min-h-full flex-col">
-      <StorefrontHeader categories={categories} />
-      <div className="flex-1">{children}</div>
-      <StorefrontFooter />
+    <div className={`${beVietnam.variable} storefront flex min-h-full flex-col`}>
+      <StorefrontChrome categories={categories}>{children}</StorefrontChrome>
     </div>
   );
 }

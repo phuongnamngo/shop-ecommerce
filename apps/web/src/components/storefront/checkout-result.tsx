@@ -6,6 +6,10 @@ import { storefrontErrorMessage } from "@/lib/api/storefront/browser";
 import { lookupGuestOrder } from "@/lib/api/storefront/commerce";
 import { formatVnd } from "@/lib/api/storefront/money";
 import type { GuestOrder } from "@/lib/api/storefront/types";
+import {
+  orderStatusLabel,
+} from "@/lib/storefront/order-status";
+import { sfContainer } from "@/lib/storefront/ui";
 
 const STATUS_BANNER: Record<string, string> = {
   paid: "Thanh toán thành công.",
@@ -47,8 +51,13 @@ export function CheckoutResult({
   const shownNumber = order?.number ?? number;
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-10">
-      <h1 className="text-2xl font-semibold">Kết quả đơn hàng</h1>
+    <main className={`${sfContainer} py-10`}>
+      <div className="mx-auto max-w-2xl rounded-xl border border-slate-200 bg-white p-6 sm:p-10">
+      <h1 className="text-3xl font-bold tracking-tight">
+        {status === "failed" || status === "cancelled"
+          ? "Kết quả đơn hàng"
+          : "Đặt hàng thành công"}
+      </h1>
       {banner ? (
         <p
           className={
@@ -74,8 +83,8 @@ export function CheckoutResult({
       ) : null}
       {order ? (
         <div className="mt-8 space-y-6">
-          <p className="text-sm text-zinc-600">
-            Đơn {order.number} — {order.status}
+          <p className="text-sm text-slate-600">
+            Đơn {order.number} — {orderStatusLabel(order.status)}
           </p>
           <ul className="divide-y rounded-lg border">
             {order.items.map((item, index) => (
@@ -130,6 +139,7 @@ export function CheckoutResult({
           </dl>
         </div>
       ) : null}
+      </div>
     </main>
   );
 }

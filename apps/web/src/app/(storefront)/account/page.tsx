@@ -1,5 +1,5 @@
-import { AccountProfileForm } from "@/components/storefront/account-profile-form";
+import { AccountOverview } from "@/components/storefront/account-overview";
 
 export default function AccountPage() {
-  return <AccountProfileForm />;
+  return <AccountOverview />;
 }

@@ -1,0 +1,131 @@
+{
+  "projectId": "3274922610422665241",
+  "title": "Ecommerce Web Client",
+  "deviceType": "DESKTOP",
+  "Last Sync Time": "2026-09-10T08:25:00.000Z",
+  "designSystem": {
+    "font": "BE_VIETNAM_PRO",
+    "roundness": "ROUND_FOUR",
+    "customColor": "#2563eb"
+  },
+  "screens": {
+    "0ff24fc55262453e8a700df5d220837f": {
+      "id": "0ff24fc55262453e8a700df5d220837f",
+      "label": "NOVA - Trang Chủ Thời Trang",
+      "route": "/",
+      "width": 2560,
+      "height": 13130
+    },
+    "c0e632bd08f04d729e56c7c7989c6123": {
+      "id": "c0e632bd08f04d729e56c7c7989c6123",
+      "label": "NOVA - Danh Mục Áo Thun Nam",
+      "route": "/products",
+      "width": 2560,
+      "height": 3616
+    },
+    "d18565117ece4cfdbebe049310d2a8ec": {
+      "id": "d18565117ece4cfdbebe049310d2a8ec",
+      "label": "NOVA - Kết Quả Tìm Kiếm Sản Phẩm",
+      "route": "/products?q=",
+      "width": 2560,
+      "height": 5238
+    },
+    "55130e52849f429783b373ae8ff4f8c2": {
+      "id": "55130e52849f429783b373ae8ff4f8c2",
+      "label": "NOVA - Chi Tiết Sản Phẩm Áo Thun",
+      "route": "/products/[slug]",
+      "width": 2560,
+      "height": 9176
+    },
+    "39dd7586bada4f3ebfc44d3c2e529120": {
+      "id": "39dd7586bada4f3ebfc44d3c2e529120",
+      "label": "NOVA - Giỏ Hàng Của Bạn",
+      "route": "/cart",
+      "width": 2560,
+      "height": 4170
+    },
+    "7ab3e1843b964698a5ceb4851418ad03": {
+      "id": "7ab3e1843b964698a5ceb4851418ad03",
+      "label": "NOVA - Thanh Toán Đơn Hàng",
+      "route": "/checkout",
+      "width": 2560,
+      "height": 4884
+    },
+    "271a345673ed48779694aa99d4a9458a": {
+      "id": "271a345673ed48779694aa99d4a9458a",
+      "label": "NOVA - Đặt Hàng Thành Công",
+      "route": "/checkout/result",
+      "width": 2560,
+      "height": 6182
+    },
+    "17f6e4c2460746738e510502ee6dd3be": {
+      "id": "17f6e4c2460746738e510502ee6dd3be",
+      "label": "NOVA - Đăng Nhập Tài Khoản",
+      "route": "/login",
+      "width": 2560,
+      "height": 2048
+    },
+    "5f625c5e1e6446118c6f7da258383f4f": {
+      "id": "5f625c5e1e6446118c6f7da258383f4f",
+      "label": "NOVA - Đăng Ký Tài Khoản",
+      "route": "/register",
+      "width": 2560,
+      "height": 2454
+    },
+    "f9a4eba617294dd5b4c8509cb5683093": {
+      "id": "f9a4eba617294dd5b4c8509cb5683093",
+      "label": "NOVA - Quên Mật Khẩu",
+      "route": "/forgot-password",
+      "width": 2560,
+      "height": 2048
+    },
+    "5dc4c1d9706341c18f2325022164cc78": {
+      "id": "5dc4c1d9706341c18f2325022164cc78",
+      "label": "NOVA - Tạo Mật Khẩu Mới",
+      "route": "/reset-password",
+      "width": 2560,
+      "height": 2048
+    },
+    "4110675a22ce4ce780aaa589b58a4937": {
+      "id": "4110675a22ce4ce780aaa589b58a4937",
+      "label": "NOVA - Tổng Quan Tài Khoản",
+      "route": "/account",
+      "width": 2560,
+      "height": 4946
+    },
+    "37e2b4a42d714a08bc59bff815ce7ee5": {
+      "id": "37e2b4a42d714a08bc59bff815ce7ee5",
+      "label": "NOVA - Thông Tin Cá Nhân",
+      "route": "/account/profile",
+      "width": 2560,
+      "height": 3644
+    },
+    "d172b75e28be456580fbd02bc52eac75": {
+      "id": "d172b75e28be456580fbd02bc52eac75",
+      "label": "NOVA - Quản Lý Sổ Địa Chỉ",
+      "route": "/account/addresses",
+      "width": 3584,
+      "height": 2972
+    },
+    "af58e908b5f14823a623ea910d77baed": {
+      "id": "af58e908b5f14823a623ea910d77baed",
+      "label": "NOVA - Đơn Hàng Của Tôi",
+      "route": "/account/orders",
+      "width": 2560,
+      "height": 4652
+    },
+    "e7df886c3cb140708a83dc81c00794c8": {
+      "id": "e7df886c3cb140708a83dc81c00794c8",
+      "label": "NOVA - Chi Tiết Đơn Hàng",
+      "route": "/account/orders/[id]",
+      "width": 2560,
+      "height": 4468
+    },
+    "bf423c96c74b4622ba0795af39a2fb4f": {
+      "id": "bf423c96c74b4622ba0795af39a2fb4f",
+      "label": "NOVA - Sản Phẩm Yêu Thích",
+      "route": null,
+      "note": "No public wishlist API — not implemented"
+    }
+  }
+}

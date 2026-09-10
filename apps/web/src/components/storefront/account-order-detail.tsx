@@ -8,6 +8,10 @@ import { StorefrontBrowserError, storefrontErrorMessage } from "@/lib/api/storef
 import { fetchCustomerOrder } from "@/lib/api/storefront/customer";
 import { formatVnd } from "@/lib/api/storefront/money";
 import type { CustomerOrder } from "@/lib/api/storefront/types";
+import {
+  orderStatusClass,
+  orderStatusLabel,
+} from "@/lib/storefront/order-status";
 
 export function AccountOrderDetail() {
   const params = useParams<{ id: string }>();
@@ -48,29 +52,55 @@ export function AccountOrderDetail() {
   }
 
   if (!order) {
-    return <p className="text-sm text-zinc-600">Đang tải đơn hàng…</p>;
+    return <p className="text-sm text-slate-500">Đang tải đơn hàng…</p>;
   }
 
   const items = order.items ?? [];
   const address = order.shipping_address;
+  const history = order.status_history ?? [];
 
   return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-semibold">{order.number}</h1>
-      <p className="text-sm text-zinc-600">Trạng thái: {order.status}</p>
-      {address ? (
-        <p className="text-sm text-zinc-600">
-          Giao tới: {address.recipient_name} · {address.phone} ·{" "}
-          {address.address_line}
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight">{order.number}</h1>
+        <p className="mt-2">
+          <span
+            className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${orderStatusClass(order.status)}`}
+          >
+            {orderStatusLabel(order.status)}
+          </span>
         </p>
+      </div>
+      {address ? (
+        <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-600">
+          <p className="font-semibold text-slate-900">Giao tới</p>
+          <p className="mt-1">
+            {address.recipient_name} · {address.phone}
+          </p>
+          <p>{address.address_line}</p>
+        </div>
       ) : null}
-      <ul className="divide-y rounded-lg border text-sm">
+      {history.length > 0 ? (
+        <ol className="space-y-3 border-l-2 border-slate-200 pl-4 text-sm">
+          {history.map((step, index) => (
+            <li key={`${step.to_status}-${index}`}>
+              <p className="font-medium">{orderStatusLabel(step.to_status)}</p>
+              <p className="text-xs text-slate-500">
+                {step.created_at
+                  ? new Date(step.created_at).toLocaleString("vi-VN")
+                  : ""}
+              </p>
+            </li>
+          ))}
+        </ol>
+      ) : null}
+      <ul className="divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white text-sm">
         {items.map((item, index) => (
-          <li key={item.id ?? index} className="flex justify-between p-3">
+          <li key={item.id ?? index} className="flex justify-between p-4">
             <span>
               {item.name} {item.sku ? `(${item.sku})` : ""} × {item.qty}
             </span>
-            <span>{formatVnd(item.line_total)}</span>
+            <span className="font-semibold">{formatVnd(item.line_total)}</span>
           </li>
         ))}
       </ul>
@@ -91,12 +121,12 @@ export function AccountOrderDetail() {
           <span>Thuế</span>
           <span>{formatVnd(order.tax_total)}</span>
         </p>
-        <p className="flex justify-between font-medium">
+        <p className="flex justify-between font-semibold">
           <span>Tổng</span>
           <span>{formatVnd(order.grand_total)}</span>
         </p>
       </div>
-      <Link href="/account/orders" className="text-sm underline">
+      <Link href="/account/orders" className="text-sm font-semibold text-blue-600">
         Về danh sách đơn
       </Link>
     </div>

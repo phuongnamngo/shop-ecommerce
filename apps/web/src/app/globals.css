@@ -68,6 +68,62 @@ body {
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
+/* Stitch Editorial Utility — storefront (Watch) */
+.storefront {
+  --background: 0 0% 100%;
+  --foreground: 222 47% 11%;
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 11%;
+  --primary: 217 91% 60%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 210 40% 98%;
+  --secondary-foreground: 222 47% 11%;
+  --muted: 210 40% 98%;
+  --muted-foreground: 215 16% 47%;
+  --accent: 214 100% 97%;
+  --accent-foreground: 217 91% 45%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 214 32% 91%;
+  --input: 214 32% 91%;
+  --ring: 217 91% 60%;
+  --radius: 0.5rem;
+  background: #ffffff;
+  color: #0f172a;
+  font-family: var(--font-storefront-sans), "Be Vietnam Pro", system-ui, sans-serif;
+}
+
+.storefront a,
+.storefront button {
+  transition:
+    background-color 180ms ease-out,
+    color 180ms ease-out,
+    border-color 180ms ease-out,
+    box-shadow 180ms ease-out,
+    transform 180ms ease-out,
+    opacity 180ms ease-out;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .storefront button:not(:disabled):hover {
+    transform: translateY(-1px);
+  }
+  .storefront button:not(:disabled):active {
+    transform: scale(0.98);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .storefront *,
+  .storefront *::before,
+  .storefront *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 /* Stitch Atelier Commerce admin — blue SaaS system from live screens */
 .admin-app {
   --background: 228 100% 99%;

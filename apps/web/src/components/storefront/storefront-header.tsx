@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { Menu } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { Menu, Search, ShoppingBag, UserRound, X } from "lucide-react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 
+import { MiniCartDrawer } from "@/components/storefront/mini-cart-drawer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -15,6 +16,8 @@ import {
 import { fetchActiveCart } from "@/lib/api/storefront/cart";
 import { fetchCustomerMeOrNull } from "@/lib/api/storefront/customer";
 import { CART_CHANGED_EVENT } from "@/lib/storefront/cart-events";
+import { STORE_NAME } from "@/lib/storefront/ui";
+import { cn } from "@/lib/utils";
 
 type NavCategory = { name: string; slug: string };
 
@@ -48,14 +51,6 @@ function useCartQty(): number {
   return qty;
 }
 
-function QtyBadge({ qty }: { qty: number }) {
-  return (
-    <span className="ml-1 inline-flex min-w-5 items-center justify-center rounded-full bg-zinc-50 px-1.5 text-xs font-medium text-zinc-950">
-      {qty}
-    </span>
-  );
-}
-
 export function StorefrontHeader({
   categories,
 }: {
@@ -63,6 +58,9 @@ export function StorefrontHeader({
 }) {
   const cartQty = useCartQty();
   const [accountHref, setAccountHref] = useState("/login");
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
+  const nav = categories.slice(0, 6);
 
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
@@ -72,15 +70,16 @@ export function StorefrontHeader({
     });
     return () => cancelAnimationFrame(frame);
   }, []);
+
   return (
-    <header className="border-b bg-zinc-950 text-zinc-50">
-      <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3">
+    <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 shadow-[0_4px_20px_-2px_rgba(15,23,42,0.06)] backdrop-blur">
+      <div className="mx-auto flex max-w-[1320px] items-center gap-3 px-4 py-3 sm:px-6">
         <Sheet>
           <SheetTrigger asChild>
             <Button
               variant="ghost"
               size="icon"
-              className="text-zinc-50 hover:bg-zinc-800 md:hidden"
+              className="text-slate-900 hover:bg-slate-100 md:hidden"
               aria-label="Mở menu"
             >
               <Menu />
@@ -88,97 +87,154 @@ export function StorefrontHeader({
           </SheetTrigger>
           <SheetContent
             side="left"
-            className="bg-zinc-950 text-zinc-50"
+            className="w-80 bg-white text-slate-900"
           >
-            <SheetTitle className="sr-only">Menu</SheetTitle>
-            <nav className="flex flex-col gap-3 pt-8 text-sm">
-              <Link href="/products" className="hover:underline">
+            <SheetTitle className="text-slate-900">{STORE_NAME}</SheetTitle>
+            <nav className="flex flex-col gap-1 pt-4 text-sm">
+              <Link
+                href="/products"
+                className="rounded-lg px-3 py-3 font-medium hover:bg-slate-50"
+              >
                 Cửa hàng
               </Link>
-              {categories.map((c) => (
+              {nav.map((c) => (
                 <Link
                   key={c.slug}
                   href={`/products?category=${encodeURIComponent(c.slug)}`}
-                  className="hover:underline"
+                  className="rounded-lg px-3 py-3 hover:bg-slate-50"
                 >
                   {c.name}
                 </Link>
               ))}
-              <Link href="/cart" className="hover:underline">
+              <Link
+                href="/cart"
+                className="rounded-lg px-3 py-3 hover:bg-slate-50"
+              >
                 Giỏ hàng
-                <QtyBadge qty={cartQty} />
+                {cartQty > 0 ? ` (${cartQty})` : ""}
               </Link>
-              <Link href={accountHref} className="hover:underline">
+              <Link
+                href={accountHref}
+                className="rounded-lg px-3 py-3 hover:bg-slate-50"
+              >
                 Tài khoản
               </Link>
             </nav>
           </SheetContent>
         </Sheet>
 
-        <Link href="/" className="text-lg font-semibold tracking-wide">
-          Watch
+        <Link
+          href="/"
+          className="text-lg font-bold tracking-[0.18em] text-slate-950"
+        >
+          {STORE_NAME}
         </Link>
 
-        <nav className="hidden items-center gap-4 text-sm md:flex">
-          <Link href="/products" className="hover:text-zinc-300">
-            Cửa hàng
-          </Link>
-          {categories.map((c) => (
-            <Link
+        <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
+          <HeaderNavLink href="/products">Cửa hàng</HeaderNavLink>
+          {nav.map((c) => (
+            <HeaderNavLink
               key={c.slug}
               href={`/products?category=${encodeURIComponent(c.slug)}`}
-              className="hover:text-zinc-300"
             >
               {c.name}
-            </Link>
+            </HeaderNavLink>
           ))}
         </nav>
 
         <form
           action="/products"
           method="get"
-          className="ml-auto hidden max-w-xs flex-1 sm:block"
+          className="ml-auto hidden max-w-sm flex-1 lg:block"
         >
-          <Input
-            type="search"
-            name="q"
-            placeholder="Tìm sản phẩm"
-            className="border-zinc-700 bg-zinc-900 text-zinc-50 placeholder:text-zinc-500"
-          />
+          <label className="relative block">
+            <span className="sr-only">Tìm sản phẩm</span>
+            <Search
+              className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+              aria-hidden
+            />
+            <Input
+              type="search"
+              name="q"
+              placeholder="Tìm sản phẩm, đồng hồ..."
+              className="h-11 rounded-full border-slate-200 bg-slate-50 pl-10"
+            />
+          </label>
         </form>
 
-        <div className="ml-auto flex items-center gap-2 sm:ml-0">
+        <div className="ml-auto flex items-center gap-1 lg:ml-0">
           <Button
             variant="ghost"
-            className="text-zinc-50 hover:bg-zinc-800"
-            asChild
+            size="icon"
+            className="lg:hidden"
+            aria-label="Tìm kiếm"
+            onClick={() => setSearchOpen((v) => !v)}
           >
-            <Link href="/cart">
-              Giỏ
-              <QtyBadge qty={cartQty} />
+            {searchOpen ? <X /> : <Search />}
+          </Button>
+          <Button variant="ghost" size="icon" asChild>
+            <Link href={accountHref} aria-label="Tài khoản">
+              <UserRound />
             </Link>
           </Button>
           <Button
             variant="ghost"
-            className="text-zinc-50 hover:bg-zinc-800"
-            asChild
+            size="icon"
+            className="relative"
+            aria-label={`Giỏ hàng${cartQty > 0 ? `, ${cartQty} sản phẩm` : ""}`}
+            onClick={() => setCartOpen(true)}
           >
-            <Link href={accountHref}>Tài khoản</Link>
+            <ShoppingBag />
+            {cartQty > 0 ? (
+              <span className="absolute right-1 top-1 inline-flex min-w-4 items-center justify-center rounded-full bg-blue-600 px-1 text-[10px] font-bold text-white">
+                {cartQty > 99 ? "99+" : cartQty}
+              </span>
+            ) : null}
           </Button>
         </div>
       </div>
-      <form
-        action="/products"
-        method="get"
-        className="border-t border-zinc-800 px-4 py-2 sm:hidden"
-      >
-        <Input
-          type="search"
-          name="q"
-          placeholder="Tìm sản phẩm"
-          className="border-zinc-700 bg-zinc-900 text-zinc-50 placeholder:text-zinc-500"
-        />
-      </form>
+      {searchOpen ? (
+        <form
+          action="/products"
+          method="get"
+          className="border-t border-slate-200 px-4 py-3 lg:hidden"
+        >
+          <label className="relative block">
+            <span className="sr-only">Tìm sản phẩm</span>
+            <Search
+              className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+              aria-hidden
+            />
+            <Input
+              type="search"
+              name="q"
+              autoFocus
+              placeholder="Tìm sản phẩm"
+              className="h-11 rounded-full border-slate-200 bg-slate-50 pl-10"
+            />
+          </label>
+        </form>
+      ) : null}
+      <MiniCartDrawer open={cartOpen} onOpenChange={setCartOpen} />
     </header>
+  );
+}
+
+function HeaderNavLink({
+  href,
+  children,
+}: {
+  href: string;
+  children: ReactNode;
+}) {
+  return (
+    <Link
+      href={href}
+      className={cn(
+        "relative px-3 py-2 text-slate-700 after:absolute after:inset-x-3 after:bottom-1 after:h-0.5 after:origin-left after:scale-x-0 after:bg-blue-600 after:transition-transform hover:text-slate-950 hover:after:scale-x-100",
+      )}
+    >
+      {children}
+    </Link>
   );
 }

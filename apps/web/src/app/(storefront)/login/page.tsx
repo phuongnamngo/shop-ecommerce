@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { AuthShell } from "@/components/storefront/auth-shell";
 import { LoginForm } from "@/components/storefront/login-form";
 
 export const metadata: Metadata = {
@@ -9,11 +10,11 @@ export const metadata: Metadata = {
 
 export default function LoginPage() {
   return (
-    <main className="mx-auto max-w-md px-4 py-16">
-      <h1 className="text-2xl font-semibold">Đăng nhập</h1>
-      <div className="mt-8">
-        <LoginForm />
-      </div>
-    </main>
+    <AuthShell
+      title="Chào mừng trở lại"
+      subtitle="Đăng nhập để quản lý đơn hàng và trải nghiệm mua sắm tốt hơn."
+    >
+      <LoginForm />
+    </AuthShell>
   );
 }

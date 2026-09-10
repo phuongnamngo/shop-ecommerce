@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { storefrontErrorMessage } from "@/lib/api/storefront/browser";
 import { resetCustomerPassword } from "@/lib/api/storefront/customer";
+import { sfInput } from "@/lib/storefront/ui";
 
 export function ResetPasswordForm() {
   const router = useRouter();
@@ -55,7 +56,7 @@ export function ResetPasswordForm() {
           type="password"
           autoComplete="new-password"
           required
-          className="mt-1"
+          className={sfInput}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
@@ -67,7 +68,7 @@ export function ResetPasswordForm() {
           type="password"
           autoComplete="new-password"
           required
-          className="mt-1"
+          className={sfInput}
           value={passwordConfirmation}
           onChange={(e) => setPasswordConfirmation(e.target.value)}
         />
@@ -77,11 +78,15 @@ export function ResetPasswordForm() {
           {error}
         </p>
       ) : null}
-      <Button type="submit" className="w-full" disabled={pending}>
+      <Button
+        type="submit"
+        className="h-12 w-full rounded-lg bg-blue-600 font-semibold hover:bg-blue-700"
+        disabled={pending}
+      >
         {pending ? "Đang lưu…" : "Đặt lại mật khẩu"}
       </Button>
-      <p className="text-center text-sm text-zinc-600">
-        <Link href="/login" className="underline">
+      <p className="text-center text-sm text-slate-600">
+        <Link href="/login" className="font-semibold text-blue-600">
           Quay lại đăng nhập
         </Link>
       </p>

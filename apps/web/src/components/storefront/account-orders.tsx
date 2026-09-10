@@ -3,11 +3,16 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { EmptyState } from "@/components/storefront/empty-state";
 import { Button } from "@/components/ui/button";
 import { storefrontErrorMessage } from "@/lib/api/storefront/browser";
 import { listCustomerOrders } from "@/lib/api/storefront/customer";
 import { formatVnd } from "@/lib/api/storefront/money";
 import type { CustomerOrder, PageMeta } from "@/lib/api/storefront/types";
+import {
+  orderStatusClass,
+  orderStatusLabel,
+} from "@/lib/storefront/order-status";
 
 export function AccountOrders() {
   const [rows, setRows] = useState<CustomerOrder[]>([]);
@@ -29,33 +34,42 @@ export function AccountOrders() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-semibold">Đơn hàng</h1>
+      <h1 className="text-2xl font-bold tracking-tight">Đơn hàng của tôi</h1>
       {error ? (
         <p className="text-sm text-red-700" role="alert">
           {error}
         </p>
       ) : null}
       {rows.length === 0 && !error ? (
-        <p className="text-sm text-zinc-600">Chưa có đơn hàng.</p>
+        <EmptyState
+          title="Chưa có đơn hàng"
+          description="Các đơn bạn đặt sẽ được liệt kê tại đây."
+          actionHref="/products"
+          actionLabel="Mua sắm ngay"
+        />
       ) : (
-        <ul className="divide-y rounded-lg border">
+        <ul className="divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white">
           {rows.map((row) => (
-            <li key={row.id} className="flex items-center justify-between p-3 text-sm">
+            <li key={row.id} className="flex items-center justify-between p-4 text-sm">
               <div>
                 <Link
                   href={`/account/orders/${row.id}`}
-                  className="font-medium hover:underline"
+                  className="font-semibold hover:text-blue-600"
                 >
                   {row.number}
                 </Link>
-                <p className="text-zinc-500">
-                  {row.status}
+                <p className="mt-1 text-slate-500">
+                  <span
+                    className={`mr-2 inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold ${orderStatusClass(row.status)}`}
+                  >
+                    {orderStatusLabel(row.status)}
+                  </span>
                   {row.created_at
-                    ? ` · ${new Date(row.created_at).toLocaleString()}`
+                    ? new Date(row.created_at).toLocaleString("vi-VN")
                     : ""}
                 </p>
               </div>
-              <span>{formatVnd(row.grand_total)}</span>
+              <span className="font-semibold">{formatVnd(row.grand_total)}</span>
             </li>
           ))}
         </ul>

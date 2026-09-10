@@ -4,8 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
+import { EmptyState } from "@/components/storefront/empty-state";
+import { QuantitySelector } from "@/components/storefront/quantity-selector";
+import { StorefrontBreadcrumb } from "@/components/storefront/storefront-breadcrumb";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   StorefrontBrowserError,
   storefrontErrorMessage,
@@ -18,6 +20,7 @@ import {
 } from "@/lib/api/storefront/cart";
 import { formatVnd } from "@/lib/api/storefront/money";
 import type { StorefrontCart } from "@/lib/api/storefront/types";
+import { sfContainer } from "@/lib/storefront/ui";
 
 export function CartPage() {
   const [cart, setCart] = useState<StorefrontCart | null>(null);
@@ -78,27 +81,35 @@ export function CartPage() {
   const empty = !loading && items.length === 0;
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-10">
-      <h1 className="text-2xl font-semibold">Giỏ hàng</h1>
+    <main className={`${sfContainer} py-8 lg:py-10`}>
+      <StorefrontBreadcrumb
+        items={[
+          { href: "/", label: "Trang chủ" },
+          { label: "Giỏ hàng của bạn" },
+        ]}
+      />
+      <h1 className="mt-4 text-3xl font-bold tracking-tight">Giỏ hàng</h1>
       {error ? (
         <p className="mt-4 text-sm text-red-700" role="alert">
           {error}
         </p>
       ) : null}
       {loading ? (
-        <p className="mt-6 text-sm text-zinc-600">Đang tải giỏ hàng…</p>
+        <p className="mt-6 text-sm text-slate-500">Đang tải giỏ hàng…</p>
       ) : null}
       {empty ? (
-        <div className="mt-6 space-y-4">
-          <p className="text-zinc-600">Giỏ hàng trống.</p>
-          <Button asChild>
-            <Link href="/products">Tiếp tục xem sản phẩm</Link>
-          </Button>
+        <div className="mt-8">
+          <EmptyState
+            title="Giỏ hàng trống"
+            description="Thêm sản phẩm từ cửa hàng để tiến hành thanh toán."
+            actionHref="/products"
+            actionLabel="Tiếp tục xem sản phẩm"
+          />
         </div>
       ) : null}
       {items.length > 0 ? (
-        <div className="mt-8 grid gap-10 lg:grid-cols-[1fr_20rem]">
-          <ul className="divide-y">
+        <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_22rem]">
+          <ul className="divide-y divide-slate-200 rounded-xl border border-slate-200 bg-white">
             {items.map((item) => {
               const thumb = storefrontMediaUrl(
                 item.thumbnail?.thumbnail_url ?? item.thumbnail?.url,
@@ -112,8 +123,8 @@ export function CartPage() {
                 .filter(Boolean)
                 .join(" / ");
               return (
-                <li key={item.id} className="flex gap-4 py-4">
-                  <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded bg-zinc-100">
+                <li key={item.id} className="flex gap-4 p-4">
+                  <div className="relative h-28 w-24 shrink-0 overflow-hidden rounded-lg bg-slate-100">
                     {thumb ? (
                       <Image
                         src={thumb}
@@ -125,33 +136,23 @@ export function CartPage() {
                     ) : null}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <Link href={href} className="font-medium hover:underline">
+                    <Link href={href} className="font-semibold hover:text-blue-600">
                       {name}
                     </Link>
                     {labels ? (
-                      <p className="mt-1 text-sm text-zinc-500">{labels}</p>
+                      <p className="mt-1 text-sm text-slate-500">{labels}</p>
                     ) : null}
                     <div className="mt-3 flex flex-wrap items-center gap-3">
-                      <label className="text-sm text-zinc-600">
-                        Số lượng
-                        <Input
-                          type="number"
-                          min={1}
-                          className="mt-1 w-20"
-                          value={item.qty}
-                          disabled={busyId === item.id}
-                          onChange={(e) => {
-                            const next = Number(e.target.value);
-                            if (Number.isInteger(next) && next >= 1) {
-                              void onQty(item.id, next);
-                            }
-                          }}
-                        />
-                      </label>
+                      <QuantitySelector
+                        value={item.qty}
+                        disabled={busyId === item.id}
+                        onChange={(next) => void onQty(item.id, next)}
+                      />
                       <Button
                         type="button"
                         variant="ghost"
                         size="sm"
+                        className="text-slate-500"
                         disabled={busyId === item.id}
                         onClick={() => void onRemove(item.id)}
                       >
@@ -159,19 +160,33 @@ export function CartPage() {
                       </Button>
                     </div>
                   </div>
-                  <p className="text-sm font-medium">{formatVnd(item.line_total)}</p>
+                  <p className="text-sm font-bold">{formatVnd(item.line_total)}</p>
                 </li>
               );
             })}
           </ul>
-          <aside className="h-fit rounded-lg border p-4">
-            <p className="flex items-center justify-between text-sm">
-              <span>Tạm tính</span>
-              <span className="font-medium">{formatVnd(cart?.subtotal ?? 0)}</span>
+          <aside className="h-fit rounded-xl border border-slate-200 bg-white p-5 lg:sticky lg:top-24">
+            <h2 className="font-semibold">Tóm tắt đơn hàng</h2>
+            <p className="mt-4 flex items-center justify-between text-sm">
+              <span className="text-slate-500">Tạm tính</span>
+              <span className="font-semibold">{formatVnd(cart?.subtotal ?? 0)}</span>
             </p>
-            <Button className="mt-4 w-full" asChild disabled={items.length === 0}>
-              <Link href="/checkout">Thanh toán</Link>
+            <p className="mt-2 text-xs text-slate-400">
+              Phí vận chuyển được tính ở bước thanh toán.
+            </p>
+            <Button
+              className="mt-5 h-12 w-full rounded-lg bg-blue-600 font-semibold hover:bg-blue-700"
+              asChild
+              disabled={items.length === 0}
+            >
+              <Link href="/checkout">Tiến hành thanh toán</Link>
             </Button>
+            <Link
+              href="/products"
+              className="mt-3 block text-center text-sm font-medium text-slate-600 hover:text-blue-600"
+            >
+              Tiếp tục mua sắm
+            </Link>
           </aside>
         </div>
       ) : null}

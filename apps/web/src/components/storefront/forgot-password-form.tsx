@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { storefrontErrorMessage } from "@/lib/api/storefront/browser";
 import { forgotCustomerPassword } from "@/lib/api/storefront/customer";
+import { sfInput } from "@/lib/storefront/ui";
 
 export function ForgotPasswordForm() {
   const [email, setEmail] = useState("");
@@ -31,7 +32,7 @@ export function ForgotPasswordForm() {
 
   if (done) {
     return (
-      <p className="text-sm text-zinc-600">
+      <p className="text-sm text-slate-600">
         Nếu email tồn tại trong hệ thống, chúng tôi đã gửi link đặt lại mật khẩu.
       </p>
     );
@@ -46,7 +47,7 @@ export function ForgotPasswordForm() {
           type="email"
           autoComplete="email"
           required
-          className="mt-1"
+          className={sfInput}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
@@ -56,11 +57,15 @@ export function ForgotPasswordForm() {
           {error}
         </p>
       ) : null}
-      <Button type="submit" className="w-full" disabled={pending}>
+      <Button
+        type="submit"
+        className="h-12 w-full rounded-lg bg-blue-600 font-semibold hover:bg-blue-700"
+        disabled={pending}
+      >
         {pending ? "Đang gửi…" : "Gửi link đặt lại"}
       </Button>
-      <p className="text-center text-sm text-zinc-600">
-        <Link href="/login" className="underline">
+      <p className="text-center text-sm text-slate-600">
+        <Link href="/login" className="font-semibold text-blue-600">
           Quay lại đăng nhập
         </Link>
       </p>
