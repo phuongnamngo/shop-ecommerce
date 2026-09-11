@@ -42,6 +42,10 @@ class ProductFactory extends Factory
                 'product_id' => $product->id,
                 'is_default' => true,
             ]);
+
+            if ($product->shouldBeSearchable()) {
+                $product->syncSearchIndex();
+            }
         });
     }
 

@@ -14,7 +14,9 @@
         "intervention/image": "^4.2",
         "laravel/framework": "^13.8",
         "laravel/sanctum": "^4.3",
+        "laravel/scout": "^11.7",
         "laravel/tinker": "^3.0",
+        "meilisearch/meilisearch-php": "^1.17",
         "spatie/laravel-activitylog": "^4.12",
         "spatie/laravel-permission": "^8.3"
     },

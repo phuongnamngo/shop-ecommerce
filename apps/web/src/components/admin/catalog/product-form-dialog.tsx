@@ -62,24 +62,6 @@ export function ProductFormDialog({
   const [categoryIds, setCategoryIds] = useState<number[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!open) return;
-    setError(null);
-    if (!isEdit) {
-      setName("");
-      setSku("");
-      setPrice("0");
-      setBrandId("none");
-      setStatus("draft");
-      setDescription("");
-      setCategoryIds([]);
-      return;
-    }
-    const product = existing.data?.data;
-    if (!product) return;
-    hydrate(product);
-  }, [open, isEdit, existing.data]);
-
   function hydrate(product: Product) {
     const def = product.variants.find((v) => v.is_default) ?? product.variants[0];
     setName(product.name);
@@ -90,6 +72,27 @@ export function ProductFormDialog({
     setDescription(product.description ?? "");
     setCategoryIds(product.categories.map((c) => c.id));
   }
+
+  useEffect(() => {
+    if (!open) return;
+    const frame = requestAnimationFrame(() => {
+      setError(null);
+      if (!isEdit) {
+        setName("");
+        setSku("");
+        setPrice("0");
+        setBrandId("none");
+        setStatus("draft");
+        setDescription("");
+        setCategoryIds([]);
+        return;
+      }
+      const product = existing.data?.data;
+      if (!product) return;
+      hydrate(product);
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [open, isEdit, existing.data]);
 
   const save = useMutation({
     mutationFn: async () => {

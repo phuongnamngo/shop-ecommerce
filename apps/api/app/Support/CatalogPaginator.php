@@ -30,4 +30,21 @@ final class CatalogPaginator
             'last_page' => $paginator->lastPage(),
         ];
     }
+
+    /**
+     * @return array{current_page: int, per_page: int, total: int, last_page: int}
+     */
+    public static function fromTotal(int $page, int $perPage, int $total): array
+    {
+        $perPage = max(1, $perPage);
+        $total = max(0, $total);
+        $lastPage = max(1, (int) ceil($total / $perPage));
+
+        return [
+            'current_page' => max(1, $page),
+            'per_page' => $perPage,
+            'total' => $total,
+            'last_page' => $lastPage,
+        ];
+    }
 }

@@ -3,6 +3,24 @@ export type PageMeta = {
   per_page: number;
   total: number;
   last_page: number;
+  facets?: CatalogFacets;
+};
+
+export type CatalogFacetOption = {
+  token: string;
+  label: string;
+  count: number;
+};
+
+export type CatalogFacets = {
+  brands: Array<{ id: number; name: string; slug: string; count: number }>;
+  categories: Array<{ id: number; name: string; slug: string; count: number }>;
+  price_buckets: Array<{ token: string; label: string; count: number }>;
+  attributes: Array<{
+    slug: string;
+    name: string;
+    options: CatalogFacetOption[];
+  }>;
 };
 
 export type PublicImage = {

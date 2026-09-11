@@ -1,4 +1,4 @@
-.PHONY: up down build logs ps migrate seed test artisan composer composer-install shell-api shell-web
+.PHONY: up down build logs ps migrate seed scout-import test artisan composer composer-install shell-api shell-web
 
 up:
 	docker compose up -d
@@ -20,6 +20,13 @@ migrate:
 
 seed:
 	docker compose exec api php artisan db:seed --force
+	$(MAKE) scout-import
+
+scout-import:
+	docker compose exec api php artisan catalog:search-configure
+	docker compose exec api php artisan scout:import 'App\Models\Product'
+	docker compose exec api php artisan scout:import 'App\Models\Brand'
+	docker compose exec api php artisan scout:import 'App\Models\Category'
 
 test:
 	docker compose exec api php artisan test

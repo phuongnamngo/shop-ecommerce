@@ -28,13 +28,20 @@ export function getStorefrontApiBase(): string {
 
 export async function storefrontFetch<T>(
   path: string,
-  searchParams?: Record<string, string | number | undefined>,
+  searchParams?: Record<string, string | number | string[] | undefined>,
 ): Promise<{ data: T; meta?: PageMeta }> {
   const base = getStorefrontApiBase();
   const url = new URL(path.startsWith("http") ? path : `${base}${path}`);
   if (searchParams) {
     for (const [key, value] of Object.entries(searchParams)) {
       if (value === undefined || value === "") continue;
+      if (Array.isArray(value)) {
+        for (const item of value) {
+          if (item === undefined || item === "") continue;
+          url.searchParams.append(key, String(item));
+        }
+        continue;
+      }
       url.searchParams.set(key, String(value));
     }
   }

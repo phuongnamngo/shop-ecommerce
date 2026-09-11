@@ -3,6 +3,11 @@
 namespace App\Providers;
 
 use App\Contracts\PaymentGateway;
+use App\Models\AttributeOption;
+use App\Models\Brand;
+use App\Models\Category;
+use App\Models\ProductVariant;
+use App\Observers\CatalogSearchObserver;
 use App\Services\Payment\FakePaymentGateway;
 use App\Services\Payment\VnPayGateway;
 use Dedoc\Scramble\Scramble;
@@ -30,6 +35,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->configureRateLimiting();
         $this->configureScramble();
+        $this->observeCatalogSearch();
     }
 
     private function configureScramble(): void
@@ -61,6 +67,19 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('auth.admin.forgot', function (Request $request) {
             return Limit::perMinute(3)->by($this->throttleKey($request));
         });
+
+        RateLimiter::for('catalog.suggest', function (Request $request) {
+            return Limit::perMinute(60)->by((string) $request->ip());
+        });
+    }
+
+    private function observeCatalogSearch(): void
+    {
+        $observer = $this->app->make(CatalogSearchObserver::class);
+        ProductVariant::observe($observer);
+        Brand::observe($observer);
+        Category::observe($observer);
+        AttributeOption::observe($observer);
     }
 
     private function throttleKey(Request $request): string

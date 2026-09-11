@@ -4,6 +4,18 @@ export type ListingQuery = {
   brand?: string;
   sort?: string;
   page?: string;
+  price_bucket?: string;
+  attrs?: string | string[];
+};
+
+export type ListingHrefInput = {
+  q?: string;
+  category?: string;
+  brand?: string;
+  sort?: string;
+  page?: string | number;
+  price_bucket?: string;
+  attrs?: string[];
 };
 
 export function normalizeSort(
@@ -13,13 +25,14 @@ export function normalizeSort(
   return "newest";
 }
 
-export function listingHref(sp: {
-  q?: string;
-  category?: string;
-  brand?: string;
-  sort?: string;
-  page?: string | number;
-}): string {
+export function normalizeAttrs(
+  raw: string | string[] | undefined,
+): string[] {
+  if (!raw) return [];
+  return (Array.isArray(raw) ? raw : [raw]).map((v) => v.trim()).filter(Boolean);
+}
+
+export function listingHref(sp: ListingHrefInput): string {
   const p = new URLSearchParams();
   const q = sp.q?.trim();
   if (q) p.set("q", q);
@@ -27,6 +40,10 @@ export function listingHref(sp: {
   if (sp.brand) p.set("brand", sp.brand);
   const sort = normalizeSort(sp.sort);
   if (sort !== "newest") p.set("sort", sort);
+  if (sp.price_bucket) p.set("price_bucket", sp.price_bucket);
+  for (const attr of sp.attrs ?? []) {
+    p.append("attrs", attr);
+  }
   const page = Number(sp.page);
   if (Number.isFinite(page) && page > 1) p.set("page", String(page));
   const s = p.toString();
@@ -38,4 +55,16 @@ export function listingCanonicalPath(sp: {
   brand?: string;
 }): string {
   return listingHref({ category: sp.category, brand: sp.brand });
+}
+
+export function listingShouldNoindex(sp: ListingQuery): boolean {
+  return Boolean(
+    sp.q?.trim() || sp.price_bucket || normalizeAttrs(sp.attrs).length > 0,
+  );
+}
+
+export function toggleAttr(attrs: string[], token: string): string[] {
+  return attrs.includes(token)
+    ? attrs.filter((item) => item !== token)
+    : [...attrs, token];
 }

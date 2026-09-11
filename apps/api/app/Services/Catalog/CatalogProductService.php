@@ -76,7 +76,10 @@ final class CatalogProductService
                 $this->variants->create($product, $row);
             }
 
-            return $product->refresh()->load($this->adminRelations());
+            $product = $product->refresh()->load($this->adminRelations());
+            $product->syncSearchIndex();
+
+            return $product;
         });
     }
 
@@ -124,11 +127,15 @@ final class CatalogProductService
             $product->categories()->sync($data['category_ids']);
         }
 
-        return $product->refresh()->load($this->adminRelations());
+        $product = $product->refresh()->load($this->adminRelations());
+        $product->syncSearchIndex();
+
+        return $product;
     }
 
     public function delete(Product $product): void
     {
+        $product->unsearchableSync();
         DB::transaction(function () use ($product): void {
             $product->load('variants.images');
             $product->images()->delete();

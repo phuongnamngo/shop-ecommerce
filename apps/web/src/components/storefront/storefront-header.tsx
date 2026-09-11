@@ -5,8 +5,8 @@ import { Menu, Search, ShoppingBag, UserRound, X } from "lucide-react";
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 
 import { MiniCartDrawer } from "@/components/storefront/mini-cart-drawer";
+import { StorefrontSearchField } from "@/components/storefront/storefront-search-field";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Sheet,
   SheetContent,
@@ -147,19 +147,7 @@ export function StorefrontHeader({
           method="get"
           className="ml-auto hidden max-w-sm flex-1 lg:block"
         >
-          <label className="relative block">
-            <span className="sr-only">Tìm sản phẩm</span>
-            <Search
-              className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
-              aria-hidden
-            />
-            <Input
-              type="search"
-              name="q"
-              placeholder="Tìm áo thun, polo, jean..."
-              className="h-11 rounded-full border-slate-200 bg-slate-50 pl-10"
-            />
-          </label>
+          <StorefrontSearchField />
         </form>
 
         <div className="ml-auto flex items-center gap-1 lg:ml-0">
@@ -199,20 +187,7 @@ export function StorefrontHeader({
           method="get"
           className="border-t border-slate-200 px-4 py-3 lg:hidden"
         >
-          <label className="relative block">
-            <span className="sr-only">Tìm sản phẩm</span>
-            <Search
-              className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
-              aria-hidden
-            />
-            <Input
-              type="search"
-              name="q"
-              autoFocus
-              placeholder="Tìm sản phẩm"
-              className="h-11 rounded-full border-slate-200 bg-slate-50 pl-10"
-            />
-          </label>
+          <StorefrontSearchField autoFocus placeholder="Tìm sản phẩm" />
         </form>
       ) : null}
       <MiniCartDrawer open={cartOpen} onOpenChange={setCartOpen} />

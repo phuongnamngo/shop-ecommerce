@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Jobs\MakeProductSearchable;
+use App\Services\Catalog\CatalogProductService;
+use App\Support\CatalogSearchDocument;
 use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Laravel\Scout\Searchable;
 
 #[Fillable([
     'code', 'brand_id', 'name', 'slug', 'status', 'published_at', 'description', 'meta_title', 'meta_description', 'created_by', 'updated_by',
@@ -18,7 +22,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Product extends Model
 {
     /** @use HasFactory<ProductFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory, Searchable, SoftDeletes;
 
     public const STATUS_DRAFT = 'draft';
 
@@ -34,6 +38,7 @@ class Product extends Model
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class, 'category_product')
+            ->using(CategoryProduct::class)
             ->orderBy('categories.id')
             ->withTimestamps();
     }
@@ -53,6 +58,36 @@ class Product extends Model
         return $this->hasMany(ProductImage::class);
     }
 
+    public function shouldBeSearchable(): bool
+    {
+        if ($this->id === null) {
+            return false;
+        }
+
+        return app(CatalogProductService::class)
+            ->applyPublicVisibility(static::query()->whereKey($this->id))
+            ->exists();
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toSearchableArray(): array
+    {
+        return CatalogSearchDocument::forProduct($this);
+    }
+
+    public function syncSearchIndex(): void
+    {
+        if ($this->shouldBeSearchable()) {
+            $this->searchableSync();
+
+            return;
+        }
+
+        $this->unsearchableSync();
+    }
+
     /**
      * @return array<string, string>
      */
@@ -61,5 +96,18 @@ class Product extends Model
         return [
             'published_at' => 'datetime',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        static::saved(function (Product $product): void {
+            if (
+                $product->status === self::STATUS_ACTIVE
+                && $product->published_at !== null
+                && $product->published_at->isFuture()
+            ) {
+                MakeProductSearchable::dispatch($product->id)->delay($product->published_at);
+            }
+        });
     }
 }

@@ -5,6 +5,7 @@
     <testsuites><testsuite name="PostgreSQL"><file>tests/Feature/Checkout/CheckoutConcurrencyTest.php</file></testsuite></testsuites>
     <source><include><directory>app</directory></include></source>
     <php>
+        <ini name="memory_limit" value="512M"/>
         <env name="APP_ENV" value="testing" force="true"/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
@@ -15,7 +16,13 @@
         <env name="DB_DATABASE" value="watch_app_test" force="true"/>
         <env name="DB_USERNAME" value="watch" force="true"/>
         <env name="DB_PASSWORD" value="watch_secret" force="true"/>
-        <env name="QUEUE_CONNECTION" value="sync"/>
+        <env name="QUEUE_CONNECTION" value="sync" force="true"/>
+        <env name="SESSION_DRIVER" value="array"/>
+        <env name="SCOUT_DRIVER" value="meilisearch" force="true"/>
+        <env name="SCOUT_QUEUE" value="false" force="true"/>
+        <env name="SCOUT_PREFIX" value="testing_" force="true"/>
+        <env name="MEILISEARCH_HOST" value="http://meilisearch:7700" force="true"/>
+        <env name="MEILISEARCH_KEY" value="watch_meili_dev" force="true"/>
         <env name="SESSION_DRIVER" value="array"/>
     </php>
 </phpunit>

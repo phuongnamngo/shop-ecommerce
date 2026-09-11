@@ -56,4 +56,29 @@ class ProductVariant extends Model
             'is_default' => 'boolean',
         ];
     }
+
+    protected static function booted(): void
+    {
+        static::saved(function (ProductVariant $variant): void {
+            self::reindexProduct($variant->product_id);
+        });
+
+        static::deleted(function (ProductVariant $variant): void {
+            self::reindexProduct($variant->product_id);
+        });
+    }
+
+    private static function reindexProduct(?int $productId): void
+    {
+        if ($productId === null) {
+            return;
+        }
+
+        $product = Product::query()->find($productId);
+        if ($product === null) {
+            return;
+        }
+
+        $product->syncSearchIndex();
+    }
 }

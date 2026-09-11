@@ -25,6 +25,7 @@ use App\Http\Controllers\Api\V1\Cart\CartController;
 use App\Http\Controllers\Api\V1\Catalog\BrandController as PublicBrandController;
 use App\Http\Controllers\Api\V1\Catalog\CategoryController as PublicCategoryController;
 use App\Http\Controllers\Api\V1\Catalog\ProductController as PublicProductController;
+use App\Http\Controllers\Api\V1\Catalog\SearchSuggestController;
 use App\Http\Controllers\Api\V1\Checkout\CheckoutController;
 use App\Http\Controllers\Api\V1\Geo\GeoController;
 use App\Http\Controllers\Api\V1\Order\GuestOrderLookupController;
@@ -49,6 +50,8 @@ Route::prefix('v1')->group(function () {
     Route::post('checkout', [CheckoutController::class, 'store']);
     Route::get('payments/vnpay/ipn', [VnPayController::class, 'ipn']);
     Route::get('payments/vnpay/return', [VnPayController::class, 'returnUrl']);
+    Route::get('catalog/search/suggest', SearchSuggestController::class)
+        ->middleware('throttle:catalog.suggest');
     Route::get('catalog/products', [PublicProductController::class, 'index']);
     Route::get('catalog/products/{slug}', [PublicProductController::class, 'show']);
     Route::get('catalog/brands', [PublicBrandController::class, 'index']);

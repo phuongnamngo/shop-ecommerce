@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { SlidersHorizontal } from "lucide-react";
+import type { ReactNode } from "react";
 
 import { EmptyState } from "@/components/storefront/empty-state";
 import { ProductCard } from "@/components/storefront/product-card";
@@ -11,26 +12,38 @@ import {
   listPublicCategories,
   listPublicProducts,
 } from "@/lib/api/storefront/catalog";
+import { StorefrontApiError } from "@/lib/api/storefront/client";
 import { findBrandBySlug, findCategoryBySlug } from "@/lib/api/storefront/resolve";
-import type { PublicCategoryNode } from "@/lib/api/storefront/types";
+import type {
+  CatalogFacets,
+  PageMeta,
+  PublicCategoryNode,
+} from "@/lib/api/storefront/types";
 import {
   listingCanonicalPath,
   listingHref,
+  listingShouldNoindex,
+  normalizeAttrs,
   normalizeSort,
+  toggleAttr,
+  type ListingHrefInput,
   type ListingQuery,
 } from "@/lib/storefront/listing";
 import { sfContainer } from "@/lib/storefront/ui";
 
 export const dynamic = "force-dynamic";
 
-function flattenOptions(
-  nodes: PublicCategoryNode[],
-  depth = 0,
-): Array<{ slug: string; name: string; depth: number }> {
-  return nodes.flatMap((n) => [
-    { slug: n.slug, name: n.name, depth },
-    ...flattenOptions(n.children ?? [], depth + 1),
-  ]);
+const PRICE_BUCKET_LABELS: Record<string, string> = {
+  lt_300k: "Dưới 300.000đ",
+  "300_500k": "300.000đ – dưới 500.000đ",
+  "500k_plus": "Từ 500.000đ",
+};
+
+function isSearchUnavailable(error: unknown): boolean {
+  return (
+    error instanceof StorefrontApiError &&
+    (error.code === "CATALOG_SEARCH_UNAVAILABLE" || error.status === 503)
+  );
 }
 
 export async function generateMetadata({
@@ -45,7 +58,7 @@ export async function generateMetadata({
     brand: sp.brand,
   });
 
-  const robots = q
+  const robots = listingShouldNoindex(sp)
     ? { index: false, follow: true }
     : undefined;
 
@@ -94,73 +107,146 @@ export async function generateMetadata({
   };
 }
 
-function FilterFields({
-  q,
-  category,
-  brand,
-  sort,
-  categoryOptions,
-  brands,
+function FacetLink({
+  href,
+  active,
+  label,
+  count,
 }: {
-  q?: string;
-  category?: string;
-  brand?: string;
-  sort: string;
-  categoryOptions: Array<{ slug: string; name: string; depth: number }>;
-  brands: Array<{ id: number; slug: string; name: string }>;
+  href: string;
+  active: boolean;
+  label: string;
+  count?: number;
 }) {
   return (
-    <>
-      {q ? <input type="hidden" name="q" value={q} /> : null}
-      <label className="block text-sm">
-        <span className="mb-1.5 block font-semibold text-slate-900">Danh mục</span>
-        <select
-          name="category"
-          defaultValue={category ?? ""}
-          className="h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm"
-        >
-          <option value="">Tất cả</option>
-          {categoryOptions.map((c) => (
-            <option key={c.slug} value={c.slug}>
-              {"— ".repeat(c.depth)}
-              {c.name}
-            </option>
-          ))}
-        </select>
-      </label>
-      <label className="mt-4 block text-sm">
-        <span className="mb-1.5 block font-semibold text-slate-900">Thương hiệu</span>
-        <select
-          name="brand"
-          defaultValue={brand ?? ""}
-          className="h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm"
-        >
-          <option value="">Tất cả</option>
-          {brands.map((b) => (
-            <option key={b.id} value={b.slug}>
-              {b.name}
-            </option>
-          ))}
-        </select>
-      </label>
-      <label className="mt-4 block text-sm">
-        <span className="mb-1.5 block font-semibold text-slate-900">Sắp xếp</span>
-        <select
-          name="sort"
-          defaultValue={sort}
-          className="h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm"
-        >
-          <option value="newest">Mới nhất</option>
-          <option value="price_asc">Giá tăng dần</option>
-          <option value="price_desc">Giá giảm dần</option>
-        </select>
-      </label>
-      <button
-        type="submit"
-        className="mt-4 h-11 w-full rounded-lg bg-blue-600 text-sm font-semibold text-white hover:bg-blue-700"
+    <li>
+      <Link
+        href={href}
+        className={
+          active
+            ? "flex items-center justify-between gap-2 rounded-lg bg-blue-50 px-2 py-1.5 text-sm font-semibold text-blue-700"
+            : "flex items-center justify-between gap-2 rounded-lg px-2 py-1.5 text-sm text-slate-700 hover:bg-slate-50"
+        }
       >
-        Áp dụng
-      </button>
+        <span>{label}</span>
+        {count !== undefined ? (
+          <span className={active ? "text-blue-600" : "text-slate-400"}>
+            {count}
+          </span>
+        ) : null}
+      </Link>
+    </li>
+  );
+}
+
+function FacetSection({
+  title,
+  children,
+}: {
+  title: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className="mt-5 first:mt-0">
+      <p className="mb-1.5 text-sm font-semibold text-slate-900">{title}</p>
+      <ul className="space-y-0.5">{children}</ul>
+    </div>
+  );
+}
+
+function FacetFilters({
+  rest,
+  facets,
+}: {
+  rest: ListingHrefInput;
+  facets?: CatalogFacets;
+}) {
+  if (!facets) {
+    return (
+      <p className="text-sm text-slate-500">
+        Bộ lọc sẽ hiện khi tìm kiếm khả dụng.
+      </p>
+    );
+  }
+
+  const selectedAttrs = rest.attrs ?? [];
+
+  return (
+    <>
+      {facets.categories.length > 0 ? (
+        <FacetSection title="Danh mục">
+          {facets.categories.map((item) => (
+            <FacetLink
+              key={item.id}
+              href={listingHref({
+                ...rest,
+                category: rest.category === item.slug ? undefined : item.slug,
+                page: undefined,
+              })}
+              active={rest.category === item.slug}
+              label={item.name}
+              count={item.count}
+            />
+          ))}
+        </FacetSection>
+      ) : null}
+      {facets.brands.length > 0 ? (
+        <FacetSection title="Thương hiệu">
+          {facets.brands.map((item) => (
+            <FacetLink
+              key={item.id}
+              href={listingHref({
+                ...rest,
+                brand: rest.brand === item.slug ? undefined : item.slug,
+                page: undefined,
+              })}
+              active={rest.brand === item.slug}
+              label={item.name}
+              count={item.count}
+            />
+          ))}
+        </FacetSection>
+      ) : null}
+      {facets.price_buckets.length > 0 ? (
+        <FacetSection title="Giá">
+          {facets.price_buckets.map((item) => (
+            <FacetLink
+              key={item.token}
+              href={listingHref({
+                ...rest,
+                price_bucket:
+                  rest.price_bucket === item.token ? undefined : item.token,
+                page: undefined,
+              })}
+              active={rest.price_bucket === item.token}
+              label={item.label}
+              count={item.count}
+            />
+          ))}
+        </FacetSection>
+      ) : null}
+      {facets.attributes.map((attr) =>
+        attr.options.length > 0 ? (
+          <FacetSection key={attr.slug} title={attr.name}>
+            {attr.options.map((option) => {
+              const nextAttrs = toggleAttr(selectedAttrs, option.token);
+              return (
+                <FacetLink
+                  key={option.token}
+                  href={listingHref({
+                    ...rest,
+                    attrs: nextAttrs,
+                    page: undefined,
+                  })}
+                  active={selectedAttrs.includes(option.token)}
+                  label={option.label}
+                  count={option.count}
+                />
+              );
+            })}
+          </FacetSection>
+        ) : null,
+      )}
     </>
   );
 }
@@ -169,11 +255,13 @@ export default async function ProductsPage({
   searchParams,
 }: {
   searchParams: Promise<ListingQuery>;
-}) {
+}): Promise<ReactNode> {
   const sp = await searchParams;
   const q = sp.q?.trim() || undefined;
   const sort = normalizeSort(sp.sort);
   const page = Math.max(1, Number(sp.page) || 1);
+  const attrs = normalizeAttrs(sp.attrs);
+  const priceBucket = sp.price_bucket?.trim() || undefined;
 
   let tree: PublicCategoryNode[] = [];
   try {
@@ -223,8 +311,9 @@ export default async function ProductsPage({
     : null;
 
   let error = false;
+  let searchUnavailable = false;
   let data: Awaited<ReturnType<typeof listPublicProducts>>["data"] = [];
-  let meta = {
+  let meta: PageMeta = {
     current_page: page,
     per_page: 20,
     total: 0,
@@ -239,19 +328,23 @@ export default async function ProductsPage({
       sort,
       page,
       per_page: 20,
+      price_bucket: priceBucket,
+      attribute_facets: attrs.length > 0 ? attrs : undefined,
     });
     data = res.data;
     meta = res.meta;
-  } catch {
+  } catch (caught) {
     error = true;
+    searchUnavailable = isSearchUnavailable(caught);
   }
 
-  const categoryOptions = flattenOptions(tree);
-  const rest = {
+  const rest: ListingHrefInput = {
     q,
     category: sp.category,
     brand: sp.brand,
     sort,
+    price_bucket: priceBucket,
+    attrs,
   };
   const heading = q
     ? `Kết quả cho “${q}”`
@@ -278,14 +371,36 @@ export default async function ProductsPage({
       label: brandName,
     });
   }
+  if (priceBucket) {
+    const bucketLabel =
+      meta.facets?.price_buckets.find((item) => item.token === priceBucket)?.label ??
+      PRICE_BUCKET_LABELS[priceBucket] ??
+      priceBucket;
+    chips.push({
+      href: listingHref({ ...rest, price_bucket: undefined }),
+      label: bucketLabel,
+    });
+  }
+  for (const token of attrs) {
+    const attrLabel =
+      meta.facets?.attributes
+        .flatMap((attr) => attr.options)
+        .find((option) => option.token === token)?.label ?? token;
+    chips.push({
+      href: listingHref({
+        ...rest,
+        attrs: attrs.filter((item) => item !== token),
+      }),
+      label: attrLabel,
+    });
+  }
 
-  const filterProps = {
+  const listingNav = {
     q,
-    category: sp.category,
     brand: sp.brand,
     sort,
-    categoryOptions,
-    brands,
+    price_bucket: priceBucket,
+    attrs,
   };
 
   return (
@@ -308,7 +423,7 @@ export default async function ProductsPage({
         <ul className="mt-6 flex gap-2 overflow-x-auto pb-1">
           <li>
             <Link
-              href={listingHref({ q, brand: sp.brand, sort })}
+              href={listingHref(listingNav)}
               className={
                 !sp.category
                   ? "inline-flex h-10 shrink-0 items-center rounded-lg bg-blue-600 px-4 text-sm font-semibold text-white"
@@ -321,7 +436,7 @@ export default async function ProductsPage({
           {tree.map((c) => (
             <li key={c.slug}>
               <Link
-                href={listingHref({ q, category: c.slug, brand: sp.brand, sort })}
+                href={listingHref({ ...listingNav, category: c.slug })}
                 className={
                   sp.category === c.slug
                     ? "inline-flex h-10 shrink-0 items-center rounded-lg border border-blue-600 bg-blue-50 px-4 text-sm font-semibold text-blue-700"
@@ -346,9 +461,7 @@ export default async function ProductsPage({
                 </Link>
               ) : null}
             </div>
-            <form action="/products" method="get">
-              <FilterFields {...filterProps} />
-            </form>
+            <FacetFilters rest={rest} facets={meta.facets} />
           </div>
         </aside>
 
@@ -358,9 +471,9 @@ export default async function ProductsPage({
               <SlidersHorizontal className="h-4 w-4" />
               Bộ lọc
             </summary>
-            <form action="/products" method="get" className="border-t border-slate-200 p-4">
-              <FilterFields {...filterProps} />
-            </form>
+            <div className="border-t border-slate-200 p-4">
+              <FacetFilters rest={rest} facets={meta.facets} />
+            </div>
           </details>
 
           <div className="flex flex-wrap items-center justify-between gap-3">
@@ -378,6 +491,12 @@ export default async function ProductsPage({
                 <input type="hidden" name="category" value={sp.category} />
               ) : null}
               {sp.brand ? <input type="hidden" name="brand" value={sp.brand} /> : null}
+              {priceBucket ? (
+                <input type="hidden" name="price_bucket" value={priceBucket} />
+              ) : null}
+              {attrs.map((token) => (
+                <input key={token} type="hidden" name="attrs" value={token} />
+              ))}
               <label className="flex items-center gap-2">
                 <span className="text-slate-500">Sắp xếp theo:</span>
                 <select
@@ -402,7 +521,7 @@ export default async function ProductsPage({
           {chips.length > 0 ? (
             <ul className="mt-3 flex flex-wrap gap-2">
               {chips.map((chip) => (
-                <li key={chip.label}>
+                <li key={`${chip.label}-${chip.href}`}>
                   <Link
                     href={chip.href}
                     className="inline-flex h-8 items-center rounded-full border border-slate-200 bg-white px-3 text-xs font-medium hover:border-blue-600 hover:text-blue-700"
@@ -421,7 +540,9 @@ export default async function ProductsPage({
 
           {error ? (
             <p className="mt-8 text-sm text-red-700" role="alert">
-              Không tải được sản phẩm. Thử lại sau.
+              {searchUnavailable
+                ? "Không tìm kiếm được lúc này. Thử lại sau."
+                : "Không tải được sản phẩm. Thử lại sau."}
             </p>
           ) : data.length === 0 ? (
             <div className="mt-8">

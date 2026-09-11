@@ -20,10 +20,21 @@ export function listPublicProducts(params: {
   sort?: "newest" | "price_asc" | "price_desc";
   page?: number;
   per_page?: number;
+  price_bucket?: string;
+  attribute_facets?: string[];
 }): Promise<{ data: PublicProductListItem[]; meta: PageMeta }> {
   return storefrontFetch<PublicProductListItem[]>(
     "/api/v1/catalog/products",
-    params,
+    {
+      q: params.q,
+      category_id: params.category_id,
+      brand_id: params.brand_id,
+      sort: params.sort,
+      page: params.page,
+      per_page: params.per_page,
+      price_bucket: params.price_bucket,
+      attribute_facets: params.attribute_facets,
+    },
   ).then((res) => ({
     data: res.data,
     meta: res.meta ?? {
