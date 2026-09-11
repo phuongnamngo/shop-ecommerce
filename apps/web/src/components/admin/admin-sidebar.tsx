@@ -49,6 +49,7 @@ function NavLinks({
 }) {
   const pathname = usePathname();
   const catalogOpen = pathname.startsWith("/admin/catalog");
+  const promotionsOpen = pathname.startsWith("/admin/promotions");
 
   return (
     <div className="flex h-full flex-col">
@@ -61,7 +62,10 @@ function NavLinks({
           {ADMIN_NAV_ITEMS.map((item) => {
             const active = isNavActive(pathname, item.href);
             const Icon = item.icon;
-            const expanded = Boolean(item.children && catalogOpen);
+            const sectionOpen =
+              (item.href.startsWith("/admin/catalog") && catalogOpen) ||
+              (item.href.startsWith("/admin/promotions") && promotionsOpen);
+            const expanded = Boolean(item.children && sectionOpen);
             return (
               <div key={item.href} className="space-y-1">
                 <Link
@@ -72,7 +76,7 @@ function NavLinks({
                     active && !item.children
                       ? "bg-[#ecf2ff] font-semibold text-[#1f53c9]"
                       : "font-medium text-[#334155] hover:bg-[#f8fafc] hover:text-[#0f172a]",
-                    item.children && catalogOpen
+                    item.children && sectionOpen
                       ? "bg-[#ecf2ff] font-semibold text-[#1f53c9]"
                       : null,
                   )}

@@ -3,6 +3,7 @@ import {
   LayoutDashboard,
   Package,
   ShoppingCart,
+  Tag,
   Warehouse,
   Users,
 } from "lucide-react";
@@ -29,6 +30,15 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
   { href: "/admin/orders", label: "Orders", icon: ShoppingCart },
   { href: "/admin/customers", label: "Customers", icon: Users },
   { href: "/admin/inventory", label: "Inventory", icon: Warehouse },
+  {
+    href: "/admin/promotions",
+    label: "Khuyến mãi",
+    icon: Tag,
+    children: [
+      { href: "/admin/promotions/discounts", label: "Discounts" },
+      { href: "/admin/promotions/coupons", label: "Coupons" },
+    ],
+  },
 ];
 
 export function isNavActive(pathname: string, href: string): boolean {
@@ -56,6 +66,12 @@ export function adminBreadcrumb(pathname: string): {
   }
   if (pathname.startsWith("/admin/catalog/products")) {
     return { parent: "Catalog", current: "Products" };
+  }
+  if (pathname.startsWith("/admin/promotions/coupons")) {
+    return { parent: "Khuyến mãi", current: "Coupons" };
+  }
+  if (pathname.startsWith("/admin/promotions/discounts")) {
+    return { parent: "Khuyến mãi", current: "Discounts" };
   }
   const match = ADMIN_NAV_ITEMS.find(
     (item) => item.href !== "/admin" && isNavActive(pathname, item.href),

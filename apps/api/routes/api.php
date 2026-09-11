@@ -13,32 +13,34 @@ use App\Http\Controllers\Api\V1\Admin\Catalog\ProductController as AdminProductC
 use App\Http\Controllers\Api\V1\Admin\Catalog\ProductImageController as AdminProductImageController;
 use App\Http\Controllers\Api\V1\Admin\Catalog\ProductVariantController as AdminProductVariantController;
 use App\Http\Controllers\Api\V1\Admin\Catalog\ProductVariantImageController as AdminProductVariantImageController;
+use App\Http\Controllers\Api\V1\Admin\Customer\CustomerController as AdminCustomerController;
+use App\Http\Controllers\Api\V1\Admin\Dashboard\MetricsController as AdminDashboardMetricsController;
 use App\Http\Controllers\Api\V1\Admin\Inventory\StockItemController as AdminStockItemController;
 use App\Http\Controllers\Api\V1\Admin\Inventory\StockMovementController as AdminStockMovementController;
 use App\Http\Controllers\Api\V1\Admin\Inventory\WarehouseController as AdminWarehouseController;
 use App\Http\Controllers\Api\V1\Admin\MeController as AdminMeController;
-use App\Http\Controllers\Api\V1\Admin\Customer\CustomerController as AdminCustomerController;
-use App\Http\Controllers\Api\V1\Admin\Dashboard\MetricsController as AdminDashboardMetricsController;
 use App\Http\Controllers\Api\V1\Admin\Order\OrderController as AdminOrderController;
 use App\Http\Controllers\Api\V1\Admin\Order\ShipmentController as AdminShipmentController;
+use App\Http\Controllers\Api\V1\Admin\Promotion\CouponController as AdminCouponController;
+use App\Http\Controllers\Api\V1\Admin\Promotion\DiscountController as AdminDiscountController;
 use App\Http\Controllers\Api\V1\Cart\CartController;
 use App\Http\Controllers\Api\V1\Catalog\BrandController as PublicBrandController;
 use App\Http\Controllers\Api\V1\Catalog\CategoryController as PublicCategoryController;
 use App\Http\Controllers\Api\V1\Catalog\ProductController as PublicProductController;
 use App\Http\Controllers\Api\V1\Catalog\SearchSuggestController;
 use App\Http\Controllers\Api\V1\Checkout\CheckoutController;
-use App\Http\Controllers\Api\V1\Geo\GeoController;
-use App\Http\Controllers\Api\V1\Order\GuestOrderLookupController;
-use App\Http\Controllers\Api\V1\Shipping\ShippingMethodController as PublicShippingMethodController;
+use App\Http\Controllers\Api\V1\Customer\AddressController as CustomerAddressController;
 use App\Http\Controllers\Api\V1\Customer\Auth\ForgotPasswordController as CustomerForgotPasswordController;
 use App\Http\Controllers\Api\V1\Customer\Auth\LoginController as CustomerLoginController;
 use App\Http\Controllers\Api\V1\Customer\Auth\LogoutController as CustomerLogoutController;
 use App\Http\Controllers\Api\V1\Customer\Auth\RegisterController as CustomerRegisterController;
 use App\Http\Controllers\Api\V1\Customer\Auth\ResetPasswordController as CustomerResetPasswordController;
-use App\Http\Controllers\Api\V1\Customer\AddressController as CustomerAddressController;
 use App\Http\Controllers\Api\V1\Customer\MeController as CustomerMeController;
 use App\Http\Controllers\Api\V1\Customer\OrderController as CustomerOrderController;
+use App\Http\Controllers\Api\V1\Geo\GeoController;
+use App\Http\Controllers\Api\V1\Order\GuestOrderLookupController;
 use App\Http\Controllers\Api\V1\Payment\VnPayController;
+use App\Http\Controllers\Api\V1\Shipping\ShippingMethodController as PublicShippingMethodController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -183,6 +185,26 @@ Route::prefix('v1')->group(function () {
                 Route::post('catalog/attributes/{id}/options', [AdminAttributeOptionController::class, 'store']);
                 Route::patch('catalog/attributes/{id}/options/{optionId}', [AdminAttributeOptionController::class, 'update']);
                 Route::delete('catalog/attributes/{id}/options/{optionId}', [AdminAttributeOptionController::class, 'destroy']);
+            });
+
+            Route::middleware('permission:promotions.discounts.view,admin')->group(function () {
+                Route::get('promotions/discounts', [AdminDiscountController::class, 'index']);
+                Route::get('promotions/discounts/{id}', [AdminDiscountController::class, 'show']);
+            });
+            Route::middleware('permission:promotions.discounts.manage,admin')->group(function () {
+                Route::post('promotions/discounts', [AdminDiscountController::class, 'store']);
+                Route::patch('promotions/discounts/{id}', [AdminDiscountController::class, 'update']);
+                Route::delete('promotions/discounts/{id}', [AdminDiscountController::class, 'destroy']);
+            });
+
+            Route::middleware('permission:promotions.coupons.view,admin')->group(function () {
+                Route::get('promotions/coupons', [AdminCouponController::class, 'index']);
+                Route::get('promotions/coupons/{id}', [AdminCouponController::class, 'show']);
+            });
+            Route::middleware('permission:promotions.coupons.manage,admin')->group(function () {
+                Route::post('promotions/coupons', [AdminCouponController::class, 'store']);
+                Route::patch('promotions/coupons/{id}', [AdminCouponController::class, 'update']);
+                Route::delete('promotions/coupons/{id}', [AdminCouponController::class, 'destroy']);
             });
         });
 });

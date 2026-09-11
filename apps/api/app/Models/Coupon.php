@@ -19,6 +19,10 @@ class Coupon extends Model
     /** @use HasFactory<CouponFactory> */
     use HasFactory, SoftDeletes;
 
+    public const STATUS_ACTIVE = 'active';
+
+    public const STATUS_INACTIVE = 'inactive';
+
     protected function casts(): array
     {
         return [

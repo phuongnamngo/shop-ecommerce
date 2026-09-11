@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Coupon;
+use App\Models\Discount;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -24,5 +25,10 @@ class CouponFactory extends Factory
             'ends_at' => null,
             'status' => 'active',
         ];
+    }
+
+    public function forDiscount(Discount $discount): static
+    {
+        return $this->state(fn () => ['discount_id' => $discount->id]);
     }
 }
