@@ -7,12 +7,14 @@ use App\Models\Cart;
 use App\Models\Coupon;
 use App\Models\Customer;
 use App\Models\CustomerAddress;
+use App\Models\FlashSaleItem;
 use App\Models\Order;
 use App\Models\PaymentMethod;
 use App\Models\PaymentTransaction;
 use App\Models\ShippingRate;
 use App\Models\StockItem;
 use App\Models\Warehouse;
+use App\Services\Promotion\FlashSalePricingService;
 use App\Support\CommerceException;
 use App\Support\ErrorCode;
 use Illuminate\Support\Facades\Crypt;
@@ -21,7 +23,10 @@ use Illuminate\Support\Str;
 
 final class CheckoutService
 {
-    public function __construct(private readonly PaymentGateway $payments) {}
+    public function __construct(
+        private readonly PaymentGateway $payments,
+        private readonly FlashSalePricingService $pricing,
+    ) {}
 
     /**
      * @param  array<string, mixed>  $payload
@@ -46,24 +51,13 @@ final class CheckoutService
                 throw new CommerceException(ErrorCode::CHECKOUT_INVALID_CART, 'Cart is empty.');
             }
 
-            $subtotal = 0;
             foreach ($lines as $line) {
                 $variant = $line->variant;
                 if ($variant === null || $variant->status !== 'active' || $variant->product === null || $variant->product->status !== 'active' || $variant->product->published_at === null) {
                     throw new CommerceException(ErrorCode::CHECKOUT_INVALID_CART, 'A cart item is no longer purchasable.');
                 }
-                $subtotal += (int) $variant->price * $line->qty;
             }
 
-            $rate = ShippingRate::query()->whereKey($payload['shipping_rate_id'])
-                ->where('shipping_method_id', $payload['shipping_method_id'])->whereNull('region_code')
-                ->where(fn ($q) => $q->whereNull('min_order_amount')->orWhere('min_order_amount', '<=', $subtotal))
-                ->where(fn ($q) => $q->whereNull('max_order_amount')->orWhere('max_order_amount', '>=', $subtotal))->first();
-            if ($rate === null) {
-                throw new CommerceException(ErrorCode::CHECKOUT_INVALID_CART, 'Shipping rate does not match the order subtotal.', 'shipping_rate_id');
-            }
-
-            [$coupon, $discount] = $this->coupon($payload['coupon_code'] ?? null, $customer, $subtotal);
             $warehouse = Warehouse::query()->where('is_default', true)->where('status', 'active')->first();
             if ($warehouse === null) {
                 throw new CommerceException(ErrorCode::INVENTORY_NOT_FOUND, 'Default warehouse is unavailable.');
@@ -78,6 +72,41 @@ final class CheckoutService
                     throw new CommerceException(ErrorCode::INVENTORY_INSUFFICIENT_STOCK, 'Insufficient stock.', 'product_variant_id', 409);
                 }
             }
+
+            $offers = $this->pricing->offersForVariants($variantIds);
+            $lockedOffers = collect();
+            $offerIds = $offers->pluck('id')->all();
+            if ($offerIds !== []) {
+                $lockedOffers = FlashSaleItem::query()
+                    ->whereIn('id', $offerIds)
+                    ->orderBy('product_variant_id')
+                    ->lockForUpdate()
+                    ->get()
+                    ->keyBy('product_variant_id');
+            }
+
+            $linePricing = [];
+            $subtotal = 0;
+            foreach ($lines as $line) {
+                $variant = $line->variant;
+                $offer = $lockedOffers->get($variant->id);
+                if ($offer !== null && $offer->qty_cap !== null && ((int) $offer->qty_sold + $line->qty) > (int) $offer->qty_cap) {
+                    throw new CommerceException(ErrorCode::FLASH_SALE_QTY_EXCEEDED, 'Flash sale quantity exceeded.', 'product_variant_id', 409);
+                }
+                $unit = $offer?->sale_price ?? $variant->price;
+                $linePricing[$variant->id] = ['unit' => $unit, 'offer' => $offer];
+                $subtotal += (int) $unit * $line->qty;
+            }
+
+            $rate = ShippingRate::query()->whereKey($payload['shipping_rate_id'])
+                ->where('shipping_method_id', $payload['shipping_method_id'])->whereNull('region_code')
+                ->where(fn ($q) => $q->whereNull('min_order_amount')->orWhere('min_order_amount', '<=', $subtotal))
+                ->where(fn ($q) => $q->whereNull('max_order_amount')->orWhere('max_order_amount', '>=', $subtotal))->first();
+            if ($rate === null) {
+                throw new CommerceException(ErrorCode::CHECKOUT_INVALID_CART, 'Shipping rate does not match the order subtotal.', 'shipping_rate_id');
+            }
+
+            [$coupon, $discount] = $this->coupon($payload['coupon_code'] ?? null, $customer, $subtotal);
 
             $address = isset($payload['customer_address_id'])
                 ? CustomerAddress::query()->whereKey($payload['customer_address_id'])->where('customer_id', $customer?->id)->firstOrFail()->only(['recipient_name', 'phone', 'province_code', 'district_code', 'ward_code', 'address_line', 'postal_code'])
@@ -94,7 +123,21 @@ final class CheckoutService
             $expiresAt = now()->addMinutes((int) config('commerce.reservation_ttl_minutes', 30));
             foreach ($lines as $line) {
                 $variant = $line->variant;
-                $order->items()->create(['product_variant_id' => $variant->id, 'sku' => $variant->sku, 'name' => $variant->product->name, 'qty' => $line->qty, 'unit_price' => $variant->price, 'line_total' => (int) $variant->price * $line->qty]);
+                $priced = $linePricing[$variant->id];
+                $unit = $priced['unit'];
+                $offer = $priced['offer'];
+                $order->items()->create([
+                    'product_variant_id' => $variant->id,
+                    'flash_sale_item_id' => $offer?->id,
+                    'sku' => $variant->sku,
+                    'name' => $variant->product->name,
+                    'qty' => $line->qty,
+                    'unit_price' => $unit,
+                    'line_total' => (int) $unit * $line->qty,
+                ]);
+                if ($offer !== null) {
+                    $offer->increment('qty_sold', $line->qty);
+                }
                 $stock = $stocks->get($variant->id);
                 $stock->increment('qty_reserved', $line->qty);
                 $order->reservations()->create([

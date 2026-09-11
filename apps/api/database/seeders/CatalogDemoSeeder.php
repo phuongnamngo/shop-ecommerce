@@ -39,14 +39,7 @@ class CatalogDemoSeeder extends Seeder
             'Be' => $this->option($color, 'Be', 4),
         ];
 
-        $warehouse = Warehouse::query()->firstOrCreate(
-            ['name' => 'Default Warehouse'],
-            [
-                'code' => (string) Str::ulid(),
-                'is_default' => true,
-                'status' => 'active',
-            ],
-        );
+        $warehouse = Warehouse::ensureDefault();
 
         foreach ($this->catalog() as $index => $item) {
             $this->seedProduct($item, $brand, $categories, $size, $color, $sizes, $colors, $warehouse, $index);

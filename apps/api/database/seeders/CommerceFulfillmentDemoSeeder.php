@@ -7,20 +7,12 @@ use App\Models\ShippingMethod;
 use App\Models\ShippingRate;
 use App\Models\Warehouse;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 
 class CommerceFulfillmentDemoSeeder extends Seeder
 {
     public function run(): void
     {
-        Warehouse::query()->firstOrCreate(
-            ['name' => 'Default Warehouse'],
-            [
-                'code' => (string) Str::ulid(),
-                'is_default' => true,
-                'status' => 'active',
-            ],
-        );
+        Warehouse::ensureDefault();
 
         foreach ([
             ['cod', 'COD', true],

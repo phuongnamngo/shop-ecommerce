@@ -8,6 +8,14 @@ export function promotionErrorMessage(error: unknown): string {
         return "Không xóa được: discount vẫn còn coupon gắn kèm.";
       case "PROMOTION_NOT_FOUND":
         return "Không tìm thấy bản ghi khuyến mãi.";
+      case "FLASH_SALE_NOT_FOUND":
+        return "Không tìm thấy flash sale.";
+      case "FLASH_SALE_OVERLAP":
+        return "Variant này đã nằm trong flash sale scheduled/active trùng khung giờ.";
+      case "FLASH_SALE_QTY_EXCEEDED":
+        return "Đã hết suất flash sale cho sản phẩm này.";
+      case "FLASH_SALE_INVALID":
+        return "Flash sale không hợp lệ.";
       default:
         break;
     }

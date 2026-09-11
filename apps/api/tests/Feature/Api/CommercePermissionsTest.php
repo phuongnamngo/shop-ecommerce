@@ -34,3 +34,15 @@ it('seeds promotion discount and coupon permissions for admin roles', function (
         ->and($staff->hasPermissionTo('promotions.discounts.manage', 'admin'))->toBeFalse()
         ->and($staff->hasPermissionTo('promotions.coupons.manage', 'admin'))->toBeFalse();
 });
+
+it('seeds promotion flash sale permissions for admin roles', function () {
+    $this->seed(RolesAndPermissionsSeeder::class);
+
+    $admin = Role::findByName('admin', 'admin');
+    $staff = Role::findByName('staff', 'admin');
+
+    expect($admin->hasPermissionTo('promotions.flash_sales.view', 'admin'))->toBeTrue()
+        ->and($admin->hasPermissionTo('promotions.flash_sales.manage', 'admin'))->toBeTrue()
+        ->and($staff->hasPermissionTo('promotions.flash_sales.view', 'admin'))->toBeTrue()
+        ->and($staff->hasPermissionTo('promotions.flash_sales.manage', 'admin'))->toBeFalse();
+});

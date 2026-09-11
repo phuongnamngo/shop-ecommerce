@@ -37,6 +37,7 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     children: [
       { href: "/admin/promotions/discounts", label: "Discounts" },
       { href: "/admin/promotions/coupons", label: "Coupons" },
+      { href: "/admin/promotions/flash-sales", label: "Flash sales" },
     ],
   },
 ];
@@ -66,6 +67,9 @@ export function adminBreadcrumb(pathname: string): {
   }
   if (pathname.startsWith("/admin/catalog/products")) {
     return { parent: "Catalog", current: "Products" };
+  }
+  if (pathname.startsWith("/admin/promotions/flash-sales")) {
+    return { parent: "Khuyến mãi", current: "Flash sales" };
   }
   if (pathname.startsWith("/admin/promotions/coupons")) {
     return { parent: "Khuyến mãi", current: "Coupons" };

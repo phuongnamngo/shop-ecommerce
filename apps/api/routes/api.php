@@ -23,6 +23,7 @@ use App\Http\Controllers\Api\V1\Admin\Order\OrderController as AdminOrderControl
 use App\Http\Controllers\Api\V1\Admin\Order\ShipmentController as AdminShipmentController;
 use App\Http\Controllers\Api\V1\Admin\Promotion\CouponController as AdminCouponController;
 use App\Http\Controllers\Api\V1\Admin\Promotion\DiscountController as AdminDiscountController;
+use App\Http\Controllers\Api\V1\Admin\Promotion\FlashSaleController as AdminFlashSaleController;
 use App\Http\Controllers\Api\V1\Cart\CartController;
 use App\Http\Controllers\Api\V1\Catalog\BrandController as PublicBrandController;
 use App\Http\Controllers\Api\V1\Catalog\CategoryController as PublicCategoryController;
@@ -205,6 +206,16 @@ Route::prefix('v1')->group(function () {
                 Route::post('promotions/coupons', [AdminCouponController::class, 'store']);
                 Route::patch('promotions/coupons/{id}', [AdminCouponController::class, 'update']);
                 Route::delete('promotions/coupons/{id}', [AdminCouponController::class, 'destroy']);
+            });
+
+            Route::middleware('permission:promotions.flash_sales.view,admin')->group(function () {
+                Route::get('promotions/flash-sales', [AdminFlashSaleController::class, 'index']);
+                Route::get('promotions/flash-sales/{id}', [AdminFlashSaleController::class, 'show']);
+            });
+            Route::middleware('permission:promotions.flash_sales.manage,admin')->group(function () {
+                Route::post('promotions/flash-sales', [AdminFlashSaleController::class, 'store']);
+                Route::patch('promotions/flash-sales/{id}', [AdminFlashSaleController::class, 'update']);
+                Route::delete('promotions/flash-sales/{id}', [AdminFlashSaleController::class, 'destroy']);
             });
         });
 });

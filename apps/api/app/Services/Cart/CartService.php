@@ -5,6 +5,7 @@ namespace App\Services\Cart;
 use App\Models\Cart;
 use App\Models\Customer;
 use App\Models\ProductVariant;
+use App\Services\Promotion\FlashSalePricingService;
 use App\Support\CommerceException;
 use App\Support\ErrorCode;
 use Illuminate\Support\Facades\DB;
@@ -12,6 +13,8 @@ use Illuminate\Support\Str;
 
 final class CartService
 {
+    public function __construct(private readonly FlashSalePricingService $pricing) {}
+
     public function createGuest(): Cart
     {
         return Cart::query()->create([
@@ -50,7 +53,7 @@ final class CartService
         }
         $item = $cart->items()->firstOrNew(['product_variant_id' => $variant->id]);
         $item->qty = ($item->exists ? $item->qty : 0) + $qty;
-        $item->unit_price = $variant->price;
+        $item->unit_price = $this->pricing->unitPrice($variant);
         $item->save();
 
         return $this->present($cart->refresh());
@@ -71,7 +74,7 @@ final class CartService
             throw new CommerceException(ErrorCode::CART_NOT_FOUND, 'The product variant is not available.', 'product_variant_id');
         }
 
-        $item->update(['qty' => $qty, 'unit_price' => $variant->price]);
+        $item->update(['qty' => $qty, 'unit_price' => $this->pricing->unitPrice($variant)]);
 
         return $this->present($cart->refresh());
     }
@@ -101,10 +104,24 @@ final class CartService
 
     public function present(Cart $cart): Cart
     {
-        return $cart->load([
+        $cart->load([
             'items.variant.product.images',
             'items.variant.images',
             'items.variant.attributeOptions.attribute',
         ]);
+
+        $offers = $this->pricing->offersForVariants($cart->items->pluck('product_variant_id')->all());
+        foreach ($cart->items as $item) {
+            $variant = $item->variant;
+            if ($variant === null) {
+                continue;
+            }
+            $price = $offers->get($variant->id)?->sale_price ?? $variant->price;
+            if ((string) $item->unit_price !== (string) $price) {
+                $item->forceFill(['unit_price' => $price])->save();
+            }
+        }
+
+        return $cart;
     }
 }

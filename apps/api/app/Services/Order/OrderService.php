@@ -3,6 +3,7 @@
 namespace App\Services\Order;
 
 use App\Models\AdminUser;
+use App\Models\FlashSaleItem;
 use App\Models\Order;
 use App\Models\PaymentTransaction;
 use App\Models\StockItem;
@@ -151,6 +152,35 @@ final class OrderService
                 ->firstOrFail();
             $stock->update(['qty_reserved' => max(0, $stock->qty_reserved - $reservation->qty)]);
             $reservation->update(['status' => 'released']);
+        }
+
+        $this->releaseFlashSaleQty($order);
+    }
+
+    private function releaseFlashSaleQty(Order $order): void
+    {
+        $order->loadMissing('items');
+        $flashLines = $order->items
+            ->filter(fn ($item) => $item->flash_sale_item_id !== null)
+            ->sortBy('product_variant_id')
+            ->values();
+        if ($flashLines->isEmpty()) {
+            return;
+        }
+
+        $locked = FlashSaleItem::query()
+            ->whereIn('id', $flashLines->pluck('flash_sale_item_id')->unique()->all())
+            ->orderBy('product_variant_id')
+            ->lockForUpdate()
+            ->get()
+            ->keyBy('id');
+
+        foreach ($flashLines as $item) {
+            $flashItem = $locked->get($item->flash_sale_item_id);
+            if ($flashItem === null) {
+                continue;
+            }
+            $flashItem->update(['qty_sold' => max(0, (int) $flashItem->qty_sold - (int) $item->qty)]);
         }
     }
 

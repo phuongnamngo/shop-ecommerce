@@ -1,5 +1,6 @@
 export type PromotionStatus = "active" | "inactive";
 export type DiscountType = "fixed" | "percentage";
+export type FlashSaleStatus = "scheduled" | "active" | "ended" | "cancelled";
 
 export type PageMeta = {
   current_page: number;
@@ -47,6 +48,27 @@ export type Coupon = {
   starts_at: string | null;
   ends_at: string | null;
   status: PromotionStatus;
+  created_at: string;
+  updated_at: string;
+};
+
+export type FlashSaleItem = {
+  id: number;
+  product_variant_id: number;
+  sale_price: string;
+  qty_cap: number | null;
+  qty_sold: number;
+  qty_remaining: number | null;
+};
+
+export type FlashSale = {
+  id: number;
+  code: string;
+  name: string;
+  starts_at: string;
+  ends_at: string;
+  status: FlashSaleStatus;
+  items: FlashSaleItem[];
   created_at: string;
   updated_at: string;
 };

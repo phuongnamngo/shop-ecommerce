@@ -12,6 +12,7 @@
             <directory>tests/Feature</directory>
             <!-- PostgreSQL row-lock suite; run via phpunit.pgsql.xml -->
             <exclude>tests/Feature/Checkout/CheckoutConcurrencyTest.php</exclude>
+            <exclude>tests/Feature/Checkout/FlashSaleConcurrencyTest.php</exclude>
         </testsuite>
     </testsuites>
     <source>
