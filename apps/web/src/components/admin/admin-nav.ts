@@ -25,6 +25,7 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
       { href: "/admin/catalog/products", label: "Product List" },
       { href: "/admin/catalog/categories", label: "Categories" },
       { href: "/admin/catalog/brands", label: "Brands" },
+      { href: "/admin/catalog/reviews", label: "Reviews" },
     ],
   },
   { href: "/admin/orders", label: "Orders", icon: ShoppingCart },
@@ -58,6 +59,9 @@ export function adminBreadcrumb(pathname: string): {
   }
   if (pathname.startsWith("/admin/orders/")) {
     return { parent: "Orders", current: "Order" };
+  }
+  if (pathname.startsWith("/admin/catalog/reviews")) {
+    return { parent: "Catalog", current: "Reviews" };
   }
   if (pathname.startsWith("/admin/catalog/categories")) {
     return { parent: "Catalog", current: "Categories" };

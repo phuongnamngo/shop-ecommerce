@@ -38,6 +38,8 @@ class RolesAndPermissionsSeeder extends Seeder
             'promotions.coupons.manage',
             'promotions.flash_sales.view',
             'promotions.flash_sales.manage',
+            'engagement.reviews.view',
+            'engagement.reviews.manage',
         ];
 
         foreach ($permissions as $name) {
@@ -72,6 +74,8 @@ class RolesAndPermissionsSeeder extends Seeder
             'promotions.coupons.manage',
             'promotions.flash_sales.view',
             'promotions.flash_sales.manage',
+            'engagement.reviews.view',
+            'engagement.reviews.manage',
         ]);
 
         $staff->syncPermissions([
@@ -85,6 +89,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'promotions.discounts.view',
             'promotions.coupons.view',
             'promotions.flash_sales.view',
+            'engagement.reviews.view',
         ]);
     }
 }

@@ -34,6 +34,10 @@ class PublicProductResource extends JsonResource
             'brand' => $this->publicBrand(),
             'primary_image' => $this->primaryImage(),
             'default_variant' => $this->whenLoaded('defaultVariant', fn () => $this->defaultVariant === null ? null : $this->publicDefaultVariant($offers)),
+            'rating_count' => (int) ($this->rating_count ?? 0),
+            'rating_avg' => ((int) ($this->rating_count ?? 0)) === 0
+                ? null
+                : round((float) $this->rating_avg, 1),
         ];
 
         if ($this->relationLoaded('categories')) {

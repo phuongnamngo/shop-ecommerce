@@ -14,11 +14,14 @@ import { logoutCustomer } from "@/lib/api/storefront/customer";
 import { emitCartChanged } from "@/lib/storefront/cart-events";
 import { cn } from "@/lib/utils";
 
+import { Heart } from "lucide-react";
+
 const links = [
   { href: "/account", label: "Tổng quan", icon: LayoutDashboard },
   { href: "/account/profile", label: "Hồ sơ", icon: UserRound },
   { href: "/account/addresses", label: "Địa chỉ", icon: MapPin },
   { href: "/account/orders", label: "Đơn hàng", icon: Package },
+  { href: "/account/wishlist", label: "Wishlist", icon: Heart },
 ];
 
 function isActive(pathname: string, href: string): boolean {

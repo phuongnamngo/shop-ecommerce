@@ -18,12 +18,13 @@ final class CatalogImageService
     /**
      * @return array{path: string, thumbnail_path: string, url: string, thumbnail_url: string}
      */
-    public function storeUploaded(UploadedFile $file): array
+    public function storeUploaded(UploadedFile $file, string $directory = 'catalog'): array
     {
+        $directory = $directory === 'reviews' ? 'reviews' : 'catalog';
         $ulid = (string) Str::ulid();
         $extension = $this->extension($file);
-        $path = 'catalog/'.$ulid.'.'.$extension;
-        $thumbnailPath = 'catalog/'.$ulid.'_thumb.'.$extension;
+        $path = $directory.'/'.$ulid.'.'.$extension;
+        $thumbnailPath = $directory.'/'.$ulid.'_thumb.'.$extension;
         $disk = Storage::disk('public');
 
         $contents = file_get_contents($file->getRealPath());

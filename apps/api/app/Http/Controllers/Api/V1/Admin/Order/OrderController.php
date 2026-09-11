@@ -34,7 +34,7 @@ final class OrderController extends Controller
     public function show(int $id): JsonResponse
     {
         return ApiResponse::success((new AdminOrderResource(
-            Order::query()->with(['items', 'statusHistories', 'shipments'])->findOrFail($id),
+            Order::query()->with(['items.variant.product', 'statusHistories', 'shipments'])->findOrFail($id),
         ))->resolve());
     }
 

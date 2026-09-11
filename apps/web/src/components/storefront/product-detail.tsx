@@ -2,23 +2,32 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
-import { Check, RotateCcw, Truck } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { Check, Heart, RotateCcw, Truck } from "lucide-react";
 
+import { ProductReviews } from "@/components/storefront/product-reviews";
 import { QuantitySelector } from "@/components/storefront/quantity-selector";
 import { Button } from "@/components/ui/button";
 import { storefrontErrorMessage } from "@/lib/api/storefront/browser";
 import { absoluteMediaUrl } from "@/lib/api/storefront/client";
 import { addCartItem } from "@/lib/api/storefront/cart";
+import { fetchCustomerMeOrNull } from "@/lib/api/storefront/customer";
 import { formatVnd } from "@/lib/api/storefront/money";
+import {
+  addWishlistItem,
+  fetchWishlist,
+  removeWishlistItem,
+} from "@/lib/api/storefront/wishlist";
 import type { PublicProductDetail } from "@/lib/api/storefront/types";
 import { emitCartChanged } from "@/lib/storefront/cart-events";
 import { discountPercent } from "@/lib/storefront/price";
+import { emitWishlistChanged } from "@/lib/storefront/wishlist-events";
 import { cn } from "@/lib/utils";
 
 export function ProductDetail({ product }: { product: PublicProductDetail }) {
   const router = useRouter();
+  const pathname = usePathname();
   const initialId =
     product.variants.find((v) => v.is_default)?.id ??
     product.default_variant?.id ??
@@ -43,6 +52,9 @@ export function ProductDetail({ product }: { product: PublicProductDetail }) {
   const [added, setAdded] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [openInfo, setOpenInfo] = useState(true);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [wishlistItemId, setWishlistItemId] = useState<number | null>(null);
+  const [wishPending, setWishPending] = useState(false);
   const main = gallery[Math.min(active, Math.max(gallery.length - 1, 0))];
   const mainSrc = absoluteMediaUrl(main?.url ?? main?.thumbnail_url);
   const off = discountPercent(selected?.price, selected?.compare_at_price);
@@ -120,11 +132,60 @@ export function ProductDetail({ product }: { product: PublicProductDetail }) {
     }
   }
 
+  useEffect(() => {
+    const variantId = selectedId;
+    const frame = requestAnimationFrame(() => {
+      void fetchCustomerMeOrNull()
+        .then(async (me) => {
+          if (!me || !variantId) {
+            setLoggedIn(false);
+            setWishlistItemId(null);
+            return;
+          }
+          setLoggedIn(true);
+          const list = await fetchWishlist();
+          const item = list.items.find((row) => row.product_variant_id === variantId);
+          setWishlistItemId(item?.id ?? null);
+        })
+        .catch(() => {
+          setLoggedIn(false);
+          setWishlistItemId(null);
+        });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [selectedId]);
+
+  async function onToggleWishlist() {
+    if (!selected) return;
+    if (!loggedIn) {
+      router.push(`/login?next=${encodeURIComponent(pathname)}`);
+      return;
+    }
+    setWishPending(true);
+    setError(null);
+    try {
+      if (wishlistItemId) {
+        await removeWishlistItem(wishlistItemId);
+        setWishlistItemId(null);
+      } else {
+        const list = await addWishlistItem(selected.id);
+        const item = list.items.find((row) => row.product_variant_id === selected.id);
+        setWishlistItemId(item?.id ?? null);
+      }
+      emitWishlistChanged();
+    } catch (e) {
+      setError(storefrontErrorMessage(e));
+    } finally {
+      setWishPending(false);
+    }
+  }
+
   const selectedAttr = (slug: string) =>
     selected?.attributes.find((a) => (a.slug ?? a.name ?? "option") === slug)
       ?.option.label;
 
   return (
+    <>
     <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
       <div>
         <div className="relative aspect-[3/4] overflow-hidden rounded-xl bg-slate-100">
@@ -182,6 +243,11 @@ export function ProductDetail({ product }: { product: PublicProductDetail }) {
         <h1 className="mt-1 text-3xl font-bold tracking-tight text-slate-950">
           {product.name}
         </h1>
+        {(product.rating_count ?? 0) > 0 && product.rating_avg != null ? (
+          <p className="mt-2 text-sm text-slate-600">
+            ★ {product.rating_avg} ({product.rating_count})
+          </p>
+        ) : null}
         {selected ? (
           <div className="mt-4 flex flex-wrap items-baseline gap-3">
             <p className="text-[26px] font-bold text-slate-950">
@@ -278,6 +344,17 @@ export function ProductDetail({ product }: { product: PublicProductDetail }) {
 
         <div className="mt-6 hidden gap-3 sm:flex">
           <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            className="h-12 w-12 shrink-0 rounded-lg"
+            disabled={!selected || wishPending}
+            aria-label={wishlistItemId ? "Bỏ khỏi wishlist" : "Thêm vào wishlist"}
+            onClick={() => void onToggleWishlist()}
+          >
+            <Heart className={wishlistItemId ? "fill-red-500 text-red-500" : ""} />
+          </Button>
+          <Button
             className="h-12 flex-1 rounded-lg bg-blue-600 text-sm font-semibold hover:bg-blue-700"
             disabled={!selected || pending}
             onClick={() => void onAddToCart()}
@@ -356,8 +433,21 @@ export function ProductDetail({ product }: { product: PublicProductDetail }) {
           >
             {pending ? "Đang thêm…" : "Thêm vào giỏ"}
           </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            className="h-11 w-11 shrink-0 rounded-lg"
+            disabled={!selected || wishPending}
+            aria-label={wishlistItemId ? "Bỏ khỏi wishlist" : "Thêm vào wishlist"}
+            onClick={() => void onToggleWishlist()}
+          >
+            <Heart className={wishlistItemId ? "fill-red-500 text-red-500" : ""} />
+          </Button>
         </div>
       </div>
     </div>
+    <ProductReviews product={product} selectedVariantId={selected?.id} />
+    </>
   );
 }

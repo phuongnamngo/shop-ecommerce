@@ -16,6 +16,12 @@ class ProductReview extends Model
     /** @use HasFactory<ProductReviewFactory> */
     use HasFactory, SoftDeletes;
 
+    public const STATUS_PENDING = 'pending';
+
+    public const STATUS_APPROVED = 'approved';
+
+    public const STATUS_REJECTED = 'rejected';
+
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
@@ -34,5 +40,15 @@ class ProductReview extends Model
     public function images(): HasMany
     {
         return $this->hasMany(ProductReviewImage::class);
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'rating' => 'integer',
+        ];
     }
 }

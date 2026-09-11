@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 
 import { AccountNav } from "@/components/storefront/account-nav";
@@ -9,6 +9,7 @@ import { sfContainer } from "@/lib/storefront/ui";
 
 export function AccountShell({ children }: { children: ReactNode }) {
   const router = useRouter();
+  const pathname = usePathname();
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -16,17 +17,17 @@ export function AccountShell({ children }: { children: ReactNode }) {
       void fetchCustomerMeOrNull()
         .then((me) => {
           if (!me) {
-            router.replace("/login");
+            router.replace(`/login?next=${encodeURIComponent(pathname)}`);
             return;
           }
           setReady(true);
         })
         .catch(() => {
-          router.replace("/login");
+          router.replace(`/login?next=${encodeURIComponent(pathname)}`);
         });
     });
     return () => cancelAnimationFrame(frame);
-  }, [router]);
+  }, [router, pathname]);
 
   if (!ready) {
     return (

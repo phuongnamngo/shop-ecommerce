@@ -47,7 +47,7 @@ final class OrderService
                 'note' => $note,
             ]);
 
-            return $order->refresh()->load('items', 'statusHistories');
+            return $order->refresh()->load(['items.variant.product', 'statusHistories']);
         });
     }
 
@@ -56,7 +56,7 @@ final class OrderService
         return DB::transaction(function () use ($order, $note): Order {
             $order = Order::query()->whereKey($order->id)->lockForUpdate()->firstOrFail();
             if ($order->status === 'paid') {
-                return $order->refresh()->load('items', 'statusHistories');
+                return $order->refresh()->load(['items.variant.product', 'statusHistories']);
             }
             if ($order->status !== 'pending') {
                 throw new CommerceException(ErrorCode::ORDER_INVALID_TRANSITION, "Cannot mark paid from {$order->status}.", 'status', 409);
@@ -72,7 +72,7 @@ final class OrderService
                 'note' => $note,
             ]);
 
-            return $order->refresh()->load('items', 'statusHistories');
+            return $order->refresh()->load(['items.variant.product', 'statusHistories']);
         });
     }
 
@@ -93,7 +93,7 @@ final class OrderService
                 'note' => $note,
             ]);
 
-            return $order->refresh()->load('items', 'statusHistories');
+            return $order->refresh()->load(['items.variant.product', 'statusHistories']);
         });
     }
 

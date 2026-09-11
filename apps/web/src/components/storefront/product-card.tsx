@@ -47,6 +47,11 @@ export function ProductCard({ product }: { product: PublicProductListItem }) {
         <h2 className="line-clamp-2 text-sm font-medium text-slate-900">
           {product.name}
         </h2>
+        {(product.rating_count ?? 0) > 0 && product.rating_avg != null ? (
+          <p className="text-xs text-slate-600">
+            ★ {product.rating_avg} ({product.rating_count})
+          </p>
+        ) : null}
         <p className="flex flex-wrap items-baseline gap-2 text-[17px] font-bold text-slate-900">
           {price !== undefined && price !== null ? formatVnd(price) : "Liên hệ"}
           {off && compare != null ? (

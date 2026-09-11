@@ -58,6 +58,8 @@ export type PublicProductListItem = {
     price: string | number;
     compare_at_price: string | number | null;
   } | null;
+  rating_avg?: number | null;
+  rating_count?: number;
 };
 
 export type PublicVariant = {
@@ -205,6 +207,9 @@ export type CustomerOrderItem = {
   qty: number;
   unit_price: string;
   line_total: string;
+  product_variant_id?: number | null;
+  product_id?: number | null;
+  product_slug?: string | null;
 };
 
 export type CustomerOrder = {

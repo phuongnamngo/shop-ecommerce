@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\V1\Admin\Catalog\ProductVariantController as AdminP
 use App\Http\Controllers\Api\V1\Admin\Catalog\ProductVariantImageController as AdminProductVariantImageController;
 use App\Http\Controllers\Api\V1\Admin\Customer\CustomerController as AdminCustomerController;
 use App\Http\Controllers\Api\V1\Admin\Dashboard\MetricsController as AdminDashboardMetricsController;
+use App\Http\Controllers\Api\V1\Admin\Engagement\ReviewController as AdminReviewController;
 use App\Http\Controllers\Api\V1\Admin\Inventory\StockItemController as AdminStockItemController;
 use App\Http\Controllers\Api\V1\Admin\Inventory\StockMovementController as AdminStockMovementController;
 use App\Http\Controllers\Api\V1\Admin\Inventory\WarehouseController as AdminWarehouseController;
@@ -28,6 +29,7 @@ use App\Http\Controllers\Api\V1\Cart\CartController;
 use App\Http\Controllers\Api\V1\Catalog\BrandController as PublicBrandController;
 use App\Http\Controllers\Api\V1\Catalog\CategoryController as PublicCategoryController;
 use App\Http\Controllers\Api\V1\Catalog\ProductController as PublicProductController;
+use App\Http\Controllers\Api\V1\Catalog\ProductReviewController as PublicProductReviewController;
 use App\Http\Controllers\Api\V1\Catalog\SearchSuggestController;
 use App\Http\Controllers\Api\V1\Checkout\CheckoutController;
 use App\Http\Controllers\Api\V1\Customer\AddressController as CustomerAddressController;
@@ -38,6 +40,8 @@ use App\Http\Controllers\Api\V1\Customer\Auth\RegisterController as CustomerRegi
 use App\Http\Controllers\Api\V1\Customer\Auth\ResetPasswordController as CustomerResetPasswordController;
 use App\Http\Controllers\Api\V1\Customer\MeController as CustomerMeController;
 use App\Http\Controllers\Api\V1\Customer\OrderController as CustomerOrderController;
+use App\Http\Controllers\Api\V1\Customer\ReviewController as CustomerReviewController;
+use App\Http\Controllers\Api\V1\Customer\WishlistController as CustomerWishlistController;
 use App\Http\Controllers\Api\V1\Geo\GeoController;
 use App\Http\Controllers\Api\V1\Order\GuestOrderLookupController;
 use App\Http\Controllers\Api\V1\Payment\VnPayController;
@@ -56,6 +60,7 @@ Route::prefix('v1')->group(function () {
     Route::get('catalog/search/suggest', SearchSuggestController::class)
         ->middleware('throttle:catalog.suggest');
     Route::get('catalog/products', [PublicProductController::class, 'index']);
+    Route::get('catalog/products/{slug}/reviews', [PublicProductReviewController::class, 'index']);
     Route::get('catalog/products/{slug}', [PublicProductController::class, 'show']);
     Route::get('catalog/brands', [PublicBrandController::class, 'index']);
     Route::get('catalog/categories', [PublicCategoryController::class, 'index']);
@@ -92,6 +97,13 @@ Route::prefix('v1')->group(function () {
             Route::post('cart/merge', [CartController::class, 'merge']);
             Route::get('orders', [CustomerOrderController::class, 'index']);
             Route::get('orders/{id}', [CustomerOrderController::class, 'show']);
+            Route::get('wishlist', [CustomerWishlistController::class, 'show']);
+            Route::post('wishlist/items', [CustomerWishlistController::class, 'storeItem']);
+            Route::delete('wishlist/items/{id}', [CustomerWishlistController::class, 'destroyItem']);
+            Route::get('products/{productId}/review-eligibility', [CustomerReviewController::class, 'eligibility']);
+            Route::get('reviews', [CustomerReviewController::class, 'index']);
+            Route::post('reviews', [CustomerReviewController::class, 'store']);
+            Route::patch('reviews/{id}', [CustomerReviewController::class, 'update']);
         });
 
     Route::prefix('admin/auth')->group(function () {
@@ -216,6 +228,14 @@ Route::prefix('v1')->group(function () {
                 Route::post('promotions/flash-sales', [AdminFlashSaleController::class, 'store']);
                 Route::patch('promotions/flash-sales/{id}', [AdminFlashSaleController::class, 'update']);
                 Route::delete('promotions/flash-sales/{id}', [AdminFlashSaleController::class, 'destroy']);
+            });
+
+            Route::middleware('permission:engagement.reviews.view,admin')->group(function () {
+                Route::get('reviews', [AdminReviewController::class, 'index']);
+                Route::get('reviews/{id}', [AdminReviewController::class, 'show']);
+            });
+            Route::middleware('permission:engagement.reviews.manage,admin')->group(function () {
+                Route::patch('reviews/{id}', [AdminReviewController::class, 'update']);
             });
         });
 });

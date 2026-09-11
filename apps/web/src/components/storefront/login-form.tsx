@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 
@@ -11,10 +11,12 @@ import { Label } from "@/components/ui/label";
 import { storefrontErrorMessage } from "@/lib/api/storefront/browser";
 import { mergeGuestCartIfPresent } from "@/lib/api/storefront/cart";
 import { loginCustomer } from "@/lib/api/storefront/customer";
+import { safeInternalPath } from "@/lib/storefront/login-next";
 import { sfInput } from "@/lib/storefront/ui";
 
 export function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -28,7 +30,7 @@ export function LoginForm() {
     try {
       await loginCustomer({ email, password });
       await mergeGuestCartIfPresent();
-      router.replace("/account");
+      router.replace(safeInternalPath(searchParams.get("next")) ?? "/account");
     } catch (err) {
       setError(storefrontErrorMessage(err));
       setPending(false);

@@ -58,6 +58,16 @@ class Product extends Model
         return $this->hasMany(ProductImage::class);
     }
 
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(ProductReview::class);
+    }
+
+    public function approvedReviews(): HasMany
+    {
+        return $this->reviews()->where('status', ProductReview::STATUS_APPROVED);
+    }
+
     public function shouldBeSearchable(): bool
     {
         if ($this->id === null) {

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Menu, Search, ShoppingBag, UserRound, X } from "lucide-react";
+import { Menu, Search, ShoppingBag, Heart, UserRound, X } from "lucide-react";
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 
 import { MiniCartDrawer } from "@/components/storefront/mini-cart-drawer";
@@ -15,7 +15,9 @@ import {
 } from "@/components/ui/sheet";
 import { fetchActiveCart } from "@/lib/api/storefront/cart";
 import { fetchCustomerMeOrNull } from "@/lib/api/storefront/customer";
+import { fetchWishlist } from "@/lib/api/storefront/wishlist";
 import { CART_CHANGED_EVENT } from "@/lib/storefront/cart-events";
+import { WISHLIST_CHANGED_EVENT } from "@/lib/storefront/wishlist-events";
 import { STORE_NAME } from "@/lib/storefront/ui";
 import { cn } from "@/lib/utils";
 
@@ -51,16 +53,54 @@ function useCartQty(): number {
   return qty;
 }
 
+function useWishlistCount(): number {
+  const [count, setCount] = useState(0);
+
+  const refresh = useCallback(async () => {
+    await Promise.resolve();
+    try {
+      const me = await fetchCustomerMeOrNull();
+      if (!me) {
+        setCount(0);
+        return;
+      }
+      const wishlist = await fetchWishlist();
+      setCount(wishlist.items.length);
+    } catch {
+      setCount(0);
+    }
+  }, []);
+
+  useEffect(() => {
+    const onChange = () => {
+      void refresh();
+    };
+    const frame = requestAnimationFrame(onChange);
+    window.addEventListener(WISHLIST_CHANGED_EVENT, onChange);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener(WISHLIST_CHANGED_EVENT, onChange);
+    };
+  }, [refresh]);
+
+  return count;
+}
+
 export function StorefrontHeader({
   categories,
 }: {
   categories: NavCategory[];
 }) {
   const cartQty = useCartQty();
+  const wishlistCount = useWishlistCount();
   const [accountHref, setAccountHref] = useState("/login");
   const [searchOpen, setSearchOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const nav = categories.slice(0, 6);
+  const wishlistHref =
+    accountHref === "/account"
+      ? "/account/wishlist"
+      : `/login?next=${encodeURIComponent("/account/wishlist")}`;
 
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
@@ -114,6 +154,13 @@ export function StorefrontHeader({
                 {cartQty > 0 ? ` (${cartQty})` : ""}
               </Link>
               <Link
+                href={wishlistHref}
+                className="rounded-lg px-3 py-3 hover:bg-slate-50"
+              >
+                Wishlist
+                {wishlistCount > 0 ? ` (${wishlistCount})` : ""}
+              </Link>
+              <Link
                 href={accountHref}
                 className="rounded-lg px-3 py-3 hover:bg-slate-50"
               >
@@ -159,6 +206,20 @@ export function StorefrontHeader({
             onClick={() => setSearchOpen((v) => !v)}
           >
             {searchOpen ? <X /> : <Search />}
+          </Button>
+          <Button variant="ghost" size="icon" asChild>
+            <Link
+              href={wishlistHref}
+              aria-label={`Wishlist${wishlistCount > 0 ? `, ${wishlistCount} sản phẩm` : ""}`}
+              className="relative"
+            >
+              <Heart />
+              {wishlistCount > 0 ? (
+                <span className="absolute right-1 top-1 inline-flex min-w-4 items-center justify-center rounded-full bg-blue-600 px-1 text-[10px] font-bold text-white">
+                  {wishlistCount > 99 ? "99+" : wishlistCount}
+                </span>
+              ) : null}
+            </Link>
           </Button>
           <Button variant="ghost" size="icon" asChild>
             <Link href={accountHref} aria-label="Tài khoản">

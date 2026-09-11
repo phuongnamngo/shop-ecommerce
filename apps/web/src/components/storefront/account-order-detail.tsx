@@ -96,9 +96,20 @@ export function AccountOrderDetail() {
       ) : null}
       <ul className="divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white text-sm">
         {items.map((item, index) => (
-          <li key={item.id ?? index} className="flex justify-between p-4">
+          <li key={item.id ?? index} className="flex justify-between gap-4 p-4">
             <span>
               {item.name} {item.sku ? `(${item.sku})` : ""} × {item.qty}
+              {["shipped", "completed"].includes(order.status) && item.product_slug ? (
+                <>
+                  {" "}
+                  <Link
+                    href={`/products/${item.product_slug}#reviews`}
+                    className="font-semibold text-blue-600"
+                  >
+                    Viết đánh giá
+                  </Link>
+                </>
+              ) : null}
             </span>
             <span className="font-semibold">{formatVnd(item.line_total)}</span>
           </li>

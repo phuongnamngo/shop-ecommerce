@@ -46,3 +46,15 @@ it('seeds promotion flash sale permissions for admin roles', function () {
         ->and($staff->hasPermissionTo('promotions.flash_sales.view', 'admin'))->toBeTrue()
         ->and($staff->hasPermissionTo('promotions.flash_sales.manage', 'admin'))->toBeFalse();
 });
+
+it('seeds engagement review permissions for admin roles', function () {
+    $this->seed(RolesAndPermissionsSeeder::class);
+
+    $admin = Role::findByName('admin', 'admin');
+    $staff = Role::findByName('staff', 'admin');
+
+    expect($admin->hasPermissionTo('engagement.reviews.view', 'admin'))->toBeTrue()
+        ->and($admin->hasPermissionTo('engagement.reviews.manage', 'admin'))->toBeTrue()
+        ->and($staff->hasPermissionTo('engagement.reviews.view', 'admin'))->toBeTrue()
+        ->and($staff->hasPermissionTo('engagement.reviews.manage', 'admin'))->toBeFalse();
+});

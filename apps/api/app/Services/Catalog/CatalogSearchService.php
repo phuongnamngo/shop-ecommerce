@@ -77,6 +77,8 @@ final class CatalogSearchService
         $visible = $this->products
             ->applyPublicVisibility(Product::query()->whereIn('products.id', $ids))
             ->with(['brand', 'defaultVariant', 'images'])
+            ->withAvg('approvedReviews as rating_avg', 'rating')
+            ->withCount(['approvedReviews as rating_count'])
             ->get()
             ->keyBy('id');
 

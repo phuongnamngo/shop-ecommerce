@@ -51,6 +51,8 @@ class ProductController extends Controller
     {
         $product = $this->products->applyPublicVisibility(Product::query())
             ->where('slug', $slug)
+            ->withAvg('approvedReviews as rating_avg', 'rating')
+            ->withCount(['approvedReviews as rating_count'])
             ->with([
                 'brand',
                 'defaultVariant',

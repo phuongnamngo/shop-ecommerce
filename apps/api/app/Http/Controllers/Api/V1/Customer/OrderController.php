@@ -27,7 +27,7 @@ final class OrderController extends Controller
     #[Response(200, 'Customer order detail.', type: 'array{data: OrderResource, meta: object}')]
     public function show(Request $request, int $id): JsonResponse
     {
-        $order = Order::query()->where('customer_id', $request->user('customer')->id)->with('items', 'statusHistories')->findOrFail($id);
+        $order = Order::query()->where('customer_id', $request->user('customer')->id)->with(['items.variant.product', 'statusHistories'])->findOrFail($id);
 
         return ApiResponse::success((new OrderResource($order))->resolve());
     }
