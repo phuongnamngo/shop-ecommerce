@@ -73,6 +73,7 @@ type VariantDraft = {
   key: string;
   sku: string;
   price: string;
+  weight_grams: string;
   is_default: boolean;
 };
 
@@ -81,6 +82,7 @@ function newVariantDraft(isDefault = false): VariantDraft {
     key: crypto.randomUUID(),
     sku: "",
     price: "0",
+    weight_grams: "",
     is_default: isDefault,
   };
 }
@@ -390,6 +392,9 @@ export function ProductCreatePage() {
         sku: v.sku,
         price: Number(v.price),
         is_default: v.is_default,
+        ...(v.weight_grams.trim() !== ""
+          ? { weight_grams: Number(v.weight_grams) }
+          : {}),
       }));
       return createProduct({
         name,
@@ -533,7 +538,7 @@ export function ProductCreatePage() {
                 {variants.map((v) => (
                   <div
                     key={v.key}
-                    className="grid gap-2 rounded-md border p-3 sm:grid-cols-4"
+                    className="grid gap-2 rounded-md border p-3 sm:grid-cols-5"
                   >
                     <Input
                       placeholder="SKU"
@@ -561,6 +566,22 @@ export function ProductCreatePage() {
                           prev.map((row) =>
                             row.key === v.key
                               ? { ...row, price: e.target.value }
+                              : row,
+                          ),
+                        )
+                      }
+                    />
+                    <Input
+                      placeholder="Gram (optional)"
+                      type="number"
+                      min={0}
+                      step="1"
+                      value={v.weight_grams}
+                      onChange={(e) =>
+                        setVariants((prev) =>
+                          prev.map((row) =>
+                            row.key === v.key
+                              ? { ...row, weight_grams: e.target.value }
                               : row,
                           ),
                         )
@@ -696,6 +717,7 @@ function ProductEditView({
   const [error, setError] = useState<string | null>(null);
   const [variantSku, setVariantSku] = useState("");
   const [variantPrice, setVariantPrice] = useState("0");
+  const [variantWeight, setVariantWeight] = useState("");
 
   const invalidate = async () => {
     await queryClient.invalidateQueries({
@@ -951,6 +973,12 @@ function ProductEditView({
                   <div className="text-sm">
                     <span className="font-medium">{v.sku}</span>
                     <span className="text-muted-foreground"> · {v.price}</span>
+                    {v.weight_grams != null ? (
+                      <span className="text-muted-foreground">
+                        {" "}
+                        · {v.weight_grams} g
+                      </span>
+                    ) : null}
                     {v.is_default ? (
                       <span className="ml-2 text-xs text-muted-foreground">
                         default
@@ -958,7 +986,30 @@ function ProductEditView({
                     ) : null}
                   </div>
                   {manage ? (
-                    <div className="space-x-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Input
+                        className="w-28"
+                        type="number"
+                        min={0}
+                        step="1"
+                        placeholder="Gram"
+                        defaultValue={v.weight_grams ?? ""}
+                        onBlur={(e) => {
+                          const raw = e.target.value.trim();
+                          const next =
+                            raw === "" ? null : Number(raw);
+                          if (next === v.weight_grams || (raw === "" && v.weight_grams == null)) {
+                            return;
+                          }
+                          void updateVariant(productId, v.id, {
+                            weight_grams: next,
+                          })
+                            .then(invalidate)
+                            .catch((err) =>
+                              setError(catalogErrorMessage(err)),
+                            );
+                        }}
+                      />
                       {!v.is_default ? (
                         <Button
                           type="button"
@@ -1022,6 +1073,15 @@ function ProductEditView({
                 value={variantPrice}
                 onChange={(e) => setVariantPrice(e.target.value)}
               />
+              <Input
+                className="max-w-[120px]"
+                type="number"
+                min={0}
+                step="1"
+                placeholder="Gram"
+                value={variantWeight}
+                onChange={(e) => setVariantWeight(e.target.value)}
+              />
               <Button
                 type="button"
                 onClick={() =>
@@ -1029,10 +1089,14 @@ function ProductEditView({
                     sku: variantSku,
                     price: Number(variantPrice),
                     is_default: product.variants.length === 0,
+                    ...(variantWeight.trim() !== ""
+                      ? { weight_grams: Number(variantWeight) }
+                      : {}),
                   })
                     .then(() => {
                       setVariantSku("");
                       setVariantPrice("0");
+                      setVariantWeight("");
                       return invalidate();
                     })
                     .catch((err) => setError(catalogErrorMessage(err)))

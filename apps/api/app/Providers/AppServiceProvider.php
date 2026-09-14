@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Contracts\PaymentGateway;
+use App\Contracts\ShippingGateway;
 use App\Models\AttributeOption;
 use App\Models\Brand;
 use App\Models\Category;
@@ -10,6 +11,8 @@ use App\Models\ProductVariant;
 use App\Observers\CatalogSearchObserver;
 use App\Services\Payment\FakePaymentGateway;
 use App\Services\Payment\VnPayGateway;
+use App\Services\Shipping\FakeGhnGateway;
+use App\Services\Shipping\GhnGateway;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
@@ -28,6 +31,14 @@ class AppServiceProvider extends ServiceProvider
             }
 
             return $app->make(VnPayGateway::class);
+        });
+
+        $this->app->bind(ShippingGateway::class, function ($app) {
+            if ($app->runningUnitTests() || $app['config']->get('commerce.shipping_driver') === 'fake') {
+                return $app->make(FakeGhnGateway::class);
+            }
+
+            return $app->make(GhnGateway::class);
         });
     }
 

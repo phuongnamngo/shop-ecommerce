@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
     'number', 'customer_id', 'status', 'currency',
     'subtotal', 'discount_total', 'shipping_total', 'tax_total', 'grand_total',
     'shipping_address_snapshot', 'billing_address_snapshot',
-    'shipping_method_id', 'coupon_id',
+            'shipping_method_id', 'ghn_service_id', 'coupon_id',
     'guest_lookup_token_hash', 'guest_lookup_token_cipher', 'guest_lookup_token_expires_at',
 ])]
 class Order extends Model
@@ -64,5 +64,10 @@ class Order extends Model
     public function reservations(): HasMany
     {
         return $this->hasMany(StockReservation::class);
+    }
+
+    public function shippingMethod(): BelongsTo
+    {
+        return $this->belongsTo(ShippingMethod::class);
     }
 }

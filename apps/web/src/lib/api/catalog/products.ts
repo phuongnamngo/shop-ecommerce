@@ -25,6 +25,7 @@ export type CreateVariantInput = {
   is_default: boolean;
   barcode?: string | null;
   compare_at_price?: number | null;
+  weight_grams?: number | null;
   status?: CatalogStatus;
 };
 

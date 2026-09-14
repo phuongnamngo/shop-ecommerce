@@ -2,6 +2,7 @@
 
 namespace App\Services\Shipment;
 
+use App\Contracts\ShippingGateway;
 use App\Models\AdminUser;
 use App\Models\Order;
 use App\Models\OrderShipment;
@@ -14,11 +15,30 @@ use Illuminate\Support\Facades\DB;
 
 final class ShipmentService
 {
-    public function __construct(private readonly OrderService $orders) {}
+    public function __construct(
+        private readonly OrderService $orders,
+        private readonly ShippingGateway $shipping,
+    ) {}
 
-    public function shipFull(Order $order, AdminUser $admin, string $trackingNumber, ?string $carrierCode = null): OrderShipment
+    public function shipFull(Order $order, AdminUser $admin, ?string $trackingNumber, ?string $carrierCode = null): OrderShipment
     {
-        return DB::transaction(function () use ($order, $admin, $trackingNumber, $carrierCode): OrderShipment {
+        $order->loadMissing('shippingMethod');
+        $methodCode = $order->shippingMethod?->code;
+        $payload = [];
+
+        if ($methodCode === 'ghn') {
+            $waybill = $this->shipping->createWaybill($order);
+            if (! $waybill->ok || $waybill->trackingNumber === null || $waybill->trackingNumber === '') {
+                throw new CommerceException(ErrorCode::SHIPPING_GHN_FAILED, 'GHN waybill could not be created.', 'tracking_number');
+            }
+            $trackingNumber = $waybill->trackingNumber;
+            $carrierCode = 'ghn';
+            $payload = $waybill->payload;
+        } elseif (trim((string) $trackingNumber) === '') {
+            throw new CommerceException(ErrorCode::SHIPMENT_TRACKING_REQUIRED, 'Tracking number is required.', 'tracking_number');
+        }
+
+        return DB::transaction(function () use ($order, $admin, $trackingNumber, $carrierCode, $payload): OrderShipment {
             $order = Order::query()->whereKey($order->id)->with('items')->lockForUpdate()->firstOrFail();
             if ($order->status !== 'fulfilling') {
                 throw new CommerceException(ErrorCode::SHIPMENT_INVALID_STATUS, 'Order must be fulfilling to ship.', 'status', 409);
@@ -27,15 +47,13 @@ final class ShipmentService
             if ($order->shipments()->withTrashed()->exists()) {
                 throw new CommerceException(ErrorCode::SHIPMENT_ALREADY_EXISTS, 'Order already has a shipment.', status: 409);
             }
-            if (trim($trackingNumber) === '') {
-                throw new CommerceException(ErrorCode::SHIPMENT_TRACKING_REQUIRED, 'Tracking number is required.', 'tracking_number');
-            }
 
             $shipment = $order->shipments()->create([
                 'shipping_method_id' => $order->shipping_method_id,
                 'tracking_number' => $trackingNumber,
                 'carrier_code' => $carrierCode,
                 'status' => 'shipped',
+                'payload' => $payload === [] ? null : $payload,
             ]);
 
             $reservations = $order->reservations()->where('status', 'active')->orderBy('product_variant_id')->lockForUpdate()->get()->keyBy('product_variant_id');

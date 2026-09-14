@@ -36,6 +36,7 @@ class StoreProductRequest extends FormRequest
             'variants.*.barcode' => ['sometimes', 'nullable', 'string', 'max:255'],
             'variants.*.price' => ['required', 'numeric', 'min:0'],
             'variants.*.compare_at_price' => ['sometimes', 'nullable', 'numeric', 'min:0'],
+            'variants.*.weight_grams' => ['sometimes', 'nullable', 'integer', 'min:0'],
             'variants.*.is_default' => ['required', 'boolean'],
             'variants.*.status' => ['sometimes', 'string', Rule::in([ProductVariant::STATUS_DRAFT, ProductVariant::STATUS_ACTIVE, ProductVariant::STATUS_INACTIVE])],
             'variants.*.attribute_option_ids' => ['sometimes', 'array'],

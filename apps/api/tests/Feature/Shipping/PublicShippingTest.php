@@ -1,8 +1,10 @@
 <?php
 
+use App\Models\GeoProvince;
 use App\Models\ShippingMethod;
 use App\Models\ShippingRate;
-use App\Support\ErrorCode;
+use Database\Seeders\CommerceFulfillmentDemoSeeder;
+use Database\Seeders\PlatformRemainderDemoSeeder;
 
 it('lists active shipping methods with region-null rates without auth', function () {
     $active = ShippingMethod::query()->create(['code' => 'standard-pub', 'name' => 'Standard', 'status' => 'active']);
@@ -19,4 +21,13 @@ it('lists active shipping methods with region-null rates without auth', function
     expect($standard['rates'])->toHaveCount(1)
         ->and($standard['rates'][0]['price'])->toBe('30000.00')
         ->and($standard['rates'][0])->toHaveKeys(['id', 'price', 'min_order_amount', 'max_order_amount']);
+});
+
+it('seeds ghn method without nationwide rates and drops GSO demo codes', function () {
+    $this->seed(CommerceFulfillmentDemoSeeder::class);
+    $this->seed(PlatformRemainderDemoSeeder::class);
+
+    $ghn = collect($this->getJson('/api/v1/shipping/methods')->json('data'))->firstWhere('code', 'ghn');
+    expect($ghn)->not->toBeNull()->and($ghn['rates'])->toBe([]);
+    expect(GeoProvince::query()->where('code', '01')->exists())->toBeFalse();
 });

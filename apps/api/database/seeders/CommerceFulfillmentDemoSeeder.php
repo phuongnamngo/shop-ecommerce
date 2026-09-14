@@ -46,5 +46,14 @@ class CommerceFulfillmentDemoSeeder extends Seeder
                 'max_order_amount' => null,
             ],
         );
+
+        ShippingMethod::query()->firstOrCreate(
+            ['code' => 'ghn'],
+            [
+                'name' => 'GHN',
+                'provider' => 'ghn',
+                'status' => 'active',
+            ],
+        );
     }
 }

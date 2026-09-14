@@ -73,6 +73,11 @@ final class AdminOrderResource extends OrderResource
                     'created_at' => $refund->created_at?->toISOString(),
                 ])
                 ->all()),
+            'shipping_method' => $this->whenLoaded('shippingMethod', fn () => $this->shippingMethod === null ? null : [
+                'id' => $this->shippingMethod->id,
+                'code' => $this->shippingMethod->code,
+            ]),
+            'ghn_service_id' => $this->ghn_service_id,
         ]);
     }
 }

@@ -44,6 +44,7 @@ export type ProductVariant = {
   barcode: string | null;
   price: string | number;
   compare_at_price: string | number | null;
+  weight_grams?: number | null;
   is_default: boolean;
   status: CatalogStatus;
   images?: CatalogImage[];

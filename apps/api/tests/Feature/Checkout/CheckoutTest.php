@@ -1,5 +1,6 @@
 <?php
 
+use App\Contracts\ShippingGateway;
 use App\Models\Coupon;
 use App\Models\Customer;
 use App\Models\CustomerAddress;
@@ -14,7 +15,9 @@ use App\Models\ShippingRate;
 use App\Models\StockItem;
 use App\Models\StockReservation;
 use App\Models\Warehouse;
+use App\Services\Shipping\FakeGhnGateway;
 use Illuminate\Support\Str;
+use Tests\Support\RecordingGhnGateway;
 
 function ensurePaymentMethods(): void
 {
@@ -233,6 +236,111 @@ it('checks out with VNPay and returns a redirect payment action', function () {
         ->assertJsonPath('data.payment.provider', 'vnpay');
     expect($this->withHeader('X-Cart-Token', $token)->postJson('/api/v1/checkout', [])->json())->toBeArray();
     $this->assertDatabaseHas('payment_transactions', ['provider' => 'vnpay', 'status' => 'pending']);
+});
+
+it('checks out standard shipping without calling GHN even when GHN is down', function () {
+    ensurePaymentMethods();
+    $recorder = new RecordingGhnGateway(new FakeGhnGateway(false));
+    $this->app->instance(ShippingGateway::class, $recorder);
+    $province = GeoProvince::query()->create(['code' => 'STD-P', 'name' => 'Province']);
+    $district = GeoDistrict::query()->create(['geo_province_id' => $province->id, 'code' => 'STD-D', 'name' => 'District']);
+    GeoWard::query()->create(['geo_district_id' => $district->id, 'code' => 'STD-W', 'name' => 'Ward']);
+    $method = ShippingMethod::query()->create(['code' => 'standard', 'name' => 'Standard', 'status' => 'active']);
+    $rate = ShippingRate::query()->create(['shipping_method_id' => $method->id, 'price' => 15000]);
+    $warehouse = Warehouse::query()->create(['code' => 'STD-WH', 'name' => 'Default', 'is_default' => true, 'status' => 'active']);
+    $product = Product::factory()->published()->create();
+    $variant = $product->variants()->firstOrFail();
+    $variant->update(['status' => 'active', 'price' => 100000]);
+    StockItem::query()->create(['warehouse_id' => $warehouse->id, 'product_variant_id' => $variant->id, 'qty_on_hand' => 2, 'qty_reserved' => 0]);
+    $token = $this->postJson('/api/v1/cart')->json('meta.cart_token');
+    $this->withHeader('X-Cart-Token', $token)->postJson('/api/v1/cart/items', ['product_variant_id' => $variant->id, 'qty' => 1]);
+
+    $this->withHeader('X-Cart-Token', $token)->postJson('/api/v1/checkout', [
+        'shipping_address' => ['recipient_name' => 'A', 'phone' => '0900000000', 'province_code' => 'STD-P', 'district_code' => 'STD-D', 'ward_code' => 'STD-W', 'address_line' => 'Road'],
+        'shipping_method_id' => $method->id,
+        'shipping_rate_id' => $rate->id,
+        'payment_method_code' => 'cod',
+    ])->assertCreated()
+        ->assertJsonPath('data.shipping_total', '15000.00')
+        ->assertJsonPath('data.grand_total', '115000.00');
+
+    expect($recorder->quoteCalls)->toBe(0);
+    $this->assertDatabaseHas('orders', ['ghn_service_id' => null, 'shipping_total' => 15000]);
+});
+
+it('checks out GHN with a live quoted fee and no shipping rate', function () {
+    ensurePaymentMethods();
+    $province = GeoProvince::query()->create(['code' => 'GHN-P', 'name' => 'Province']);
+    $district = GeoDistrict::query()->create(['geo_province_id' => $province->id, 'code' => 'GHN-D', 'name' => 'District']);
+    GeoWard::query()->create(['geo_district_id' => $district->id, 'code' => 'GHN-W', 'name' => 'Ward']);
+    $method = ShippingMethod::query()->create(['code' => 'ghn', 'name' => 'GHN', 'provider' => 'ghn', 'status' => 'active']);
+    $warehouse = Warehouse::query()->create(['code' => 'GHN-WH', 'name' => 'Default', 'is_default' => true, 'status' => 'active']);
+    $product = Product::factory()->published()->create();
+    $variant = $product->variants()->firstOrFail();
+    $variant->update(['status' => 'active', 'price' => 100000]);
+    StockItem::query()->create(['warehouse_id' => $warehouse->id, 'product_variant_id' => $variant->id, 'qty_on_hand' => 2, 'qty_reserved' => 0]);
+    $token = $this->postJson('/api/v1/cart')->json('meta.cart_token');
+    $this->withHeader('X-Cart-Token', $token)->postJson('/api/v1/cart/items', ['product_variant_id' => $variant->id, 'qty' => 1]);
+
+    $this->withHeader('X-Cart-Token', $token)->postJson('/api/v1/checkout', [
+        'shipping_address' => ['recipient_name' => 'A', 'phone' => '0900000000', 'province_code' => 'GHN-P', 'district_code' => 'GHN-D', 'ward_code' => 'GHN-W', 'address_line' => 'Road'],
+        'shipping_method_id' => $method->id,
+        'ghn_service_id' => 1,
+        'payment_method_code' => 'cod',
+    ])->assertCreated()
+        ->assertJsonPath('data.shipping_total', '25000.00')
+        ->assertJsonPath('data.grand_total', '125000.00');
+
+    $this->assertDatabaseHas('orders', ['ghn_service_id' => 1, 'shipping_total' => 25000, 'shipping_method_id' => $method->id]);
+});
+
+it('rejects GHN checkout when the gateway is down without creating an order', function () {
+    ensurePaymentMethods();
+    $this->app->instance(ShippingGateway::class, new FakeGhnGateway(false));
+    $province = GeoProvince::query()->create(['code' => 'GHN-DOWN-P', 'name' => 'Province']);
+    $district = GeoDistrict::query()->create(['geo_province_id' => $province->id, 'code' => 'GHN-DOWN-D', 'name' => 'District']);
+    GeoWard::query()->create(['geo_district_id' => $district->id, 'code' => 'GHN-DOWN-W', 'name' => 'Ward']);
+    $method = ShippingMethod::query()->create(['code' => 'ghn', 'name' => 'GHN', 'provider' => 'ghn', 'status' => 'active']);
+    $warehouse = Warehouse::query()->create(['code' => 'GHN-DOWN-WH', 'name' => 'Default', 'is_default' => true, 'status' => 'active']);
+    $product = Product::factory()->published()->create();
+    $variant = $product->variants()->firstOrFail();
+    $variant->update(['status' => 'active', 'price' => 100000]);
+    StockItem::query()->create(['warehouse_id' => $warehouse->id, 'product_variant_id' => $variant->id, 'qty_on_hand' => 2, 'qty_reserved' => 0]);
+    $token = $this->postJson('/api/v1/cart')->json('meta.cart_token');
+    $this->withHeader('X-Cart-Token', $token)->postJson('/api/v1/cart/items', ['product_variant_id' => $variant->id, 'qty' => 1]);
+
+    $this->withHeader('X-Cart-Token', $token)->postJson('/api/v1/checkout', [
+        'shipping_address' => ['recipient_name' => 'A', 'phone' => '0900000000', 'province_code' => 'GHN-DOWN-P', 'district_code' => 'GHN-DOWN-D', 'ward_code' => 'GHN-DOWN-W', 'address_line' => 'Road'],
+        'shipping_method_id' => $method->id,
+        'ghn_service_id' => 1,
+        'payment_method_code' => 'cod',
+    ])->assertUnprocessable()->assertJsonPath('errors.0.code', 'SHIPPING_GHN_FAILED');
+
+    $this->assertDatabaseCount('orders', 0);
+});
+
+it('rejects a GHN service that is no longer on the live quote', function () {
+    ensurePaymentMethods();
+    $province = GeoProvince::query()->create(['code' => 'GHN-BAD-P', 'name' => 'Province']);
+    $district = GeoDistrict::query()->create(['geo_province_id' => $province->id, 'code' => 'GHN-BAD-D', 'name' => 'District']);
+    GeoWard::query()->create(['geo_district_id' => $district->id, 'code' => 'GHN-BAD-W', 'name' => 'Ward']);
+    $method = ShippingMethod::query()->create(['code' => 'ghn', 'name' => 'GHN', 'provider' => 'ghn', 'status' => 'active']);
+    $warehouse = Warehouse::query()->create(['code' => 'GHN-BAD-WH', 'name' => 'Default', 'is_default' => true, 'status' => 'active']);
+    $product = Product::factory()->published()->create();
+    $variant = $product->variants()->firstOrFail();
+    $variant->update(['status' => 'active', 'price' => 100000]);
+    StockItem::query()->create(['warehouse_id' => $warehouse->id, 'product_variant_id' => $variant->id, 'qty_on_hand' => 2, 'qty_reserved' => 0]);
+    $token = $this->postJson('/api/v1/cart')->json('meta.cart_token');
+    $this->withHeader('X-Cart-Token', $token)->postJson('/api/v1/cart/items', ['product_variant_id' => $variant->id, 'qty' => 1]);
+
+    $this->withHeader('X-Cart-Token', $token)->postJson('/api/v1/checkout', [
+        'shipping_address' => ['recipient_name' => 'A', 'phone' => '0900000000', 'province_code' => 'GHN-BAD-P', 'district_code' => 'GHN-BAD-D', 'ward_code' => 'GHN-BAD-W', 'address_line' => 'Road'],
+        'shipping_method_id' => $method->id,
+        'ghn_service_id' => 999,
+        'payment_method_code' => 'cod',
+    ])->assertUnprocessable()->assertJsonPath('errors.0.code', 'SHIPPING_SERVICE_INVALID');
+
+    $this->assertDatabaseCount('orders', 0);
 });
 
 it('rejects inactive payment methods at checkout', function () {

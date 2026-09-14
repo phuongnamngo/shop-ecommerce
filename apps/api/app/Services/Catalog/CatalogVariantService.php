@@ -31,6 +31,7 @@ final class CatalogVariantService
                 'barcode' => $data['barcode'] ?? null,
                 'price' => $data['price'],
                 'compare_at_price' => $data['compare_at_price'] ?? null,
+                'weight_grams' => $data['weight_grams'] ?? null,
                 'is_default' => $data['is_default'] ?? false,
                 'status' => $data['status'] ?? ProductVariant::STATUS_ACTIVE,
             ]);
@@ -70,6 +71,7 @@ final class CatalogVariantService
                 'barcode' => array_key_exists('barcode', $data) ? $data['barcode'] : $variant->barcode,
                 'price' => $data['price'] ?? $variant->price,
                 'compare_at_price' => array_key_exists('compare_at_price', $data) ? $data['compare_at_price'] : $variant->compare_at_price,
+                'weight_grams' => array_key_exists('weight_grams', $data) ? $data['weight_grams'] : $variant->weight_grams,
                 'is_default' => $isDefault,
                 'status' => $data['status'] ?? $variant->status,
             ])->save();

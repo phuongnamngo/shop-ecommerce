@@ -59,5 +59,27 @@ it('creates an additional variant', function () {
         ])
         ->assertCreated()
         ->assertJsonPath('data.sku', 'SKU-EXTRA')
-        ->assertJsonPath('data.is_default', false);
+        ->assertJsonPath('data.is_default', false)
+        ->assertJsonPath('data.weight_grams', null);
+});
+
+it('persists optional variant weight in grams', function () {
+    $product = Product::factory()->create();
+
+    $created = $this->actingAs(catalogAdmin(), 'admin')
+        ->postJson('/api/v1/admin/catalog/products/'.$product->id.'/variants', [
+            'sku' => 'SKU-WEIGHT',
+            'price' => 250000,
+            'is_default' => false,
+            'weight_grams' => 750,
+        ])
+        ->assertCreated()
+        ->assertJsonPath('data.weight_grams', 750);
+
+    $this->actingAs(catalogAdmin(), 'admin')
+        ->patchJson('/api/v1/admin/catalog/products/'.$product->id.'/variants/'.$created->json('data.id'), [
+            'weight_grams' => 400,
+        ])
+        ->assertOk()
+        ->assertJsonPath('data.weight_grams', 400);
 });

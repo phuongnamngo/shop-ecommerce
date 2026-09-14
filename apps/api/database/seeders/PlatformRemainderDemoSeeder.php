@@ -12,18 +12,20 @@ class PlatformRemainderDemoSeeder extends Seeder
 {
     public function run(): void
     {
+        // GHN sandbox Hà Nội / Ba Đình / Phúc Xá (ProvinceID / DistrictID / WardCode).
+        // https://api.ghn.vn/home/docs/detail?id=77 (GetProvince / GetDistrict / GetWard)
         $province = GeoProvince::query()->firstOrCreate(
-            ['code' => '01'],
+            ['code' => '201'],
             ['name' => 'Hà Nội'],
         );
 
         $district = GeoDistrict::query()->firstOrCreate(
-            ['geo_province_id' => $province->id, 'code' => '001'],
+            ['geo_province_id' => $province->id, 'code' => '1484'],
             ['name' => 'Ba Đình'],
         );
 
         GeoWard::query()->firstOrCreate(
-            ['geo_district_id' => $district->id, 'code' => '00001'],
+            ['geo_district_id' => $district->id, 'code' => '1A0106'],
             ['name' => 'Phúc Xá'],
         );
 

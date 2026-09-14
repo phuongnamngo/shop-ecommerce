@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Fillable([
-    'code', 'product_id', 'sku', 'barcode', 'price', 'compare_at_price', 'is_default', 'status',
+    'code', 'product_id', 'sku', 'barcode', 'price', 'compare_at_price', 'weight_grams', 'is_default', 'status',
 ])]
 class ProductVariant extends Model
 {

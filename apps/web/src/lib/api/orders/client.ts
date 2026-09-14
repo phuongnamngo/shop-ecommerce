@@ -43,7 +43,7 @@ export function updateOrderStatus(
 
 export function createOrderShipment(
   id: number,
-  body: { tracking_number: string; carrier_code?: string | null },
+  body: { tracking_number?: string; carrier_code?: string | null } = {},
 ): Promise<
   ApiSuccess<
     Pick<OrderShipment, "id" | "tracking_number" | "carrier_code" | "status">

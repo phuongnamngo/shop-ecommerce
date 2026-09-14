@@ -152,7 +152,8 @@ export type GuestCheckoutBody = {
     address_line: string;
   };
   shipping_method_id: number;
-  shipping_rate_id: number;
+  shipping_rate_id?: number;
+  ghn_service_id?: number;
   payment_method_code: "cod" | "vnpay";
   coupon_code?: string;
 };
@@ -161,9 +162,19 @@ export type CheckoutBody = {
   customer_address_id?: number;
   shipping_address?: GuestCheckoutBody["shipping_address"];
   shipping_method_id: number;
-  shipping_rate_id: number;
+  shipping_rate_id?: number;
+  ghn_service_id?: number;
   payment_method_code: "cod" | "vnpay";
   coupon_code?: string;
+};
+
+export type ShippingQuote = {
+  shipping_method_id: number;
+  code: string;
+  name: string;
+  fee: string;
+  ghn_service_id: number | null;
+  shipping_rate_id: number | null;
 };
 
 export type CustomerProfile = {

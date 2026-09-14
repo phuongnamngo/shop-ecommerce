@@ -19,8 +19,8 @@ import {
 import {
   listDistricts,
   listProvinces,
-  listShippingMethods,
   listWards,
+  postShippingQuotes,
 } from "@/lib/api/storefront/commerce";
 import {
   createCustomerAddress,
@@ -32,23 +32,14 @@ import type {
   CustomerAddress,
   CustomerProfile,
   GeoNode,
-  ShippingMethod,
+  ShippingQuote,
   StorefrontCart,
 } from "@/lib/api/storefront/types";
 import { sfContainer, sfInput } from "@/lib/storefront/ui";
 import { cn } from "@/lib/utils";
 
-function rateFits(
-  rate: { min_order_amount: string | null; max_order_amount: string | null },
-  subtotal: number,
-): boolean {
-  if (rate.min_order_amount != null && subtotal < Number(rate.min_order_amount)) {
-    return false;
-  }
-  if (rate.max_order_amount != null && subtotal > Number(rate.max_order_amount)) {
-    return false;
-  }
-  return true;
+function quoteKey(quote: ShippingQuote): string {
+  return `${quote.code}:${quote.ghn_service_id ?? quote.shipping_rate_id ?? quote.shipping_method_id}`;
 }
 
 export function CheckoutForm() {
@@ -59,7 +50,10 @@ export function CheckoutForm() {
   const [savedId, setSavedId] = useState<number | null>(null);
   const [saveToBook, setSaveToBook] = useState(false);
   const [cart, setCart] = useState<StorefrontCart | null>(null);
-  const [methods, setMethods] = useState<ShippingMethod[]>([]);
+  const [quotesResult, setQuotesResult] = useState<{
+    key: string;
+    rows: ShippingQuote[];
+  } | null>(null);
   const [provinces, setProvinces] = useState<GeoNode[]>([]);
   const [districts, setDistricts] = useState<GeoNode[]>([]);
   const [wards, setWards] = useState<GeoNode[]>([]);
@@ -92,12 +86,8 @@ export function CheckoutForm() {
           router.replace("/cart");
           return;
         }
-        const [nextMethods, nextProvinces] = await Promise.all([
-          listShippingMethods(),
-          listProvinces(),
-        ]);
+        const nextProvinces = await listProvinces();
         setCart(nextCart);
-        setMethods(nextMethods);
         setProvinces(nextProvinces);
         if (profile) {
           const book = await listCustomerAddresses();
@@ -124,22 +114,71 @@ export function CheckoutForm() {
     })();
   }, [router]);
 
-  const subtotal = Number(cart?.subtotal ?? 0);
-  const options = useMemo(() => {
-    return methods.flatMap((method) =>
-      method.rates
-        .filter((rate) => rateFits(rate, subtotal))
-        .map((rate) => ({
-          key: `${method.id}:${rate.id}`,
-          methodId: method.id,
-          rateId: rate.id,
-          name: method.name,
-          price: rate.price,
-        })),
-    );
-  }, [methods, subtotal]);
+  const geo = useMemo(() => {
+    if (me && addressMode === "saved" && savedId) {
+      const saved = addresses.find((row) => row.id === savedId);
+      if (
+        saved &&
+        saved.province_code &&
+        saved.district_code &&
+        saved.ward_code
+      ) {
+        return {
+          province_code: saved.province_code,
+          district_code: saved.district_code,
+          ward_code: saved.ward_code,
+        };
+      }
+      return null;
+    }
+    if (provinceCode && districtCode && wardCode) {
+      return {
+        province_code: provinceCode,
+        district_code: districtCode,
+        ward_code: wardCode,
+      };
+    }
+    return null;
+  }, [
+    me,
+    addressMode,
+    savedId,
+    addresses,
+    provinceCode,
+    districtCode,
+    wardCode,
+  ]);
 
-  const selected = options.find((option) => option.key === shippingKey) ?? options[0];
+  const geoKey = geo
+    ? `${geo.province_code}|${geo.district_code}|${geo.ward_code}`
+    : "";
+
+  useEffect(() => {
+    if (!geo) {
+      return;
+    }
+    const key = geoKey;
+    let cancelled = false;
+    void postShippingQuotes(geo)
+      .then((rows) => {
+        if (cancelled) return;
+        setQuotesResult({ key, rows });
+        setShippingKey(rows[0] ? quoteKey(rows[0]) : "");
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        setQuotesResult({ key, rows: [] });
+        setError(storefrontErrorMessage(err));
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [geo, geoKey]);
+
+  const quoting = Boolean(geo) && quotesResult?.key !== geoKey;
+  const quotes = !geo || quoting ? [] : (quotesResult?.rows ?? []);
+
+  const selected = quotes.find((quote) => quoteKey(quote) === shippingKey) ?? quotes[0];
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
@@ -148,9 +187,11 @@ export function CheckoutForm() {
     setError(null);
     try {
       const shipping = {
-        shipping_method_id: selected.methodId,
-        shipping_rate_id: selected.rateId,
+        shipping_method_id: selected.shipping_method_id,
         payment_method_code: payment,
+        ...(selected.ghn_service_id != null
+          ? { ghn_service_id: selected.ghn_service_id }
+          : { shipping_rate_id: selected.shipping_rate_id ?? undefined }),
         ...(coupon.trim() !== "" ? { coupon_code: coupon.trim() } : {}),
       };
       const newAddress = {
@@ -410,17 +451,21 @@ export function CheckoutForm() {
 
           <fieldset className="space-y-3 rounded-xl border border-slate-200 bg-white p-5">
             <legend className="px-1 text-sm font-semibold">Vận chuyển</legend>
-            {options.length === 0 ? (
+            {!geo ? (
+              <p className="text-sm text-slate-500">Chọn địa chỉ để xem phí</p>
+            ) : quoting ? (
+              <p className="text-sm text-slate-500">Đang tải phí vận chuyển…</p>
+            ) : quotes.length === 0 ? (
               <p className="text-sm text-slate-500">
                 Không có phương thức vận chuyển phù hợp.
               </p>
             ) : (
-              options.map((option) => (
+              quotes.map((option) => (
                 <label
-                  key={option.key}
+                  key={quoteKey(option)}
                   className={cn(
                     "flex items-center justify-between gap-3 rounded-lg border p-3 text-sm",
-                    (shippingKey || options[0]?.key) === option.key
+                    (shippingKey || quoteKey(quotes[0])) === quoteKey(option)
                       ? "border-blue-600 bg-blue-50"
                       : "border-slate-200",
                   )}
@@ -429,13 +474,15 @@ export function CheckoutForm() {
                     <input
                       type="radio"
                       name="shipping"
-                      value={option.key}
-                      checked={(shippingKey || options[0]?.key) === option.key}
-                      onChange={() => setShippingKey(option.key)}
+                      value={quoteKey(option)}
+                      checked={
+                        (shippingKey || quoteKey(quotes[0])) === quoteKey(option)
+                      }
+                      onChange={() => setShippingKey(quoteKey(option))}
                     />
                     {option.name}
                   </span>
-                  <span className="font-semibold">{formatVnd(option.price)}</span>
+                  <span className="font-semibold">{formatVnd(option.fee)}</span>
                 </label>
               ))
             )}
@@ -507,20 +554,20 @@ export function CheckoutForm() {
           </p>
           <p className="flex justify-between text-sm">
             <span className="text-slate-500">Phí vận chuyển</span>
-            <span>{selected ? formatVnd(selected.price) : "—"}</span>
+            <span>{selected ? formatVnd(selected.fee) : "—"}</span>
           </p>
           <p className="flex justify-between border-t border-slate-100 pt-3 font-semibold">
             <span>Tổng cộng</span>
             <span>
               {formatVnd(
-                Number(cart?.subtotal ?? 0) + Number(selected?.price ?? 0),
+                Number(cart?.subtotal ?? 0) + Number(selected?.fee ?? 0),
               )}
             </span>
           </p>
           <Button
             type="submit"
             className="h-12 w-full rounded-lg bg-blue-600 font-semibold hover:bg-blue-700"
-            disabled={pending || !selected || options.length === 0}
+            disabled={pending || !selected || quotes.length === 0}
           >
             {pending ? "Đang đặt hàng…" : "Đặt hàng ngay"}
           </Button>

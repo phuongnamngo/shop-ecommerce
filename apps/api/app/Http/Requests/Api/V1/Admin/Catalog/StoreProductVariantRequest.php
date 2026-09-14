@@ -24,6 +24,7 @@ class StoreProductVariantRequest extends FormRequest
             'barcode' => ['sometimes', 'nullable', 'string', 'max:255'],
             'price' => ['required', 'numeric', 'min:0'],
             'compare_at_price' => ['sometimes', 'nullable', 'numeric', 'min:0'],
+            'weight_grams' => ['sometimes', 'nullable', 'integer', 'min:0'],
             'is_default' => ['required', 'boolean'],
             'status' => ['sometimes', 'string', Rule::in([ProductVariant::STATUS_DRAFT, ProductVariant::STATUS_ACTIVE, ProductVariant::STATUS_INACTIVE])],
             'attribute_option_ids' => ['sometimes', 'array'],

@@ -47,7 +47,9 @@ use App\Http\Controllers\Api\V1\Customer\WishlistController as CustomerWishlistC
 use App\Http\Controllers\Api\V1\Geo\GeoController;
 use App\Http\Controllers\Api\V1\Order\GuestOrderLookupController;
 use App\Http\Controllers\Api\V1\Payment\VnPayController;
+use App\Http\Controllers\Api\V1\Shipping\GhnWebhookController;
 use App\Http\Controllers\Api\V1\Shipping\ShippingMethodController as PublicShippingMethodController;
+use App\Http\Controllers\Api\V1\Shipping\ShippingQuoteController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -67,6 +69,8 @@ Route::prefix('v1')->group(function () {
     Route::get('catalog/brands', [PublicBrandController::class, 'index']);
     Route::get('catalog/categories', [PublicCategoryController::class, 'index']);
     Route::get('shipping/methods', [PublicShippingMethodController::class, 'index']);
+    Route::post('shipping/quotes', [ShippingQuoteController::class, 'store']);
+    Route::post('webhooks/ghn', [GhnWebhookController::class, 'store']);
     Route::get('geo/provinces', [GeoController::class, 'provinces']);
     Route::get('geo/provinces/{code}/districts', [GeoController::class, 'districts']);
     Route::get('geo/districts/{code}/wards', [GeoController::class, 'wards']);

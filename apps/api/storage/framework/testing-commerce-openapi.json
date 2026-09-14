@@ -2550,6 +2550,20 @@
                                                 "examples": [
                                                     "cod"
                                                 ]
+                                            },
+                                            "shipping_rate_id": {
+                                                "type": [
+                                                    "integer",
+                                                    "null"
+                                                ],
+                                                "description": "Required for standard shipping; omit for GHN."
+                                            },
+                                            "ghn_service_id": {
+                                                "type": [
+                                                    "integer",
+                                                    "null"
+                                                ],
+                                                "description": "Required for GHN shipping; omit for standard."
                                             }
                                         },
                                         "required": [
@@ -4106,6 +4120,110 @@
                                                         "message": {
                                                             "type": "string",
                                                             "const": "Not found."
+                                                        },
+                                                        "field": {
+                                                            "type": "null"
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "code",
+                                                        "message",
+                                                        "field"
+                                                    ]
+                                                }
+                                            ],
+                                            "minItems": 1,
+                                            "maxItems": 1,
+                                            "additionalItems": false
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta",
+                                        "errors"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": []
+            }
+        },
+        "/api/v1/webhooks/ghn": {
+            "post": {
+                "operationId": "ghnWebhook.store",
+                "tags": [
+                    "GhnWebhook"
+                ],
+                "parameters": [
+                    {
+                        "name": "Token",
+                        "in": "header",
+                        "required": true,
+                        "description": "GHN webhook token.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Webhook acknowledged.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "ok": {
+                                                    "type": "boolean"
+                                                }
+                                            },
+                                            "required": [
+                                                "ok"
+                                            ]
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "null"
+                                        },
+                                        "meta": {
+                                            "type": "string"
+                                        },
+                                        "errors": {
+                                            "type": "array",
+                                            "prefixItems": [
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "code": {
+                                                            "type": "string",
+                                                            "const": "AUTH_UNAUTHENTICATED"
+                                                        },
+                                                        "message": {
+                                                            "type": "string",
+                                                            "const": "Invalid webhook token."
                                                         },
                                                         "field": {
                                                             "type": "null"
@@ -8265,8 +8383,11 @@
                                         "type": "object",
                                         "properties": {
                                             "tracking_number": {
-                                                "type": "string",
-                                                "description": "Manual carrier tracking number."
+                                                "type": [
+                                                    "string",
+                                                    "null"
+                                                ],
+                                                "description": "Required for standard shipping; ignored for GHN."
                                             },
                                             "carrier_code": {
                                                 "type": [
@@ -8275,10 +8396,7 @@
                                                 ],
                                                 "description": "Optional carrier code."
                                             }
-                                        },
-                                        "required": [
-                                            "tracking_number"
-                                        ]
+                                        }
                                     }
                                 ]
                             }
@@ -8416,6 +8534,100 @@
                                 }
                             }
                         }
+                    }
+                },
+                "security": []
+            }
+        },
+        "/api/v1/shipping/quotes": {
+            "post": {
+                "operationId": "shippingQuote.store",
+                "tags": [
+                    "ShippingQuote"
+                ],
+                "parameters": [
+                    {
+                        "name": "X-Cart-Token",
+                        "in": "header",
+                        "description": "Opaque guest cart token; omit for authenticated customer quotes.",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ShippingQuoteRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Available shipping quotes for the cart destination.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "shipping_method_id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "code": {
+                                                        "type": "string"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "fee": {
+                                                        "type": "string"
+                                                    },
+                                                    "ghn_service_id": {
+                                                        "type": [
+                                                            "integer",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "shipping_rate_id": {
+                                                        "type": [
+                                                            "integer",
+                                                            "null"
+                                                        ]
+                                                    }
+                                                },
+                                                "required": [
+                                                    "shipping_method_id",
+                                                    "code",
+                                                    "name",
+                                                    "fee",
+                                                    "ghn_service_id",
+                                                    "shipping_rate_id"
+                                                ]
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
                     }
                 },
                 "security": []
@@ -9454,6 +9666,30 @@
                                 "created_at"
                             ]
                         }
+                    },
+                    "shipping_method": {
+                        "type": [
+                            "object",
+                            "null"
+                        ],
+                        "properties": {
+                            "id": {
+                                "type": "integer"
+                            },
+                            "code": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "id",
+                            "code"
+                        ]
+                    },
+                    "ghn_service_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
                     }
                 },
                 "required": [
@@ -9468,7 +9704,8 @@
                     "grand_total",
                     "shipping_address",
                     "created_at",
-                    "customer_id"
+                    "customer_id",
+                    "ghn_service_id"
                 ],
                 "title": "AdminOrderResource"
             },
@@ -9863,7 +10100,16 @@
                         "type": "integer"
                     },
                     "shipping_rate_id": {
-                        "type": "integer"
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "ghn_service_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
                     },
                     "coupon_code": {
                         "type": [
@@ -9882,7 +10128,6 @@
                 },
                 "required": [
                     "shipping_method_id",
-                    "shipping_rate_id",
                     "payment_method_code"
                 ],
                 "title": "CheckoutRequest"
@@ -10716,6 +10961,29 @@
                 ],
                 "title": "ResetPasswordRequest"
             },
+            "ShippingQuoteRequest": {
+                "type": "object",
+                "properties": {
+                    "province_code": {
+                        "type": "string",
+                        "maxLength": 32
+                    },
+                    "district_code": {
+                        "type": "string",
+                        "maxLength": 32
+                    },
+                    "ward_code": {
+                        "type": "string",
+                        "maxLength": 32
+                    }
+                },
+                "required": [
+                    "province_code",
+                    "district_code",
+                    "ward_code"
+                ],
+                "title": "ShippingQuoteRequest"
+            },
             "StockItemResource": {
                 "type": "object",
                 "properties": {
@@ -11376,6 +11644,13 @@
                                     ],
                                     "minimum": 0
                                 },
+                                "weight_grams": {
+                                    "type": [
+                                        "integer",
+                                        "null"
+                                    ],
+                                    "minimum": 0
+                                },
                                 "is_default": {
                                     "type": "boolean"
                                 },
@@ -11433,6 +11708,13 @@
                         ],
                         "minimum": 0
                     },
+                    "weight_grams": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "minimum": 0
+                    },
                     "is_default": {
                         "type": "boolean"
                     },
@@ -11462,7 +11744,10 @@
                 "type": "object",
                 "properties": {
                     "tracking_number": {
-                        "type": "string",
+                        "type": [
+                            "string",
+                            "null"
+                        ],
                         "maxLength": 255
                     },
                     "carrier_code": {
@@ -11473,9 +11758,6 @@
                         "maxLength": 64
                     }
                 },
-                "required": [
-                    "tracking_number"
-                ],
                 "title": "StoreShipmentRequest"
             },
             "StoreStockMovementRequest": {
@@ -12082,6 +12364,13 @@
                     "compare_at_price": {
                         "type": [
                             "number",
+                            "null"
+                        ],
+                        "minimum": 0
+                    },
+                    "weight_grams": {
+                        "type": [
+                            "integer",
                             "null"
                         ],
                         "minimum": 0

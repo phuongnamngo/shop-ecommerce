@@ -98,12 +98,18 @@ final class CheckoutService
                 $subtotal += (int) $unit * $line->qty;
             }
 
-            $rate = ShippingRate::query()->whereKey($payload['shipping_rate_id'])
-                ->where('shipping_method_id', $payload['shipping_method_id'])->whereNull('region_code')
-                ->where(fn ($q) => $q->whereNull('min_order_amount')->orWhere('min_order_amount', '<=', $subtotal))
-                ->where(fn ($q) => $q->whereNull('max_order_amount')->orWhere('max_order_amount', '>=', $subtotal))->first();
-            if ($rate === null) {
-                throw new CommerceException(ErrorCode::CHECKOUT_INVALID_CART, 'Shipping rate does not match the order subtotal.', 'shipping_rate_id');
+            $isGhn = isset($payload['ghn_service_id']);
+            if ($isGhn) {
+                $shipping = (int) $payload['shipping_total'];
+            } else {
+                $rate = ShippingRate::query()->whereKey($payload['shipping_rate_id'])
+                    ->where('shipping_method_id', $payload['shipping_method_id'])->whereNull('region_code')
+                    ->where(fn ($q) => $q->whereNull('min_order_amount')->orWhere('min_order_amount', '<=', $subtotal))
+                    ->where(fn ($q) => $q->whereNull('max_order_amount')->orWhere('max_order_amount', '>=', $subtotal))->first();
+                if ($rate === null) {
+                    throw new CommerceException(ErrorCode::CHECKOUT_INVALID_CART, 'Shipping rate does not match the order subtotal.', 'shipping_rate_id');
+                }
+                $shipping = (int) $rate->price;
             }
 
             [$coupon, $discount] = $this->coupon($payload['coupon_code'] ?? null, $customer, $subtotal);
@@ -111,12 +117,13 @@ final class CheckoutService
             $address = isset($payload['customer_address_id'])
                 ? CustomerAddress::query()->whereKey($payload['customer_address_id'])->where('customer_id', $customer?->id)->firstOrFail()->only(['recipient_name', 'phone', 'province_code', 'district_code', 'ward_code', 'address_line', 'postal_code'])
                 : $payload['shipping_address'];
-            $shipping = (int) $rate->price;
             $order = Order::query()->create([
                 'number' => 'ORD-'.Str::upper((string) Str::ulid()), 'customer_id' => $customer?->id, 'status' => 'pending', 'currency' => 'VND',
                 'subtotal' => $subtotal, 'discount_total' => $discount, 'shipping_total' => $shipping, 'tax_total' => 0,
                 'grand_total' => $subtotal - $discount + $shipping, 'shipping_address_snapshot' => $address,
-                'billing_address_snapshot' => $address, 'shipping_method_id' => $payload['shipping_method_id'], 'coupon_id' => $coupon?->id,
+                'billing_address_snapshot' => $address, 'shipping_method_id' => $payload['shipping_method_id'],
+                'ghn_service_id' => $isGhn ? (int) $payload['ghn_service_id'] : null,
+                'coupon_id' => $coupon?->id,
             ]);
             $lookupToken = $customer === null ? $this->issueGuestLookupToken($order) : null;
 

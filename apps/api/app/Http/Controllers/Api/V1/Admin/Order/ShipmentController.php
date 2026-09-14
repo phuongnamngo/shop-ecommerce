@@ -15,16 +15,17 @@ final class ShipmentController extends Controller
 {
     public function __construct(private readonly ShipmentService $shipments) {}
 
-    #[BodyParameter('tracking_number', description: 'Manual carrier tracking number.', type: 'string', required: true)]
+    #[BodyParameter('tracking_number', description: 'Required for standard shipping; ignored for GHN.', type: 'string|null')]
     #[BodyParameter('carrier_code', description: 'Optional carrier code.', type: 'string|null')]
     #[Response(201, 'Created shipment and marked order shipped.', type: 'array{data: array{id: int, tracking_number: string, status: string}, meta: object}')]
     public function store(StoreShipmentRequest $request, int $id): JsonResponse
     {
         $order = Order::query()->findOrFail($id);
+        $tracking = $request->input('tracking_number');
         $shipment = $this->shipments->shipFull(
             $order,
             $request->user('admin'),
-            $request->string('tracking_number')->toString(),
+            is_string($tracking) ? $tracking : null,
             $request->input('carrier_code'),
         );
 

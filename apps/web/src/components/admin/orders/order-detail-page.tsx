@@ -87,11 +87,18 @@ export function OrderDetailPage({ orderId }: { orderId: number }) {
   });
 
   const ship = useMutation({
-    mutationFn: () =>
-      createOrderShipment(orderId, {
-        tracking_number: tracking.trim(),
-        carrier_code: carrier.trim() || null,
-      }),
+    mutationFn: () => {
+      const isGhn = orderQuery.data?.data.shipping_method?.code === "ghn";
+      return createOrderShipment(
+        orderId,
+        isGhn
+          ? {}
+          : {
+              tracking_number: tracking.trim(),
+              carrier_code: carrier.trim() || null,
+            },
+      );
+    },
     onSuccess: async () => {
       setError(null);
       setTracking("");
@@ -529,27 +536,41 @@ export function OrderDetailPage({ orderId }: { orderId: number }) {
                   void ship.mutateAsync();
                 }}
               >
-                <p className="text-sm font-medium">Tạo shipment (full-ship)</p>
-                <div className="space-y-2">
-                  <Label htmlFor="tracking">Tracking number</Label>
-                  <Input
-                    id="tracking"
-                    required
-                    value={tracking}
-                    onChange={(e) => setTracking(e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="carrier">Carrier code (optional)</Label>
-                  <Input
-                    id="carrier"
-                    value={carrier}
-                    onChange={(e) => setCarrier(e.target.value)}
-                  />
-                </div>
-                <Button type="submit" disabled={ship.isPending || !tracking.trim()}>
-                  {ship.isPending ? "Đang ship…" : "Ship order"}
-                </Button>
+                {order.shipping_method?.code === "ghn" ? (
+                  <>
+                    <p className="text-sm font-medium">Tạo vận đơn GHN</p>
+                    <Button type="submit" disabled={ship.isPending}>
+                      {ship.isPending ? "Đang tạo vận đơn…" : "Tạo vận đơn GHN"}
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-sm font-medium">Tạo shipment (full-ship)</p>
+                    <div className="space-y-2">
+                      <Label htmlFor="tracking">Tracking number</Label>
+                      <Input
+                        id="tracking"
+                        required
+                        value={tracking}
+                        onChange={(e) => setTracking(e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="carrier">Carrier code (optional)</Label>
+                      <Input
+                        id="carrier"
+                        value={carrier}
+                        onChange={(e) => setCarrier(e.target.value)}
+                      />
+                    </div>
+                    <Button
+                      type="submit"
+                      disabled={ship.isPending || !tracking.trim()}
+                    >
+                      {ship.isPending ? "Đang ship…" : "Ship order"}
+                    </Button>
+                  </>
+                )}
               </form>
             ) : null}
           </CardContent>

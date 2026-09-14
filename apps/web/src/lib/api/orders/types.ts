@@ -58,6 +58,8 @@ export type AdminOrder = {
   tax_total: string | number;
   grand_total: string | number;
   customer_id: number | null;
+  shipping_method?: { id: number; code: string } | null;
+  ghn_service_id?: number | null;
   shipping_address: ShippingAddress | null;
   items?: OrderItem[];
   status_history?: OrderStatusHistory[];

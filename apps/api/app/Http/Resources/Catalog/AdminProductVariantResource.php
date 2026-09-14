@@ -23,6 +23,7 @@ class AdminProductVariantResource extends JsonResource
             'barcode' => $this->barcode,
             'price' => $this->price,
             'compare_at_price' => $this->compare_at_price,
+            'weight_grams' => $this->weight_grams,
             'is_default' => $this->is_default,
             'status' => $this->status,
             'attributes' => $this->whenLoaded('attributeOptions', function () {

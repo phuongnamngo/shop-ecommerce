@@ -24,6 +24,7 @@ class UpdateProductVariantRequest extends FormRequest
             'barcode' => ['sometimes', 'nullable', 'string', 'max:255'],
             'price' => ['sometimes', 'numeric', 'min:0'],
             'compare_at_price' => ['sometimes', 'nullable', 'numeric', 'min:0'],
+            'weight_grams' => ['sometimes', 'nullable', 'integer', 'min:0'],
             'is_default' => ['sometimes', 'boolean'],
             'status' => ['sometimes', 'string', Rule::in([ProductVariant::STATUS_DRAFT, ProductVariant::STATUS_ACTIVE, ProductVariant::STATUS_INACTIVE])],
             'attribute_option_ids' => ['sometimes', 'array'],

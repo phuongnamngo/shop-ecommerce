@@ -101,6 +101,8 @@ it('discovers every inventory cart checkout and order operation', function () {
         '/api/v1/checkout' => ['post'],
         '/api/v1/orders/lookup' => ['get'],
         '/api/v1/shipping/methods' => ['get'],
+        '/api/v1/shipping/quotes' => ['post'],
+        '/api/v1/webhooks/ghn' => ['post'],
         '/api/v1/geo/provinces' => ['get'],
         '/api/v1/geo/provinces/{code}/districts' => ['get'],
         '/api/v1/geo/districts/{code}/wards' => ['get'],
@@ -195,6 +197,10 @@ it('documents the guest cart token header contract', function () {
     $checkoutHeaders = commerceHeaderParameters($document, 'post', '/api/v1/checkout');
     expect($checkoutHeaders)->toHaveKey('X-Cart-Token')
         ->and($checkoutHeaders['X-Cart-Token']['required'] ?? false)->toBeFalse();
+
+    $quoteHeaders = commerceHeaderParameters($document, 'post', '/api/v1/shipping/quotes');
+    expect($quoteHeaders)->toHaveKey('X-Cart-Token')
+        ->and($quoteHeaders['X-Cart-Token']['required'] ?? false)->toBeFalse();
 });
 
 it('documents order snapshots and conditional nested detail fields', function () {
@@ -245,8 +251,14 @@ it('documents checkout address alternatives and nonzero stock quantity', functio
         ])
         ->and(strtolower($shippingAddress['description']))->toContain('exactly one')
         ->and(strtolower($checkout['properties']['customer_address_id']['description']))->toContain('exactly one')
-        ->and($checkout['properties'])->toHaveKey('payment_method_code');
+        ->and($checkout['properties'])->toHaveKey('payment_method_code')
+        ->and($checkout['properties'])->toHaveKey('ghn_service_id');
+    expect($checkout['required'] ?? [])->not->toContain('shipping_rate_id', 'ghn_service_id');
     expect(commerceSchemaContainsKeyword($checkoutRef, 'allOf'))->toBeTrue();
+
+    $shipRef = $document['paths']['/api/v1/admin/orders/{id}/shipments']['post']['requestBody']['content']['application/json']['schema'];
+    $ship = resolveCommerceSchema($document, $shipRef);
+    expect($ship['required'] ?? [])->not->toContain('tracking_number');
 
     $movementRef = $document['paths']['/api/v1/admin/inventory/movements']['post']['requestBody']['content']['application/json']['schema'];
     $movement = resolveCommerceSchema($document, $movementRef);
