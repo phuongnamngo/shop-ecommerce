@@ -23,6 +23,7 @@ it('settles VNPay IPN once and ignores duplicates', function () {
         'vnp_ResponseCode' => '00',
         'vnp_TxnRef' => 'ORD-IPN1',
         'vnp_TransactionNo' => 'VN123',
+        'vnp_TransactionDate' => '20260914120000',
     ];
     $payload['vnp_SecureHash'] = $gateway->hash($payload);
 
@@ -31,7 +32,8 @@ it('settles VNPay IPN once and ignores duplicates', function () {
         ->assertSee('Confirm Success');
     expect($order->refresh()->status)->toBe('paid')
         ->and($txn->refresh()->status)->toBe('succeeded')
-        ->and($txn->provider_txn_id)->toBe('VN123');
+        ->and($txn->provider_txn_id)->toBe('VN123')
+        ->and($txn->payload['vnp_TransactionDate'] ?? null)->toBe('20260914120000');
     $this->assertDatabaseHas('order_status_histories', ['order_id' => $order->id, 'to_status' => 'paid', 'changed_by_admin_id' => null]);
 
     $this->get('/api/v1/payments/vnpay/ipn?'.http_build_query($payload))->assertOk();

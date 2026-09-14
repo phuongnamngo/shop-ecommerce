@@ -5,11 +5,14 @@ namespace App\Services\Payment;
 use App\Contracts\PaymentGateway;
 use App\Models\Order;
 use App\Models\PaymentTransaction;
+use App\Models\Refund;
 use App\Support\CommerceException;
 use App\Support\ErrorCode;
 
 final class FakePaymentGateway implements PaymentGateway
 {
+    public function __construct(private readonly bool $refundSucceeds = true) {}
+
     public function initiate(Order $order, PaymentTransaction $txn): array
     {
         if ($txn->provider === 'cod') {
@@ -54,5 +57,18 @@ final class FakePaymentGateway implements PaymentGateway
         }
 
         return hash_hmac('sha512', implode('&', $query), (string) config('commerce.vnpay.hash_secret'));
+    }
+
+    public function refund(PaymentTransaction $txn, Refund $refund): PaymentRefundResult
+    {
+        if (! $this->refundSucceeds) {
+            return new PaymentRefundResult(ok: false, providerRefundId: null, payload: ['error' => 'forced']);
+        }
+
+        return new PaymentRefundResult(
+            ok: true,
+            providerRefundId: 'fake-'.$refund->idempotency_key,
+            payload: [],
+        );
     }
 }

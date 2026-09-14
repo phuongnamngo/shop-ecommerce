@@ -7,5 +7,6 @@ return [
         'hash_secret' => env('VNPAY_HASH_SECRET', 'testing-vnpay-secret'),
         'url' => env('VNPAY_URL', 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html'),
         'return_url' => env('VNPAY_RETURN_URL', env('APP_URL', 'http://localhost').'/api/v1/payments/vnpay/return'),
+        'refund_url' => env('VNPAY_REFUND_URL', 'https://sandbox.vnpayment.vn/merchant_webapi/api/transaction'),
     ],
 ];

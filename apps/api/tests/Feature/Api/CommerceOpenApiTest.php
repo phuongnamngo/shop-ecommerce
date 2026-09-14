@@ -112,6 +112,12 @@ it('discovers every inventory cart checkout and order operation', function () {
         '/api/v1/admin/orders/{id}' => ['get'],
         '/api/v1/admin/orders/{id}/status' => ['patch'],
         '/api/v1/admin/orders/{id}/shipments' => ['post'],
+        '/api/v1/admin/orders/{id}/refunds' => ['post'],
+        '/api/v1/admin/refunds/{id}/approve' => ['post'],
+        '/api/v1/admin/refunds/{id}/reject' => ['post'],
+        '/api/v1/admin/refunds/{id}/retry' => ['post'],
+        '/api/v1/admin/payments/transactions' => ['get'],
+        '/api/v1/admin/payments/transactions/{id}' => ['get'],
     ];
 
     foreach ($expected as $path => $methods) {

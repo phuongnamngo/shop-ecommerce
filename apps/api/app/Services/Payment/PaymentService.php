@@ -15,9 +15,9 @@ final class PaymentService
 {
     public function __construct(private readonly OrderService $orders) {}
 
-    public function settleSuccess(PaymentTransaction $txn, ?string $providerTxnId, string $note): void
+    public function settleSuccess(PaymentTransaction $txn, ?string $providerTxnId, string $note, ?string $vnpTransactionDate = null): void
     {
-        DB::transaction(function () use ($txn, $providerTxnId, $note): void {
+        DB::transaction(function () use ($txn, $providerTxnId, $note, $vnpTransactionDate): void {
             $txn = PaymentTransaction::query()->whereKey($txn->id)->lockForUpdate()->firstOrFail();
             $order = Order::query()->whereKey($txn->order_id)->lockForUpdate()->firstOrFail();
 
@@ -31,9 +31,15 @@ final class PaymentService
                 throw new CommerceException(ErrorCode::PAYMENT_ALREADY_SETTLED, 'Payment is not pending.');
             }
 
+            $payload = $txn->payload ?? [];
+            if ($vnpTransactionDate !== null && $vnpTransactionDate !== '') {
+                $payload['vnp_TransactionDate'] = $vnpTransactionDate;
+            }
+
             $txn->update([
                 'status' => 'succeeded',
                 'provider_txn_id' => $providerTxnId,
+                'payload' => $payload === [] ? $txn->payload : $payload,
             ]);
             $this->orders->markPaidBySystem($order, $note);
         });
@@ -70,15 +76,17 @@ final class PaymentService
     {
         $key = (string) Uuid::uuid5(Uuid::NAMESPACE_URL, $provider.':'.$txnRef.':'.$responseCode);
         try {
-            WebhookEvent::query()->create([
-                'provider' => $provider,
-                'event_type' => $eventType,
-                'payload' => $payload,
-                'status' => 'received',
-                'idempotency_key' => $key,
-            ]);
+            return DB::transaction(function () use ($provider, $eventType, $payload, $key): bool {
+                WebhookEvent::query()->create([
+                    'provider' => $provider,
+                    'event_type' => $eventType,
+                    'payload' => $payload,
+                    'status' => 'received',
+                    'idempotency_key' => $key,
+                ]);
 
-            return true;
+                return true;
+            });
         } catch (\Throwable) {
             return false;
         }

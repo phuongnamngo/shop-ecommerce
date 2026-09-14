@@ -25,9 +25,11 @@ abstract class TestCase extends BaseTestCase
         putenv('SCOUT_PREFIX=testing_');
         putenv('SCOUT_QUEUE=false');
         putenv('QUEUE_CONNECTION=sync');
+        putenv('APP_ENV=testing');
         $_ENV['SCOUT_PREFIX'] = $_SERVER['SCOUT_PREFIX'] = 'testing_';
         $_ENV['SCOUT_QUEUE'] = $_SERVER['SCOUT_QUEUE'] = 'false';
         $_ENV['QUEUE_CONNECTION'] = $_SERVER['QUEUE_CONNECTION'] = 'sync';
+        $_ENV['APP_ENV'] = $_SERVER['APP_ENV'] = 'testing';
 
         if (! $usePgsql) {
             putenv('DB_CONNECTION=sqlite');

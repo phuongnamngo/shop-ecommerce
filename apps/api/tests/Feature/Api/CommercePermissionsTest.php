@@ -58,3 +58,15 @@ it('seeds engagement review permissions for admin roles', function () {
         ->and($staff->hasPermissionTo('engagement.reviews.view', 'admin'))->toBeTrue()
         ->and($staff->hasPermissionTo('engagement.reviews.manage', 'admin'))->toBeFalse();
 });
+
+it('seeds payment permissions for admin roles', function () {
+    $this->seed(RolesAndPermissionsSeeder::class);
+
+    $admin = Role::findByName('admin', 'admin');
+    $staff = Role::findByName('staff', 'admin');
+
+    expect($admin->hasPermissionTo('payments.view', 'admin'))->toBeTrue()
+        ->and($admin->hasPermissionTo('payments.manage', 'admin'))->toBeTrue()
+        ->and($staff->hasPermissionTo('payments.view', 'admin'))->toBeTrue()
+        ->and($staff->hasPermissionTo('payments.manage', 'admin'))->toBeFalse();
+});

@@ -4,8 +4,8 @@
  */
 export const ORDER_TRANSITIONS: Record<string, string[]> = {
   pending: ["paid", "cancelled"],
-  paid: ["fulfilling", "cancelled"],
-  fulfilling: ["cancelled"],
+  paid: ["fulfilling"],
+  fulfilling: [],
   shipped: ["completed"],
   completed: [],
   cancelled: [],

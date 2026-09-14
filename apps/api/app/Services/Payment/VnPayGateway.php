@@ -5,8 +5,10 @@ namespace App\Services\Payment;
 use App\Contracts\PaymentGateway;
 use App\Models\Order;
 use App\Models\PaymentTransaction;
+use App\Models\Refund;
 use App\Support\CommerceException;
 use App\Support\ErrorCode;
+use Illuminate\Support\Facades\Http;
 
 final class VnPayGateway implements PaymentGateway
 {
@@ -90,5 +92,54 @@ final class VnPayGateway implements PaymentGateway
         }
 
         return hash_hmac('sha512', implode('&', $hashData), (string) config('commerce.vnpay.hash_secret'));
+    }
+
+    public function refund(PaymentTransaction $txn, Refund $refund): PaymentRefundResult
+    {
+        $order = $txn->order ?? $txn->load('order')->order;
+        $requestId = (string) $refund->idempotency_key;
+        $version = '2.1.0';
+        $command = 'refund';
+        $tmnCode = (string) config('commerce.vnpay.tmn_code');
+        $transactionType = '02';
+        $txnRef = (string) $order->number;
+        $amount = (string) ((int) $order->grand_total * 100);
+        $transactionNo = (string) ($txn->provider_txn_id ?? '');
+        $transactionDate = (string) (($txn->payload['vnp_TransactionDate'] ?? null) ?: $txn->updated_at?->format('YmdHis'));
+        $createBy = 'watch';
+        $createDate = now()->format('YmdHis');
+        $ipAddr = request()->ip() ?? '127.0.0.1';
+        $orderInfo = 'Refund '.$txnRef;
+        $hashSecret = (string) config('commerce.vnpay.hash_secret');
+        $data = implode('|', [
+            $requestId, $version, $command, $tmnCode, $transactionType, $txnRef,
+            $amount, $transactionNo, $transactionDate, $createBy, $createDate, $ipAddr, $orderInfo,
+        ]);
+        $params = [
+            'vnp_RequestId' => $requestId,
+            'vnp_Version' => $version,
+            'vnp_Command' => $command,
+            'vnp_TmnCode' => $tmnCode,
+            'vnp_TransactionType' => $transactionType,
+            'vnp_TxnRef' => $txnRef,
+            'vnp_Amount' => $amount,
+            'vnp_OrderInfo' => $orderInfo,
+            'vnp_TransactionNo' => $transactionNo,
+            'vnp_TransactionDate' => $transactionDate,
+            'vnp_CreateBy' => $createBy,
+            'vnp_CreateDate' => $createDate,
+            'vnp_IpAddr' => $ipAddr,
+            'vnp_SecureHash' => hash_hmac('sha512', $data, $hashSecret),
+        ];
+        $response = Http::asJson()->post((string) config('commerce.vnpay.refund_url'), $params);
+        $body = $response->json() ?? [];
+        $code = (string) ($body['vnp_ResponseCode'] ?? '');
+        $ok = $response->successful() && $code === '00';
+
+        return new PaymentRefundResult(
+            ok: $ok,
+            providerRefundId: isset($body['vnp_TransactionNo']) ? (string) $body['vnp_TransactionNo'] : null,
+            payload: is_array($body) ? $body : ['raw' => $response->body()],
+        );
     }
 }

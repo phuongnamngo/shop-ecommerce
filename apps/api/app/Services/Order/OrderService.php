@@ -6,6 +6,7 @@ use App\Models\AdminUser;
 use App\Models\FlashSaleItem;
 use App\Models\Order;
 use App\Models\PaymentTransaction;
+use App\Models\Refund;
 use App\Models\StockItem;
 use App\Support\CommerceException;
 use App\Support\ErrorCode;
@@ -15,8 +16,8 @@ final class OrderService
 {
     private const TRANSITIONS = [
         'pending' => ['paid', 'cancelled'],
-        'paid' => ['fulfilling', 'cancelled'],
-        'fulfilling' => ['cancelled'],
+        'paid' => ['fulfilling'],
+        'fulfilling' => [],
         'shipped' => ['completed'],
         'completed' => [],
         'cancelled' => [],
@@ -29,6 +30,10 @@ final class OrderService
             $fromStatus = $order->status;
             if (! in_array($toStatus, self::TRANSITIONS[$fromStatus] ?? [], true)) {
                 throw new CommerceException(ErrorCode::ORDER_INVALID_TRANSITION, "Cannot transition order from {$fromStatus} to {$toStatus}.", 'status', 409);
+            }
+
+            if ($toStatus === 'fulfilling') {
+                $this->assertNoOpenRefund($order);
             }
 
             if ($toStatus === 'cancelled') {
@@ -49,6 +54,39 @@ final class OrderService
 
             return $order->refresh()->load(['items.variant.product', 'statusHistories']);
         });
+    }
+
+    public function cancelAfterRefund(Order $order, AdminUser $admin, string $note): Order
+    {
+        return DB::transaction(function () use ($order, $admin, $note): Order {
+            $order = Order::query()->whereKey($order->id)->lockForUpdate()->firstOrFail();
+            if (! in_array($order->status, ['paid', 'fulfilling'], true)) {
+                throw new CommerceException(ErrorCode::ORDER_INVALID_TRANSITION, "Cannot refund-cancel order from {$order->status}.", 'status', 409);
+            }
+
+            $this->releaseActiveReservations($order);
+            $fromStatus = $order->status;
+            $order->update(['status' => 'cancelled']);
+            $order->statusHistories()->create([
+                'from_status' => $fromStatus,
+                'to_status' => 'cancelled',
+                'changed_by_admin_id' => $admin->id,
+                'note' => $note,
+            ]);
+
+            return $order->refresh()->load(['items.variant.product', 'statusHistories']);
+        });
+    }
+
+    public function assertNoOpenRefund(Order $order): void
+    {
+        $hasOpen = Refund::query()
+            ->whereIn('payment_transaction_id', $order->paymentTransactions()->select('id'))
+            ->whereIn('status', [Refund::STATUS_PENDING, Refund::STATUS_FAILED])
+            ->exists();
+        if ($hasOpen) {
+            throw new CommerceException(ErrorCode::ORDER_REFUND_IN_PROGRESS, 'Order has an open refund.', status: 409);
+        }
     }
 
     public function markPaidBySystem(Order $order, string $note): Order

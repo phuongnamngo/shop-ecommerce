@@ -37,7 +37,7 @@ it('guards admin order routes with order permissions and filters status', functi
     $this->actingAs($admin, 'admin')->getJson('/api/v1/admin/orders')->assertForbidden();
 });
 
-it('records allowed transitions and releases cancellation reservations once', function () {
+it('records allowed transitions and releases pending cancellation reservations once', function () {
     $admin = AdminUser::factory()->create(['status' => 'active']);
     $admin->assignRole('admin');
     $warehouse = Warehouse::factory()->create(['status' => 'active']);
@@ -49,11 +49,42 @@ it('records allowed transitions and releases cancellation reservations once', fu
 
     $this->actingAs($admin, 'admin')->patchJson('/api/v1/admin/orders/'.$order->id.'/status', ['status' => 'paid', 'note' => 'manual'])->assertOk()->assertJsonPath('data.status', 'paid');
     $this->assertDatabaseHas('order_status_histories', ['order_id' => $order->id, 'from_status' => 'pending', 'to_status' => 'paid', 'changed_by_admin_id' => $admin->id]);
+    $this->actingAs($admin, 'admin')->patchJson('/api/v1/admin/orders/'.$order->id.'/status', ['status' => 'cancelled'])
+        ->assertConflict()
+        ->assertJsonPath('errors.0.code', 'ORDER_INVALID_TRANSITION');
+    expect($stock->refresh()->qty_reserved)->toBe(2);
+    $this->assertDatabaseHas('stock_reservations', ['order_id' => $order->id, 'status' => 'active']);
+});
+
+it('cancels a pending order and releases reservations', function () {
+    $admin = AdminUser::factory()->create(['status' => 'active']);
+    $admin->assignRole('admin');
+    $warehouse = Warehouse::factory()->create(['status' => 'active']);
+    $product = Product::factory()->published()->create();
+    $variant = $product->variants()->firstOrFail();
+    $stock = StockItem::query()->create(['warehouse_id' => $warehouse->id, 'product_variant_id' => $variant->id, 'qty_on_hand' => 5, 'qty_reserved' => 2]);
+    $order = Order::factory()->create(['status' => 'pending']);
+    StockReservation::query()->create(['warehouse_id' => $warehouse->id, 'product_variant_id' => $variant->id, 'order_id' => $order->id, 'qty' => 2, 'status' => 'active']);
+
     $this->actingAs($admin, 'admin')->patchJson('/api/v1/admin/orders/'.$order->id.'/status', ['status' => 'cancelled'])->assertOk();
     expect($stock->refresh()->qty_reserved)->toBe(0);
     $this->assertDatabaseHas('stock_reservations', ['order_id' => $order->id, 'status' => 'released']);
     $this->actingAs($admin, 'admin')->patchJson('/api/v1/admin/orders/'.$order->id.'/status', ['status' => 'cancelled'])->assertConflict()->assertJsonPath('errors.0.code', 'ORDER_INVALID_TRANSITION');
-    expect($stock->refresh()->qty_reserved)->toBe(0);
+});
+
+it('rejects cancel from paid and fulfilling via PATCH', function () {
+    $admin = AdminUser::factory()->create(['status' => 'active']);
+    $admin->assignRole('admin');
+    $paid = Order::factory()->create(['status' => 'paid']);
+    $this->actingAs($admin, 'admin')
+        ->patchJson('/api/v1/admin/orders/'.$paid->id.'/status', ['status' => 'cancelled'])
+        ->assertConflict()
+        ->assertJsonPath('errors.0.code', 'ORDER_INVALID_TRANSITION');
+    $fulfilling = Order::factory()->create(['status' => 'fulfilling']);
+    $this->actingAs($admin, 'admin')
+        ->patchJson('/api/v1/admin/orders/'.$fulfilling->id.'/status', ['status' => 'cancelled'])
+        ->assertConflict()
+        ->assertJsonPath('errors.0.code', 'ORDER_INVALID_TRANSITION');
 });
 
 it('rejects shipped via PATCH status with validation error', function () {
@@ -95,8 +126,8 @@ it('accepts each documented order state transition', function (string $from, str
     $order = Order::factory()->create(['status' => $from]);
     $this->actingAs($admin, 'admin')->patchJson('/api/v1/admin/orders/'.$order->id.'/status', ['status' => $to])->assertOk()->assertJsonPath('data.status', $to);
 })->with([
-    ['pending', 'paid'], ['pending', 'cancelled'], ['paid', 'fulfilling'], ['paid', 'cancelled'],
-    ['fulfilling', 'cancelled'], ['shipped', 'completed'],
+    ['pending', 'paid'], ['pending', 'cancelled'], ['paid', 'fulfilling'],
+    ['shipped', 'completed'],
 ]);
 
 it('admin order show includes shipments array and mapped status history', function () {

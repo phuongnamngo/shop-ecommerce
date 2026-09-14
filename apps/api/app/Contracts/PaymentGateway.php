@@ -4,6 +4,8 @@ namespace App\Contracts;
 
 use App\Models\Order;
 use App\Models\PaymentTransaction;
+use App\Models\Refund;
+use App\Services\Payment\PaymentRefundResult;
 use App\Services\Payment\VnPayVerificationResult;
 
 interface PaymentGateway
@@ -17,4 +19,6 @@ interface PaymentGateway
      * @param  array<string, mixed>  $payload
      */
     public function verify(array $payload): VnPayVerificationResult;
+
+    public function refund(PaymentTransaction $txn, Refund $refund): PaymentRefundResult;
 }

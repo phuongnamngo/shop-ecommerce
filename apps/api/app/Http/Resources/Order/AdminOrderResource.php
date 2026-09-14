@@ -4,6 +4,8 @@ namespace App\Http\Resources\Order;
 
 use App\Models\Order;
 use App\Models\OrderShipment;
+use App\Models\PaymentTransaction;
+use App\Models\Refund;
 use Illuminate\Http\Request;
 
 /** @mixin Order */
@@ -38,6 +40,39 @@ final class AdminOrderResource extends OrderResource
                 'carrier_code' => $shipment->carrier_code,
                 'status' => $shipment->status,
             ])->all()),
+            'payment' => $this->whenLoaded('paymentTransactions', function () {
+                $txn = $this->paymentTransactions->sortByDesc('id')->first();
+                if (! $txn instanceof PaymentTransaction) {
+                    return null;
+                }
+
+                return [
+                    'id' => $txn->id,
+                    'provider' => $txn->provider,
+                    'amount' => number_format((float) $txn->amount, 2, '.', ''),
+                    'status' => $txn->status,
+                    'provider_txn_id' => $txn->provider_txn_id,
+                    'idempotency_key' => $txn->idempotency_key,
+                ];
+            }),
+            'refunds' => $this->whenLoaded('paymentTransactions', fn () => $this->paymentTransactions
+                ->flatMap(fn (PaymentTransaction $txn) => $txn->refunds)
+                ->sortByDesc('id')
+                ->values()
+                ->map(fn (Refund $refund) => [
+                    'id' => $refund->id,
+                    'payment_transaction_id' => $refund->payment_transaction_id,
+                    'amount' => number_format((float) $refund->amount, 2, '.', ''),
+                    'status' => $refund->status,
+                    'reason' => $refund->reason,
+                    'provider_refund_id' => $refund->provider_refund_id,
+                    'idempotency_key' => $refund->idempotency_key,
+                    'requested_by_admin_id' => $refund->requested_by_admin_id,
+                    'reviewed_by_admin_id' => $refund->reviewed_by_admin_id,
+                    'reviewed_at' => $refund->reviewed_at?->toISOString(),
+                    'created_at' => $refund->created_at?->toISOString(),
+                ])
+                ->all()),
         ]);
     }
 }

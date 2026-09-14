@@ -28,6 +28,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useAdminMe } from "@/hooks/use-admin-me";
 import { canManageOrders } from "@/lib/admin/can-manage-orders";
+import { canManagePayments } from "@/lib/admin/can-manage-payments";
 import { nextOrderStatuses } from "@/lib/admin/order-transitions";
 import {
   createOrderShipment,
@@ -35,12 +36,22 @@ import {
   updateOrderStatus,
 } from "@/lib/api/orders/client";
 import { orderErrorMessage } from "@/lib/api/orders/errors";
+import {
+  approveRefund,
+  createOrderRefund,
+  rejectRefund,
+  retryRefund,
+} from "@/lib/api/payments/client";
+import { paymentErrorMessage } from "@/lib/api/payments/errors";
+import type { AdminRefund } from "@/lib/api/payments/types";
 
 export function OrderDetailPage({ orderId }: { orderId: number }) {
   const queryClient = useQueryClient();
   const me = useAdminMe();
   const manage =
     me.isSuccess && me.data ? canManageOrders(me.data.roles) : false;
+  const managePayments =
+    me.isSuccess && me.data ? canManagePayments(me.data.roles) : false;
 
   const orderQuery = useQuery({
     queryKey: ["admin", "orders", orderId],
@@ -50,6 +61,7 @@ export function OrderDetailPage({ orderId }: { orderId: number }) {
   const [note, setNote] = useState("");
   const [tracking, setTracking] = useState("");
   const [carrier, setCarrier] = useState("");
+  const [refundReason, setRefundReason] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   const invalidate = async () => {
@@ -57,6 +69,7 @@ export function OrderDetailPage({ orderId }: { orderId: number }) {
       queryKey: ["admin", "orders", orderId],
     });
     await queryClient.invalidateQueries({ queryKey: ["admin", "orders"] });
+    await queryClient.invalidateQueries({ queryKey: ["admin", "payments"] });
   };
 
   const transition = useMutation({
@@ -88,6 +101,36 @@ export function OrderDetailPage({ orderId }: { orderId: number }) {
     onError: (err) => setError(orderErrorMessage(err)),
   });
 
+  const createRefund = useMutation({
+    mutationFn: () =>
+      createOrderRefund(orderId, { reason: refundReason.trim() }),
+    onSuccess: async () => {
+      setError(null);
+      setRefundReason("");
+      await invalidate();
+    },
+    onError: (err) => setError(paymentErrorMessage(err)),
+  });
+
+  const actRefund = useMutation({
+    mutationFn: ({
+      id,
+      action,
+    }: {
+      id: number;
+      action: "approve" | "reject" | "retry";
+    }) => {
+      if (action === "approve") return approveRefund(id);
+      if (action === "retry") return retryRefund(id);
+      return rejectRefund(id);
+    },
+    onSuccess: async () => {
+      setError(null);
+      await invalidate();
+    },
+    onError: (err) => setError(paymentErrorMessage(err)),
+  });
+
   if (orderQuery.isPending) {
     return <LoadingState />;
   }
@@ -100,11 +143,31 @@ export function OrderDetailPage({ orderId }: { orderId: number }) {
   }
 
   const order = orderQuery.data.data;
-  const next = nextOrderStatuses(order.status);
+  const refunds = order.refunds ?? [];
+  const hasOpenRefund = refunds.some(
+    (refund) => refund.status === "pending" || refund.status === "failed",
+  );
+  const next = nextOrderStatuses(order.status).filter(
+    (status) => !(hasOpenRefund && status === "fulfilling"),
+  );
   const address = order.shipping_address;
   const items = order.items ?? [];
   const history = order.status_history ?? [];
   const shipments = order.shipments ?? [];
+  const payment = order.payment ?? null;
+  const canRequestRefund =
+    managePayments &&
+    payment !== null &&
+    (order.status === "paid" || order.status === "fulfilling") &&
+    shipments.length === 0 &&
+    payment.status === "succeeded" &&
+    (payment.provider === "cod" || payment.provider === "vnpay") &&
+    !refunds.some(
+      (refund) =>
+        refund.status === "pending" ||
+        refund.status === "failed" ||
+        refund.status === "succeeded",
+    );
 
   return (
     <div className="space-y-6">
@@ -162,6 +225,165 @@ export function OrderDetailPage({ orderId }: { orderId: number }) {
                 {address.province_code}
               </p>
             </div>
+          ) : null}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Thanh toán</CardTitle>
+          {!managePayments ? (
+            <CardDescription>Chỉ xem (staff).</CardDescription>
+          ) : null}
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {payment === null ? (
+            <p className="text-sm text-muted-foreground">
+              Chưa có giao dịch thanh toán.
+            </p>
+          ) : (
+            <div className="grid gap-2 text-sm sm:grid-cols-2">
+              <p>Provider: {payment.provider}</p>
+              <p>
+                Status: <StatusBadge status={String(payment.status)} />
+              </p>
+              <p className="tabular-nums">Amount: {payment.amount}</p>
+              <p>Provider txn: {payment.provider_txn_id ?? "—"}</p>
+            </div>
+          )}
+
+          {refunds.length > 0 ? (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Refund</TableHead>
+                  <TableHead>Amount</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Reason</TableHead>
+                  {managePayments ? <TableHead>Actions</TableHead> : null}
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {refunds.map((refund: AdminRefund) => (
+                  <TableRow key={refund.id}>
+                    <TableCell>#{refund.id}</TableCell>
+                    <TableCell className="tabular-nums">{refund.amount}</TableCell>
+                    <TableCell>
+                      <StatusBadge status={String(refund.status)} />
+                    </TableCell>
+                    <TableCell className="max-w-xs truncate">
+                      {refund.reason ?? "—"}
+                    </TableCell>
+                    {managePayments ? (
+                      <TableCell>
+                        <div className="flex flex-wrap gap-2">
+                          {refund.status === "pending" ? (
+                            <>
+                              <Button
+                                type="button"
+                                size="sm"
+                                disabled={actRefund.isPending}
+                                onClick={() => {
+                                  setError(null);
+                                  void actRefund.mutateAsync({
+                                    id: refund.id,
+                                    action: "approve",
+                                  });
+                                }}
+                              >
+                                {payment?.provider === "cod"
+                                  ? "Xác nhận đã trả tiền mặt / hoàn tay trên cổng"
+                                  : "Duyệt"}
+                              </Button>
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                disabled={actRefund.isPending}
+                                onClick={() => {
+                                  setError(null);
+                                  void actRefund.mutateAsync({
+                                    id: refund.id,
+                                    action: "reject",
+                                  });
+                                }}
+                              >
+                                Từ chối
+                              </Button>
+                            </>
+                          ) : null}
+                          {refund.status === "failed" ? (
+                            <>
+                              <Button
+                                type="button"
+                                size="sm"
+                                disabled={actRefund.isPending}
+                                onClick={() => {
+                                  setError(null);
+                                  void actRefund.mutateAsync({
+                                    id: refund.id,
+                                    action: "retry",
+                                  });
+                                }}
+                              >
+                                Thử lại
+                              </Button>
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                disabled={actRefund.isPending}
+                                onClick={() => {
+                                  setError(null);
+                                  void actRefund.mutateAsync({
+                                    id: refund.id,
+                                    action: "reject",
+                                  });
+                                }}
+                              >
+                                Từ chối
+                              </Button>
+                            </>
+                          ) : null}
+                        </div>
+                      </TableCell>
+                    ) : null}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <p className="text-sm text-muted-foreground">Chưa có hoàn tiền.</p>
+          )}
+
+          {canRequestRefund ? (
+            <form
+              className="space-y-3 rounded-md border p-3"
+              onSubmit={(e: FormEvent) => {
+                e.preventDefault();
+                setError(null);
+                void createRefund.mutateAsync();
+              }}
+            >
+              <p className="text-sm font-medium">Tạo hoàn tiền (đủ grand total)</p>
+              <div className="space-y-2">
+                <Label htmlFor="refund-reason">Lý do</Label>
+                <Textarea
+                  id="refund-reason"
+                  required
+                  maxLength={1000}
+                  value={refundReason}
+                  onChange={(e) => setRefundReason(e.target.value)}
+                  placeholder="Lý do hoàn tiền…"
+                />
+              </div>
+              <Button
+                type="submit"
+                disabled={createRefund.isPending || refundReason.trim() === ""}
+              >
+                {createRefund.isPending ? "Đang tạo…" : "Tạo hoàn tiền"}
+              </Button>
+            </form>
           ) : null}
         </CardContent>
       </Card>
@@ -298,7 +520,7 @@ export function OrderDetailPage({ orderId }: { orderId: number }) {
               )}
             </div>
 
-            {order.status === "fulfilling" ? (
+            {order.status === "fulfilling" && !hasOpenRefund ? (
               <form
                 className="space-y-3 rounded-md border p-3"
                 onSubmit={(e: FormEvent) => {

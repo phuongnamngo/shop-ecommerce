@@ -22,6 +22,8 @@ use App\Http\Controllers\Api\V1\Admin\Inventory\WarehouseController as AdminWare
 use App\Http\Controllers\Api\V1\Admin\MeController as AdminMeController;
 use App\Http\Controllers\Api\V1\Admin\Order\OrderController as AdminOrderController;
 use App\Http\Controllers\Api\V1\Admin\Order\ShipmentController as AdminShipmentController;
+use App\Http\Controllers\Api\V1\Admin\Payment\PaymentTransactionController as AdminPaymentTransactionController;
+use App\Http\Controllers\Api\V1\Admin\Payment\RefundController as AdminRefundController;
 use App\Http\Controllers\Api\V1\Admin\Promotion\CouponController as AdminCouponController;
 use App\Http\Controllers\Api\V1\Admin\Promotion\DiscountController as AdminDiscountController;
 use App\Http\Controllers\Api\V1\Admin\Promotion\FlashSaleController as AdminFlashSaleController;
@@ -137,6 +139,14 @@ Route::prefix('v1')->group(function () {
             });
             Route::patch('orders/{id}/status', [AdminOrderController::class, 'updateStatus'])->middleware('permission:orders.manage,admin');
             Route::post('orders/{id}/shipments', [AdminShipmentController::class, 'store'])->middleware('permission:orders.manage,admin');
+            Route::middleware('permission:payments.view,admin')->group(function () {
+                Route::get('payments/transactions', [AdminPaymentTransactionController::class, 'index']);
+                Route::get('payments/transactions/{id}', [AdminPaymentTransactionController::class, 'show']);
+            });
+            Route::post('orders/{id}/refunds', [AdminRefundController::class, 'store'])->middleware('permission:payments.manage,admin');
+            Route::post('refunds/{id}/approve', [AdminRefundController::class, 'approve'])->middleware('permission:payments.manage,admin');
+            Route::post('refunds/{id}/reject', [AdminRefundController::class, 'reject'])->middleware('permission:payments.manage,admin');
+            Route::post('refunds/{id}/retry', [AdminRefundController::class, 'retry'])->middleware('permission:payments.manage,admin');
 
             Route::middleware('permission:customers.view,admin')->group(function () {
                 Route::get('customers', [AdminCustomerController::class, 'index']);

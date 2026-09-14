@@ -23,7 +23,8 @@ final class ShipmentService
             if ($order->status !== 'fulfilling') {
                 throw new CommerceException(ErrorCode::SHIPMENT_INVALID_STATUS, 'Order must be fulfilling to ship.', 'status', 409);
             }
-            if ($order->shipments()->exists()) {
+            $this->orders->assertNoOpenRefund($order);
+            if ($order->shipments()->withTrashed()->exists()) {
                 throw new CommerceException(ErrorCode::SHIPMENT_ALREADY_EXISTS, 'Order already has a shipment.', status: 409);
             }
             if (trim($trackingNumber) === '') {

@@ -6,6 +6,7 @@ import {
   Tag,
   Warehouse,
   Users,
+  CreditCard,
 } from "lucide-react";
 
 export type AdminNavItem = {
@@ -29,6 +30,7 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     ],
   },
   { href: "/admin/orders", label: "Orders", icon: ShoppingCart },
+  { href: "/admin/payments", label: "Payments", icon: CreditCard },
   { href: "/admin/customers", label: "Customers", icon: Users },
   { href: "/admin/inventory", label: "Inventory", icon: Warehouse },
   {
@@ -59,6 +61,9 @@ export function adminBreadcrumb(pathname: string): {
   }
   if (pathname.startsWith("/admin/orders/")) {
     return { parent: "Orders", current: "Order" };
+  }
+  if (pathname.startsWith("/admin/payments")) {
+    return { parent: "Overview", current: "Payments" };
   }
   if (pathname.startsWith("/admin/catalog/reviews")) {
     return { parent: "Catalog", current: "Reviews" };

@@ -2761,6 +2761,302 @@
                 "security": []
             }
         },
+        "/api/v1/admin/promotions/coupons": {
+            "get": {
+                "operationId": "coupon.index",
+                "tags": [
+                    "Coupon"
+                ],
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number.",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        },
+                        "example": 1
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items per page (maximum 100).",
+                        "schema": {
+                            "type": "integer",
+                            "default": 20
+                        },
+                        "example": 20
+                    },
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "Search coupon code.",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "SAVE"
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter by status.",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "active"
+                    },
+                    {
+                        "name": "discount_id",
+                        "in": "query",
+                        "description": "Filter by discount id.",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paginated coupons.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/AdminCouponResource"
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object",
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer"
+                                                },
+                                                "last_page": {
+                                                    "type": "integer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer"
+                                                },
+                                                "total": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "required": [
+                                                "current_page",
+                                                "last_page",
+                                                "per_page",
+                                                "total"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            },
+            "post": {
+                "operationId": "coupon.store",
+                "tags": [
+                    "Coupon"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreCouponRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created coupon.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/AdminCouponResource"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/promotions/coupons/{id}": {
+            "get": {
+                "operationId": "coupon.show",
+                "tags": [
+                    "Coupon"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Coupon detail.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/AdminCouponResource"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            },
+            "patch": {
+                "operationId": "coupon.update",
+                "tags": [
+                    "Coupon"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateCouponRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Updated coupon.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/AdminCouponResource"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "coupon.destroy",
+                "tags": [
+                    "Coupon"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted coupon.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "null"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
         "/api/v1/admin/customers": {
             "get": {
                 "operationId": "customer.index",
@@ -2863,6 +3159,589 @@
                                         },
                                         "meta": {
                                             "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/promotions/discounts": {
+            "get": {
+                "operationId": "discount.index",
+                "tags": [
+                    "Discount"
+                ],
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number.",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        },
+                        "example": 1
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items per page (maximum 100).",
+                        "schema": {
+                            "type": "integer",
+                            "default": 20
+                        },
+                        "example": 20
+                    },
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "Search name or code.",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "Summer"
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter by status.",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "active"
+                    },
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "Filter by type.",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "percentage"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paginated discounts.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/AdminDiscountResource"
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object",
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer"
+                                                },
+                                                "last_page": {
+                                                    "type": "integer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer"
+                                                },
+                                                "total": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "required": [
+                                                "current_page",
+                                                "last_page",
+                                                "per_page",
+                                                "total"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            },
+            "post": {
+                "operationId": "discount.store",
+                "tags": [
+                    "Discount"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreDiscountRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created discount.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/AdminDiscountResource"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/promotions/discounts/{id}": {
+            "get": {
+                "operationId": "discount.show",
+                "tags": [
+                    "Discount"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Discount detail.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/AdminDiscountResource"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            },
+            "patch": {
+                "operationId": "discount.update",
+                "tags": [
+                    "Discount"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateDiscountRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Updated discount.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/AdminDiscountResource"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "discount.destroy",
+                "tags": [
+                    "Discount"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted discount.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "null"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/promotions/flash-sales": {
+            "get": {
+                "operationId": "flashSale.index",
+                "tags": [
+                    "FlashSale"
+                ],
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number.",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        },
+                        "example": 1
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items per page (maximum 100).",
+                        "schema": {
+                            "type": "integer",
+                            "default": 20
+                        },
+                        "example": 20
+                    },
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "Search name or code.",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "Noon"
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter by status.",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "active"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paginated flash sales.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/AdminFlashSaleResource"
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object",
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer"
+                                                },
+                                                "last_page": {
+                                                    "type": "integer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer"
+                                                },
+                                                "total": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "required": [
+                                                "current_page",
+                                                "last_page",
+                                                "per_page",
+                                                "total"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            },
+            "post": {
+                "operationId": "flashSale.store",
+                "tags": [
+                    "FlashSale"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreFlashSaleRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created flash sale.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/AdminFlashSaleResource"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/promotions/flash-sales/{id}": {
+            "get": {
+                "operationId": "flashSale.show",
+                "tags": [
+                    "FlashSale"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Flash sale detail.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/AdminFlashSaleResource"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            },
+            "patch": {
+                "operationId": "flashSale.update",
+                "tags": [
+                    "FlashSale"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateFlashSaleRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Updated flash sale.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/AdminFlashSaleResource"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "flashSale.destroy",
+                "tags": [
+                    "FlashSale"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted flash sale.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "null"
+                                        },
+                                        "meta": {
+                                            "type": "object"
                                         }
                                     },
                                     "required": [
@@ -4362,6 +5241,157 @@
                 }
             }
         },
+        "/api/v1/admin/payments/transactions": {
+            "get": {
+                "operationId": "paymentTransaction.index",
+                "tags": [
+                    "PaymentTransaction"
+                ],
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number.",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items per page (maximum 100).",
+                        "schema": {
+                            "type": "integer",
+                            "default": 20
+                        }
+                    },
+                    {
+                        "name": "provider",
+                        "in": "query",
+                        "description": "Filter by payment provider.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter by transaction status.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "refund_status",
+                        "in": "query",
+                        "description": "Filter by displayed refund status (pending, failed, succeeded).",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "Search order number.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "from",
+                        "in": "query",
+                        "description": "Filter transactions created on or after this date (Y-m-d).",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "to",
+                        "in": "query",
+                        "description": "Filter transactions created on or before this date (Y-m-d).",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paginated payment transactions with ledger totals.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/PaymentTransactionResource"
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/payments/transactions/{id}": {
+            "get": {
+                "operationId": "paymentTransaction.show",
+                "tags": [
+                    "PaymentTransaction"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Payment transaction detail.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/PaymentTransactionResource"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
         "/api/v1/catalog/products": {
             "get": {
                 "operationId": "v1.catalog.product.index",
@@ -5374,6 +6404,122 @@
                 }
             }
         },
+        "/api/v1/catalog/products/{slug}/reviews": {
+            "get": {
+                "operationId": "productReview.index",
+                "tags": [
+                    "ProductReview"
+                ],
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number.",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items per page (maximum 100).",
+                        "schema": {
+                            "type": "integer",
+                            "default": 20
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Approved product reviews.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/PublicProductReviewResource"
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "null"
+                                        },
+                                        "meta": {
+                                            "type": "string"
+                                        },
+                                        "errors": {
+                                            "type": "array",
+                                            "prefixItems": [
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "code": {
+                                                            "type": "string",
+                                                            "const": "CATALOG_NOT_FOUND"
+                                                        },
+                                                        "message": {
+                                                            "type": "string",
+                                                            "const": "Not found."
+                                                        },
+                                                        "field": {
+                                                            "type": "null"
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "code",
+                                                        "message",
+                                                        "field"
+                                                    ]
+                                                }
+                                            ],
+                                            "minItems": 1,
+                                            "maxItems": 1,
+                                            "additionalItems": false
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta",
+                                        "errors"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": []
+            }
+        },
         "/api/v1/admin/catalog/products/{id}/variants": {
             "post": {
                 "operationId": "productVariant.store",
@@ -6086,6 +7232,226 @@
                 }
             }
         },
+        "/api/v1/admin/orders/{id}/refunds": {
+            "post": {
+                "operationId": "refund.store",
+                "tags": [
+                    "Refund"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/StoreOrderRefundRequest"
+                                    },
+                                    {
+                                        "type": "object",
+                                        "properties": {
+                                            "reason": {
+                                                "type": "string",
+                                                "description": "Staff reason for the full refund."
+                                            }
+                                        },
+                                        "required": [
+                                            "reason"
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created pending refund.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/RefundResource"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/refunds/{id}/approve": {
+            "post": {
+                "operationId": "refund.approve",
+                "tags": [
+                    "Refund"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Approved refund.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/RefundResource"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/refunds/{id}/reject": {
+            "post": {
+                "operationId": "refund.reject",
+                "tags": [
+                    "Refund"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Rejected refund.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/RefundResource"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/refunds/{id}/retry": {
+            "post": {
+                "operationId": "refund.retry",
+                "tags": [
+                    "Refund"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Retried refund.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/RefundResource"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/ModelNotFoundException"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
         "/api/v1/customer/auth/register": {
             "post": {
                 "operationId": "auth.register",
@@ -6271,6 +7637,426 @@
                     }
                 },
                 "security": []
+            }
+        },
+        "/api/v1/customer/products/{productId}/review-eligibility": {
+            "get": {
+                "operationId": "review.eligibility",
+                "tags": [
+                    "Review"
+                ],
+                "parameters": [
+                    {
+                        "name": "productId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Review eligibility for a product.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "eligible": {
+                                                    "type": "boolean"
+                                                },
+                                                "reason": {
+                                                    "type": "string"
+                                                },
+                                                "existing_review": {
+                                                    "type": [
+                                                        "object",
+                                                        "null"
+                                                    ],
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer"
+                                                        },
+                                                        "status": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "id",
+                                                        "status"
+                                                    ]
+                                                }
+                                            },
+                                            "required": [
+                                                "eligible",
+                                                "reason",
+                                                "existing_review"
+                                            ]
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/api/v1/customer/reviews": {
+            "get": {
+                "operationId": "v1.customer.review.index",
+                "tags": [
+                    "Review"
+                ],
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number.",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items per page (maximum 100).",
+                        "schema": {
+                            "type": "integer",
+                            "default": 20
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Customer reviews.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/CustomerReviewResource"
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            },
+            "post": {
+                "operationId": "review.store",
+                "tags": [
+                    "Review"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreCustomerReviewRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created pending review.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/CustomerReviewResource"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/api/v1/customer/reviews/{id}": {
+            "patch": {
+                "operationId": "v1.customer.review.update",
+                "tags": [
+                    "Review"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateCustomerReviewRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Updated customer review.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/CustomerReviewResource"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/reviews": {
+            "get": {
+                "operationId": "v1.admin.engagement.review.index",
+                "tags": [
+                    "Review"
+                ],
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number.",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items per page (maximum 100).",
+                        "schema": {
+                            "type": "integer",
+                            "default": 20
+                        }
+                    },
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "Search product name or customer name/email.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter by review status.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "product_id",
+                        "in": "query",
+                        "description": "Filter by product id.",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paginated admin reviews.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/AdminReviewResource"
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/reviews/{id}": {
+            "get": {
+                "operationId": "review.show",
+                "tags": [
+                    "Review"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Admin review detail.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/AdminReviewResource"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            },
+            "patch": {
+                "operationId": "v1.admin.engagement.review.update",
+                "tags": [
+                    "Review"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateAdminReviewRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Moderated review.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/AdminReviewResource"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
             }
         },
         "/api/v1/catalog/search/suggest": {
@@ -6937,6 +8723,134 @@
                     }
                 }
             }
+        },
+        "/api/v1/customer/wishlist": {
+            "get": {
+                "operationId": "wishlist.show",
+                "tags": [
+                    "Wishlist"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Customer default wishlist.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/WishlistResource"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/api/v1/customer/wishlist/items": {
+            "post": {
+                "operationId": "wishlist.storeItem",
+                "tags": [
+                    "Wishlist"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreWishlistItemRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Wishlist after adding an item.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/WishlistResource"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/api/v1/customer/wishlist/items/{id}": {
+            "delete": {
+                "operationId": "wishlist.destroyItem",
+                "tags": [
+                    "Wishlist"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Wishlist item removed.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "null"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -6955,6 +8869,335 @@
             }
         },
         "schemas": {
+            "AdminCouponResource": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "code": {
+                        "type": "string"
+                    },
+                    "discount_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "discount": {
+                        "type": [
+                            "object",
+                            "null"
+                        ],
+                        "properties": {
+                            "id": {
+                                "type": "integer"
+                            },
+                            "code": {
+                                "type": "string"
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "type": {
+                                "type": "string"
+                            },
+                            "value": {
+                                "type": "string"
+                            },
+                            "status": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "id",
+                            "code",
+                            "name",
+                            "type",
+                            "value",
+                            "status"
+                        ]
+                    },
+                    "max_uses": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "max_uses_per_customer": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "used_count": {
+                        "type": "integer"
+                    },
+                    "starts_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    },
+                    "ends_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    }
+                },
+                "required": [
+                    "id",
+                    "code",
+                    "discount_id",
+                    "discount",
+                    "max_uses",
+                    "max_uses_per_customer",
+                    "used_count",
+                    "starts_at",
+                    "ends_at",
+                    "status",
+                    "created_at",
+                    "updated_at"
+                ],
+                "title": "AdminCouponResource"
+            },
+            "AdminDiscountResource": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "code": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string"
+                    },
+                    "value": {
+                        "type": "string"
+                    },
+                    "starts_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    },
+                    "ends_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "rule": {
+                        "type": [
+                            "object",
+                            "null"
+                        ],
+                        "properties": {
+                            "id": {
+                                "anyOf": [
+                                    {
+                                        "type": "integer"
+                                    },
+                                    {
+                                        "type": "string"
+                                    }
+                                ]
+                            },
+                            "conditions": {
+                                "anyOf": [
+                                    {
+                                        "type": "string"
+                                    },
+                                    {
+                                        "type": "array",
+                                        "items": {}
+                                    }
+                                ]
+                            }
+                        },
+                        "required": [
+                            "id",
+                            "conditions"
+                        ]
+                    },
+                    "created_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    }
+                },
+                "required": [
+                    "id",
+                    "code",
+                    "name",
+                    "type",
+                    "value",
+                    "starts_at",
+                    "ends_at",
+                    "status",
+                    "rule",
+                    "created_at",
+                    "updated_at"
+                ],
+                "title": "AdminDiscountResource"
+            },
+            "AdminFlashSaleResource": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "code": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "starts_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "ends_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "anyOf": [
+                                        {
+                                            "type": "integer"
+                                        },
+                                        {
+                                            "type": "string"
+                                        }
+                                    ]
+                                },
+                                "product_variant_id": {
+                                    "anyOf": [
+                                        {
+                                            "type": "integer"
+                                        },
+                                        {
+                                            "type": "string"
+                                        }
+                                    ]
+                                },
+                                "sale_price": {
+                                    "type": "string"
+                                },
+                                "qty_cap": {
+                                    "anyOf": [
+                                        {
+                                            "type": "integer"
+                                        },
+                                        {
+                                            "type": "null"
+                                        },
+                                        {
+                                            "type": "string"
+                                        }
+                                    ]
+                                },
+                                "qty_sold": {
+                                    "type": "integer"
+                                },
+                                "qty_remaining": {
+                                    "anyOf": [
+                                        {
+                                            "type": "null"
+                                        },
+                                        {
+                                            "type": "integer"
+                                        },
+                                        {
+                                            "type": "string"
+                                        }
+                                    ]
+                                }
+                            },
+                            "required": [
+                                "id",
+                                "product_variant_id",
+                                "sale_price",
+                                "qty_cap",
+                                "qty_sold",
+                                "qty_remaining"
+                            ]
+                        }
+                    },
+                    "created_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    }
+                },
+                "required": [
+                    "id",
+                    "code",
+                    "name",
+                    "starts_at",
+                    "ends_at",
+                    "status",
+                    "items",
+                    "created_at",
+                    "updated_at"
+                ],
+                "title": "AdminFlashSaleResource"
+            },
             "AdminOrderResource": {
                 "type": "object",
                 "properties": {
@@ -7028,7 +9271,7 @@
                     "items": {
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/OrderItem"
+                            "$ref": "#/components/schemas/OrderItemResource"
                         }
                     },
                     "status_history": {
@@ -7102,6 +9345,115 @@
                                 "status"
                             ]
                         }
+                    },
+                    "payment": {
+                        "type": [
+                            "object",
+                            "null"
+                        ],
+                        "properties": {
+                            "id": {
+                                "type": "integer"
+                            },
+                            "provider": {
+                                "type": "string"
+                            },
+                            "amount": {
+                                "type": "string"
+                            },
+                            "status": {
+                                "type": "string"
+                            },
+                            "provider_txn_id": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ]
+                            },
+                            "idempotency_key": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "id",
+                            "provider",
+                            "amount",
+                            "status",
+                            "provider_txn_id",
+                            "idempotency_key"
+                        ]
+                    },
+                    "refunds": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "integer"
+                                },
+                                "payment_transaction_id": {
+                                    "type": "integer"
+                                },
+                                "amount": {
+                                    "type": "string"
+                                },
+                                "status": {
+                                    "type": "string"
+                                },
+                                "reason": {
+                                    "type": [
+                                        "string",
+                                        "null"
+                                    ]
+                                },
+                                "provider_refund_id": {
+                                    "type": [
+                                        "string",
+                                        "null"
+                                    ]
+                                },
+                                "idempotency_key": {
+                                    "type": "string"
+                                },
+                                "requested_by_admin_id": {
+                                    "type": [
+                                        "integer",
+                                        "null"
+                                    ]
+                                },
+                                "reviewed_by_admin_id": {
+                                    "type": [
+                                        "integer",
+                                        "null"
+                                    ]
+                                },
+                                "reviewed_at": {
+                                    "type": [
+                                        "string",
+                                        "null"
+                                    ]
+                                },
+                                "created_at": {
+                                    "type": [
+                                        "string",
+                                        "null"
+                                    ]
+                                }
+                            },
+                            "required": [
+                                "id",
+                                "payment_transaction_id",
+                                "amount",
+                                "status",
+                                "reason",
+                                "provider_refund_id",
+                                "idempotency_key",
+                                "requested_by_admin_id",
+                                "reviewed_by_admin_id",
+                                "reviewed_at",
+                                "created_at"
+                            ]
+                        }
                     }
                 },
                 "required": [
@@ -7119,6 +9471,115 @@
                     "customer_id"
                 ],
                 "title": "AdminOrderResource"
+            },
+            "AdminReviewResource": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "rating": {
+                        "type": "integer"
+                    },
+                    "body": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "product_variant_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "product": {
+                        "type": [
+                            "object",
+                            "null"
+                        ],
+                        "properties": {
+                            "id": {
+                                "type": "integer"
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "slug": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "id",
+                            "name",
+                            "slug"
+                        ]
+                    },
+                    "customer": {
+                        "type": [
+                            "object",
+                            "null"
+                        ],
+                        "properties": {
+                            "id": {
+                                "type": "integer"
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "email": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "id",
+                            "name",
+                            "email"
+                        ]
+                    },
+                    "images": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "integer"
+                                },
+                                "url": {
+                                    "type": "string"
+                                },
+                                "thumbnail_url": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "id",
+                                "url",
+                                "thumbnail_url"
+                            ]
+                        }
+                    },
+                    "created_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    }
+                },
+                "required": [
+                    "id",
+                    "status",
+                    "rating",
+                    "body",
+                    "product_variant_id",
+                    "product",
+                    "customer",
+                    "created_at"
+                ],
+                "title": "AdminReviewResource"
             },
             "App.Http.Requests.Api.V1.Admin.Auth.ForgotPasswordRequest": {
                 "type": "object",
@@ -7480,6 +9941,73 @@
                 ],
                 "title": "CustomerAddressResource"
             },
+            "CustomerReviewResource": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "product_id": {
+                        "type": "integer"
+                    },
+                    "product_variant_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "rating": {
+                        "type": "integer"
+                    },
+                    "body": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "images": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "integer"
+                                },
+                                "url": {
+                                    "type": "string"
+                                },
+                                "thumbnail_url": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "id",
+                                "url",
+                                "thumbnail_url"
+                            ]
+                        }
+                    },
+                    "created_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    }
+                },
+                "required": [
+                    "id",
+                    "product_id",
+                    "product_variant_id",
+                    "rating",
+                    "body",
+                    "status",
+                    "created_at"
+                ],
+                "title": "CustomerReviewResource"
+            },
             "ForgotPasswordRequest": {
                 "type": "object",
                 "properties": {
@@ -7553,6 +10081,12 @@
                             "null"
                         ],
                         "format": "date-time"
+                    },
+                    "flash_sale_item_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
                     }
                 },
                 "required": [
@@ -7565,9 +10099,63 @@
                     "unit_price",
                     "line_total",
                     "created_at",
-                    "updated_at"
+                    "updated_at",
+                    "flash_sale_item_id"
                 ],
                 "title": "OrderItem"
+            },
+            "OrderItemResource": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "product_variant_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "product_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "product_slug": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "sku": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "qty": {
+                        "type": "integer"
+                    },
+                    "unit_price": {
+                        "type": "string"
+                    },
+                    "line_total": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "id",
+                    "product_variant_id",
+                    "product_id",
+                    "product_slug",
+                    "sku",
+                    "name",
+                    "qty",
+                    "unit_price",
+                    "line_total"
+                ],
+                "title": "OrderItemResource"
             },
             "OrderResource": {
                 "type": "object",
@@ -7642,7 +10230,7 @@
                     "items": {
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/OrderItem"
+                            "$ref": "#/components/schemas/OrderItemResource"
                         }
                     },
                     "status_history": {
@@ -7694,6 +10282,62 @@
                     "created_at"
                 ],
                 "title": "OrderResource"
+            },
+            "PaymentTransactionResource": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "order_id": {
+                        "type": "integer"
+                    },
+                    "order_number": {
+                        "type": "string"
+                    },
+                    "provider": {
+                        "type": "string"
+                    },
+                    "provider_txn_id": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "idempotency_key": {
+                        "type": "string"
+                    },
+                    "amount": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "refund": {
+                        "type": [
+                            "array",
+                            "null"
+                        ],
+                        "items": {}
+                    },
+                    "created_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    }
+                },
+                "required": [
+                    "id",
+                    "order_id",
+                    "provider",
+                    "provider_txn_id",
+                    "idempotency_key",
+                    "amount",
+                    "status",
+                    "created_at"
+                ],
+                "title": "PaymentTransactionResource"
             },
             "PublicProductResource": {
                 "type": "object",
@@ -7769,28 +10413,15 @@
                             "object",
                             "null"
                         ],
-                        "properties": {
-                            "id": {
-                                "type": "integer"
-                            },
-                            "sku": {
-                                "type": "string"
-                            },
-                            "price": {
-                                "type": "string"
-                            },
-                            "compare_at_price": {
-                                "type": [
-                                    "string",
-                                    "null"
-                                ]
-                            }
-                        },
-                        "required": [
-                            "id",
-                            "sku",
-                            "price",
-                            "compare_at_price"
+                        "additionalProperties": {}
+                    },
+                    "rating_count": {
+                        "type": "integer"
+                    },
+                    "rating_avg": {
+                        "type": [
+                            "number",
+                            "null"
                         ]
                     },
                     "description": {
@@ -7868,84 +10499,7 @@
                         "type": "array",
                         "items": {
                             "type": "object",
-                            "properties": {
-                                "id": {
-                                    "type": "integer"
-                                },
-                                "sku": {
-                                    "type": "string"
-                                },
-                                "barcode": {
-                                    "type": [
-                                        "string",
-                                        "null"
-                                    ]
-                                },
-                                "price": {
-                                    "type": "string"
-                                },
-                                "compare_at_price": {
-                                    "type": [
-                                        "string",
-                                        "null"
-                                    ]
-                                },
-                                "is_default": {
-                                    "type": "boolean"
-                                },
-                                "attributes": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "id": {
-                                                "type": "integer"
-                                            },
-                                            "name": {
-                                                "type": "string"
-                                            },
-                                            "slug": {
-                                                "type": "string"
-                                            },
-                                            "option": {
-                                                "type": "object",
-                                                "properties": {
-                                                    "id": {
-                                                        "type": "integer"
-                                                    },
-                                                    "label": {
-                                                        "type": "string"
-                                                    }
-                                                },
-                                                "required": [
-                                                    "id",
-                                                    "label"
-                                                ]
-                                            }
-                                        },
-                                        "required": [
-                                            "id",
-                                            "name",
-                                            "slug",
-                                            "option"
-                                        ]
-                                    }
-                                },
-                                "images": {
-                                    "type": "array",
-                                    "items": {}
-                                }
-                            },
-                            "required": [
-                                "id",
-                                "sku",
-                                "barcode",
-                                "price",
-                                "compare_at_price",
-                                "is_default",
-                                "attributes",
-                                "images"
-                            ]
+                            "additionalProperties": {}
                         }
                     }
                 },
@@ -7957,6 +10511,8 @@
                     "published_at",
                     "brand",
                     "primary_image",
+                    "rating_count",
+                    "rating_avg",
                     "description",
                     "meta_title",
                     "meta_description",
@@ -7964,6 +10520,142 @@
                     "variants"
                 ],
                 "title": "PublicProductResource"
+            },
+            "PublicProductReviewResource": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "author_name": {
+                        "type": "string"
+                    },
+                    "rating": {
+                        "type": "integer"
+                    },
+                    "body": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "product_variant_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "variant_label": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "images": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "url": {
+                                    "type": "string"
+                                },
+                                "thumbnail_url": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "url",
+                                "thumbnail_url"
+                            ]
+                        }
+                    },
+                    "created_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    }
+                },
+                "required": [
+                    "id",
+                    "author_name",
+                    "rating",
+                    "body",
+                    "product_variant_id",
+                    "variant_label",
+                    "created_at"
+                ],
+                "title": "PublicProductReviewResource"
+            },
+            "RefundResource": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "payment_transaction_id": {
+                        "type": "integer"
+                    },
+                    "amount": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "reason": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "provider_refund_id": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "idempotency_key": {
+                        "type": "string"
+                    },
+                    "requested_by_admin_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "reviewed_by_admin_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "reviewed_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "created_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    }
+                },
+                "required": [
+                    "id",
+                    "payment_transaction_id",
+                    "amount",
+                    "status",
+                    "reason",
+                    "provider_refund_id",
+                    "idempotency_key",
+                    "requested_by_admin_id",
+                    "reviewed_by_admin_id",
+                    "reviewed_at",
+                    "created_at"
+                ],
+                "title": "RefundResource"
             },
             "RegisterRequest": {
                 "type": "object",
@@ -8305,6 +10997,58 @@
                 ],
                 "title": "StoreCategoryRequest"
             },
+            "StoreCouponRequest": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "string",
+                        "maxLength": 64
+                    },
+                    "discount_id": {
+                        "type": "integer"
+                    },
+                    "max_uses": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "minimum": 1
+                    },
+                    "max_uses_per_customer": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "minimum": 1
+                    },
+                    "starts_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    },
+                    "ends_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "active",
+                            "inactive"
+                        ]
+                    }
+                },
+                "required": [
+                    "code",
+                    "discount_id"
+                ],
+                "title": "StoreCouponRequest"
+            },
             "StoreCustomerAddressRequest": {
                 "type": "object",
                 "properties": {
@@ -8359,6 +11103,190 @@
                     "address_line"
                 ],
                 "title": "StoreCustomerAddressRequest"
+            },
+            "StoreCustomerReviewRequest": {
+                "type": "object",
+                "properties": {
+                    "product_id": {
+                        "type": "integer"
+                    },
+                    "product_variant_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "rating": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 5
+                    },
+                    "body": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "images": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "binary",
+                            "contentMediaType": "application/octet-stream",
+                            "description": "Maximum file size: 5120 kilobytes."
+                        },
+                        "maxItems": 3
+                    }
+                },
+                "required": [
+                    "product_id",
+                    "rating"
+                ],
+                "title": "StoreCustomerReviewRequest"
+            },
+            "StoreDiscountRequest": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "code": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 26
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "fixed",
+                            "percentage"
+                        ]
+                    },
+                    "value": {
+                        "type": "number"
+                    },
+                    "starts_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    },
+                    "ends_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "active",
+                            "inactive"
+                        ]
+                    },
+                    "rule": {
+                        "type": "object",
+                        "properties": {
+                            "conditions": {
+                                "type": "object",
+                                "properties": {
+                                    "min_subtotal": {
+                                        "type": "integer",
+                                        "minimum": 0
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "required": [
+                    "name",
+                    "type",
+                    "value"
+                ],
+                "title": "StoreDiscountRequest"
+            },
+            "StoreFlashSaleRequest": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "code": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 26
+                    },
+                    "starts_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "ends_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "scheduled",
+                            "active",
+                            "ended",
+                            "cancelled"
+                        ]
+                    },
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "product_variant_id": {
+                                    "type": "integer"
+                                },
+                                "sale_price": {
+                                    "type": "number"
+                                },
+                                "qty_cap": {
+                                    "type": [
+                                        "integer",
+                                        "null"
+                                    ],
+                                    "minimum": 1
+                                }
+                            },
+                            "required": [
+                                "product_variant_id",
+                                "sale_price"
+                            ]
+                        }
+                    }
+                },
+                "required": [
+                    "name",
+                    "starts_at",
+                    "ends_at"
+                ],
+                "title": "StoreFlashSaleRequest"
+            },
+            "StoreOrderRefundRequest": {
+                "type": "object",
+                "properties": {
+                    "reason": {
+                        "type": "string",
+                        "maxLength": 1000
+                    }
+                },
+                "required": [
+                    "reason"
+                ],
+                "title": "StoreOrderRefundRequest"
             },
             "StoreProductRequest": {
                 "type": "object",
@@ -8585,6 +11513,34 @@
                 ],
                 "title": "StoreStockMovementRequest"
             },
+            "StoreWishlistItemRequest": {
+                "type": "object",
+                "properties": {
+                    "product_variant_id": {
+                        "type": "integer"
+                    }
+                },
+                "required": [
+                    "product_variant_id"
+                ],
+                "title": "StoreWishlistItemRequest"
+            },
+            "UpdateAdminReviewRequest": {
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "approved",
+                            "rejected"
+                        ]
+                    }
+                },
+                "required": [
+                    "status"
+                ],
+                "title": "UpdateAdminReviewRequest"
+            },
             "UpdateAttributeOptionRequest": {
                 "type": "object",
                 "properties": {
@@ -8733,6 +11689,54 @@
                 },
                 "title": "UpdateCategoryRequest"
             },
+            "UpdateCouponRequest": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "string",
+                        "maxLength": 64
+                    },
+                    "discount_id": {
+                        "type": "integer"
+                    },
+                    "max_uses": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "minimum": 1
+                    },
+                    "max_uses_per_customer": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "minimum": 1
+                    },
+                    "starts_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    },
+                    "ends_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "active",
+                            "inactive"
+                        ]
+                    }
+                },
+                "title": "UpdateCouponRequest"
+            },
             "UpdateCustomerAddressRequest": {
                 "type": "object",
                 "properties": {
@@ -8787,6 +11791,166 @@
                     "address_line"
                 ],
                 "title": "UpdateCustomerAddressRequest"
+            },
+            "UpdateCustomerReviewRequest": {
+                "type": "object",
+                "properties": {
+                    "product_variant_id": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    },
+                    "rating": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 5
+                    },
+                    "body": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "images": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "binary",
+                            "contentMediaType": "application/octet-stream",
+                            "description": "Maximum file size: 5120 kilobytes."
+                        },
+                        "maxItems": 3
+                    },
+                    "remove_image_ids": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "title": "UpdateCustomerReviewRequest"
+            },
+            "UpdateDiscountRequest": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "code": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 26
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "fixed",
+                            "percentage"
+                        ]
+                    },
+                    "value": {
+                        "type": "number"
+                    },
+                    "starts_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    },
+                    "ends_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date-time"
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "active",
+                            "inactive"
+                        ]
+                    },
+                    "rule": {
+                        "type": "object",
+                        "properties": {
+                            "conditions": {
+                                "type": "object",
+                                "properties": {
+                                    "min_subtotal": {
+                                        "type": "integer",
+                                        "minimum": 0
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "title": "UpdateDiscountRequest"
+            },
+            "UpdateFlashSaleRequest": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "code": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 26
+                    },
+                    "starts_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "ends_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "scheduled",
+                            "active",
+                            "ended",
+                            "cancelled"
+                        ]
+                    },
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "product_variant_id": {
+                                    "type": "integer"
+                                },
+                                "sale_price": {
+                                    "type": "number"
+                                },
+                                "qty_cap": {
+                                    "type": [
+                                        "integer",
+                                        "null"
+                                    ],
+                                    "minimum": 1
+                                }
+                            },
+                            "required": [
+                                "product_variant_id",
+                                "sale_price"
+                            ]
+                        }
+                    }
+                },
+                "title": "UpdateFlashSaleRequest"
             },
             "UpdateMeRequest": {
                 "type": "object",
@@ -8969,6 +12133,27 @@
                     "status"
                 ],
                 "title": "WarehouseResource"
+            },
+            "WishlistResource": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "items": {
+                        "type": "array",
+                        "items": {}
+                    }
+                },
+                "required": [
+                    "id",
+                    "name",
+                    "items"
+                ],
+                "title": "WishlistResource"
             }
         },
         "responses": {

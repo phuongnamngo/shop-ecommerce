@@ -1,8 +1,13 @@
 <?php
 
+use App\Models\Order;
+use App\Models\PaymentTransaction;
+use App\Models\Refund;
 use App\Services\Payment\FakePaymentGateway;
 use App\Services\Payment\VnPayGateway;
 use App\Support\CommerceException;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
 it('rejects invalid signatures on the fake gateway', function () {
     $gateway = new FakePaymentGateway;
@@ -48,4 +53,32 @@ it('hashes and verifies with the VNPay gateway using sha512 hmac', function () {
     $payload['vnp_SecureHash'] = $gateway->hash($payload);
     $result = $gateway->verify($payload);
     expect($result->ok)->toBeTrue()->and($result->providerTxnId)->toBe('99');
+});
+
+it('refunds through VnPayGateway with hmac and http fake', function () {
+    Http::fake(['*' => Http::response(['vnp_ResponseCode' => '00', 'vnp_TransactionNo' => 'R1'], 200)]);
+    config([
+        'commerce.vnpay.hash_secret' => 'secret',
+        'commerce.vnpay.tmn_code' => 'TMN',
+        'commerce.vnpay.refund_url' => 'https://sandbox.vnpayment.vn/merchant_webapi/api/transaction',
+    ]);
+    $order = Order::factory()->create(['number' => 'ORD-REF', 'grand_total' => 100000]);
+    $txn = PaymentTransaction::query()->create([
+        'order_id' => $order->id,
+        'provider' => 'vnpay',
+        'provider_txn_id' => '99',
+        'idempotency_key' => (string) Str::uuid(),
+        'amount' => 100000,
+        'status' => 'succeeded',
+        'payload' => ['vnp_TransactionDate' => '20260914120000'],
+    ]);
+    $refund = Refund::factory()->create([
+        'payment_transaction_id' => $txn->id,
+        'amount' => 100000,
+        'idempotency_key' => (string) Str::uuid(),
+        'reason' => 'test',
+    ]);
+    $result = (new VnPayGateway)->refund($txn->load('order'), $refund);
+    expect($result->ok)->toBeTrue()->and($result->providerRefundId)->toBe('R1');
+    Http::assertSent(fn ($request) => str_contains($request->url(), 'merchant_webapi'));
 });

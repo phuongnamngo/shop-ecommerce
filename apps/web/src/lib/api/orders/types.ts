@@ -1,3 +1,5 @@
+import type { AdminRefund, OrderPayment } from "@/lib/api/payments/types";
+
 export type PageMeta = {
   current_page: number;
   per_page: number;
@@ -60,5 +62,7 @@ export type AdminOrder = {
   items?: OrderItem[];
   status_history?: OrderStatusHistory[];
   shipments?: OrderShipment[];
+  payment?: OrderPayment | null;
+  refunds?: AdminRefund[];
   created_at: string | null;
 };

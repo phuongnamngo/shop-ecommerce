@@ -33,7 +33,7 @@ final class VnPayController extends Controller
                 $txn = $this->payments->findTxnByOrderNumber($result->orderRef);
                 if ($txn !== null) {
                     if ($result->ok) {
-                        $this->payments->settleSuccess($txn, $result->providerTxnId, 'payment:vnpay');
+                        $this->payments->settleSuccess($txn, $result->providerTxnId, 'payment:vnpay', isset($payload['vnp_TransactionDate']) ? (string) $payload['vnp_TransactionDate'] : null);
                     } else {
                         $this->payments->markFailed($txn, 'payment:vnpay:'.$result->responseCode);
                     }
@@ -68,7 +68,7 @@ final class VnPayController extends Controller
             $txn = $this->payments->findTxnByOrderNumber($result->orderRef);
             if ($isNew && $txn !== null) {
                 if ($result->ok) {
-                    $this->payments->settleSuccess($txn, $result->providerTxnId, 'payment:vnpay');
+                    $this->payments->settleSuccess($txn, $result->providerTxnId, 'payment:vnpay', isset($payload['vnp_TransactionDate']) ? (string) $payload['vnp_TransactionDate'] : null);
                     $status = 'paid';
                 } else {
                     $this->payments->markFailed($txn, 'payment:vnpay:'.$result->responseCode);

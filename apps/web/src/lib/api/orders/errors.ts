@@ -4,6 +4,8 @@ import { messageForAuthError } from "@/lib/api/admin-auth";
 export function orderErrorMessage(error: unknown): string {
   if (error instanceof ApiError) {
     switch (error.code) {
+      case "ORDER_REFUND_IN_PROGRESS":
+        return "Không thể fulfillment khi đang có hoàn tiền mở.";
       case "ORDER_INVALID_TRANSITION":
         return "Không chuyển được trạng thái đơn (transition không hợp lệ).";
       case "SHIPMENT_INVALID_STATUS":

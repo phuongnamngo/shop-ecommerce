@@ -23,7 +23,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(PaymentGateway::class, function ($app) {
-            if ($app->environment('testing')) {
+            if ($app->runningUnitTests()) {
                 return $app->make(FakePaymentGateway::class);
             }
 
