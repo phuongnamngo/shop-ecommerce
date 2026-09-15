@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
 
         if (app()->environment(['local', 'testing'])) {
             $this->call([
+                NotificationTemplateSeeder::class,
                 IdentityDemoSeeder::class,
                 CatalogDemoSeeder::class,
                 CommerceFulfillmentDemoSeeder::class,

@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\PaymentTransaction;
 use App\Models\Refund;
 use App\Models\StockItem;
+use App\Services\Mail\MailTemplateService;
 use App\Support\CommerceException;
 use App\Support\ErrorCode;
 use Illuminate\Support\Facades\DB;
@@ -22,6 +23,8 @@ final class OrderService
         'completed' => [],
         'cancelled' => [],
     ];
+
+    public function __construct(private readonly MailTemplateService $mail) {}
 
     public function transition(Order $order, string $toStatus, AdminUser $admin, ?string $note = null): Order
     {
@@ -51,6 +54,10 @@ final class OrderService
                 'changed_by_admin_id' => $admin->id,
                 'note' => $note,
             ]);
+
+            if ($toStatus === 'paid') {
+                $this->notifyOrderPaid($order);
+            }
 
             return $order->refresh()->load(['items.variant.product', 'statusHistories']);
         });
@@ -110,13 +117,15 @@ final class OrderService
                 'note' => $note,
             ]);
 
+            $this->notifyOrderPaid($order);
+
             return $order->refresh()->load(['items.variant.product', 'statusHistories']);
         });
     }
 
-    public function markShipped(Order $order, AdminUser $admin, ?string $note = null): Order
+    public function markShipped(Order $order, AdminUser $admin, ?string $note = null, ?string $trackingNumber = null): Order
     {
-        return DB::transaction(function () use ($order, $admin, $note): Order {
+        return DB::transaction(function () use ($order, $admin, $note, $trackingNumber): Order {
             $order = Order::query()->whereKey($order->id)->lockForUpdate()->firstOrFail();
             if ($order->status !== 'fulfilling') {
                 throw new CommerceException(ErrorCode::ORDER_INVALID_TRANSITION, "Cannot ship order from {$order->status}.", 'status', 409);
@@ -130,6 +139,8 @@ final class OrderService
                 'changed_by_admin_id' => $admin->id,
                 'note' => $note,
             ]);
+
+            $this->notifyOrderShipped($order, $trackingNumber);
 
             return $order->refresh()->load(['items.variant.product', 'statusHistories']);
         });
@@ -220,6 +231,34 @@ final class OrderService
             }
             $flashItem->update(['qty_sold' => max(0, (int) $flashItem->qty_sold - (int) $item->qty)]);
         }
+    }
+
+    private function notifyOrderShipped(Order $order, ?string $trackingNumber): void
+    {
+        $order->loadMissing('customer');
+        $customer = $order->customer;
+        if ($customer === null) {
+            return;
+        }
+        $this->mail->send($customer, 'order.shipped', [
+            'order_number' => (string) $order->number,
+            'tracking_number' => (string) $trackingNumber,
+            'customer_name' => (string) $customer->name,
+        ]);
+    }
+
+    private function notifyOrderPaid(Order $order): void
+    {
+        $order->loadMissing('customer');
+        $customer = $order->customer;
+        if ($customer === null) {
+            return;
+        }
+        $this->mail->send($customer, 'order.paid', [
+            'order_number' => (string) $order->number,
+            'grand_total' => (string) $order->grand_total,
+            'customer_name' => (string) $customer->name,
+        ]);
     }
 
     private function settlePendingTransaction(Order $order): void

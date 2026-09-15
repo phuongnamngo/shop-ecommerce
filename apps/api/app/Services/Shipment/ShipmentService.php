@@ -87,7 +87,7 @@ final class ShipmentService
                 $reservation->update(['status' => 'consumed']);
             }
 
-            $this->orders->markShipped($order, $admin, 'shipment:'.$trackingNumber);
+            $this->orders->markShipped($order, $admin, 'shipment:'.$trackingNumber, $trackingNumber);
 
             return $shipment->load('items');
         });

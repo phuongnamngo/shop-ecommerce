@@ -14,6 +14,7 @@ use App\Models\PaymentTransaction;
 use App\Models\ShippingRate;
 use App\Models\StockItem;
 use App\Models\Warehouse;
+use App\Services\Mail\MailTemplateService;
 use App\Services\Promotion\FlashSalePricingService;
 use App\Support\CommerceException;
 use App\Support\ErrorCode;
@@ -26,6 +27,7 @@ final class CheckoutService
     public function __construct(
         private readonly PaymentGateway $payments,
         private readonly FlashSalePricingService $pricing,
+        private readonly MailTemplateService $mail,
     ) {}
 
     /**
@@ -34,7 +36,7 @@ final class CheckoutService
      */
     public function checkout(Cart $cart, ?Customer $customer, array $payload): array
     {
-        return DB::transaction(function () use ($cart, $customer, $payload): array {
+        $result = DB::transaction(function () use ($cart, $customer, $payload): array {
             $cart = Cart::query()->whereKey($cart->id)->where('status', 'active')->lockForUpdate()->first();
             if ($cart === null) {
                 throw new CommerceException(ErrorCode::CHECKOUT_INVALID_CART, 'Cart is no longer active.');
@@ -195,6 +197,23 @@ final class CheckoutService
 
             return $result;
         }, 3);
+        $this->notifyOrderPlaced($result['order']);
+
+        return $result;
+    }
+
+    private function notifyOrderPlaced(Order $order): void
+    {
+        $order->loadMissing('customer');
+        $customer = $order->customer;
+        if ($customer === null) {
+            return;
+        }
+        $this->mail->send($customer, 'order.placed', [
+            'order_number' => (string) $order->number,
+            'grand_total' => (string) $order->grand_total,
+            'customer_name' => (string) $customer->name,
+        ]);
     }
 
     private function issueGuestLookupToken(Order $order): string

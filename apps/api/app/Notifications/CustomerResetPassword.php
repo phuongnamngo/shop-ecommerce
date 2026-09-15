@@ -2,11 +2,23 @@
 
 namespace App\Notifications;
 
+use App\Services\Mail\MailTemplateService;
 use Illuminate\Auth\Notifications\ResetPassword;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Support\HtmlString;
 
-class CustomerResetPassword extends ResetPassword
+class CustomerResetPassword extends ResetPassword implements ShouldQueue
 {
+    use Queueable;
+
+    public function __construct(#[\SensitiveParameter] $token)
+    {
+        parent::__construct($token);
+        $this->afterCommit();
+    }
+
     public function resetUrl($notifiable): string
     {
         $email = method_exists($notifiable, 'getEmailForPasswordReset')
@@ -20,11 +32,17 @@ class CustomerResetPassword extends ResetPassword
 
     public function toMail($notifiable): MailMessage
     {
-        return (new MailMessage)
-            ->subject('Reset Password Notification')
-            ->line('You are receiving this email because we received a password reset request for your account.')
-            ->action('Reset Password', $this->resetUrl($notifiable))
-            ->line('This password reset link will expire in '.config('auth.passwords.customers.expire').' minutes.')
-            ->line('If you did not request a password reset, no further action is required.');
+        $mail = app(MailTemplateService::class)->mailMessage('auth.reset.customer', [
+            'reset_url' => $this->resetUrl($notifiable),
+            'customer_name' => (string) $notifiable->name,
+            'expires_minutes' => (string) config('auth.passwords.customers.expire'),
+        ]);
+        if ($mail === null) {
+            return (new MailMessage)
+                ->subject('')
+                ->view('mail.notification-html', ['body' => new HtmlString('')]);
+        }
+
+        return $mail;
     }
 }
