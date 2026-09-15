@@ -185,6 +185,7 @@ export type CustomerProfile = {
   email: string;
   phone: string | null;
   status: string;
+  phone_verified_at: string | null;
 };
 
 export type CustomerAddress = {

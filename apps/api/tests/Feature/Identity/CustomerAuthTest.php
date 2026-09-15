@@ -15,11 +15,13 @@ it('registers customer with 201 and session', function () {
         ->assertJsonPath('data.status', 'active')
         ->assertJsonMissing(['errors']);
 
-    $this->getJson('/api/v1/customer/me')
+    $me = $this->getJson('/api/v1/customer/me')
         ->assertOk()
         ->assertJsonPath('data.email', 'ada@example.com')
         ->assertJsonPath('data.phone', null)
+        ->assertJsonPath('data.phone_verified_at', null)
         ->assertJsonMissingPath('data.password');
+    expect($me->json('data'))->toHaveKey('phone_verified_at');
 });
 
 it('logs in and logs out customer', function () {
@@ -115,6 +117,43 @@ it('rejects duplicate phone on patch me', function () {
 
 it('rejects unauthenticated patch me', function () {
     $this->patchJson('/api/v1/customer/me', ['name' => 'X'])->assertUnauthorized();
+});
+
+it('exposes phone_verified_at on me', function () {
+    $customer = Customer::factory()->create(['phone' => '0900000001']);
+    $response = $this->actingAs($customer, 'customer')
+        ->getJson('/api/v1/customer/me')
+        ->assertOk()
+        ->assertJsonPath('data.phone_verified_at', null);
+    expect($response->json('data'))->toHaveKey('phone_verified_at');
+});
+
+it('clears phone_verified_at when patch me changes phone', function () {
+    $customer = Customer::factory()->create([
+        'name' => 'Old',
+        'phone' => '0900000001',
+        'phone_verified_at' => now(),
+    ]);
+    $this->actingAs($customer, 'customer')
+        ->patchJson('/api/v1/customer/me', ['name' => 'Old', 'phone' => '0900000002'])
+        ->assertOk()
+        ->assertJsonPath('data.phone', '0900000002')
+        ->assertJsonPath('data.phone_verified_at', null);
+    expect($customer->fresh()->phone_verified_at)->toBeNull();
+});
+
+it('keeps phone_verified_at when patch me keeps the same phone', function () {
+    $at = now()->startOfSecond();
+    $customer = Customer::factory()->create([
+        'name' => 'Old',
+        'phone' => '0900000001',
+        'phone_verified_at' => $at,
+    ]);
+    $this->actingAs($customer, 'customer')
+        ->patchJson('/api/v1/customer/me', ['name' => 'New', 'phone' => '0900000001'])
+        ->assertOk()
+        ->assertJsonPath('data.name', 'New');
+    expect($customer->fresh()->phone_verified_at?->equalTo($at))->toBeTrue();
 });
 
 it('throttles customer login', function () {

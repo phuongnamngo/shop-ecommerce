@@ -8,7 +8,7 @@ use App\Models\Customer;
 final class AuthProfile
 {
     /**
-     * @return array{id: int, code: string, name: string, email: string, phone: ?string, status: string}
+     * @return array{id: int, code: string, name: string, email: string, phone: ?string, status: string, phone_verified_at: ?string}
      */
     public static function customer(Customer $customer): array
     {
@@ -19,6 +19,7 @@ final class AuthProfile
             'email' => $customer->email,
             'phone' => $customer->phone,
             'status' => $customer->status,
+            'phone_verified_at' => $customer->phone_verified_at?->toISOString(),
         ];
     }
 

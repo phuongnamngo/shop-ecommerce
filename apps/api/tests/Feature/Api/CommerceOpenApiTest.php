@@ -113,6 +113,8 @@ it('discovers every inventory cart checkout and order operation', function () {
         '/api/v1/customer/notifications' => ['get'],
         '/api/v1/customer/notifications/read-all' => ['post'],
         '/api/v1/customer/notifications/{id}' => ['patch'],
+        '/api/v1/customer/phone/otp' => ['post'],
+        '/api/v1/customer/phone/otp/verify' => ['post'],
         '/api/v1/admin/orders' => ['get'],
         '/api/v1/admin/orders/{id}' => ['get'],
         '/api/v1/admin/orders/{id}/status' => ['patch'],
@@ -157,6 +159,9 @@ it('documents commerce response resource shapes and cardinality', function () {
     $order = commerceSuccessDataSchema($document, 'get', '/api/v1/customer/orders/{id}');
     expect($order['type'])->toBe('object')
         ->and(array_keys($order['properties']))->toContain('id', 'number', 'status', 'items');
+
+    $me = commerceSuccessDataSchema($document, 'get', '/api/v1/customer/me');
+    expect(array_keys($me['properties']))->toContain('phone_verified_at');
 
     $checkoutCreated = commerceSuccessDataSchema($document, 'post', '/api/v1/checkout', '201');
     expect(array_keys($checkoutCreated['properties']))->toContain('lookup_token');

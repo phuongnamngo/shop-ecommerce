@@ -47,6 +47,7 @@ use App\Http\Controllers\Api\V1\Customer\Auth\ResetPasswordController as Custome
 use App\Http\Controllers\Api\V1\Customer\MeController as CustomerMeController;
 use App\Http\Controllers\Api\V1\Customer\NotificationController as CustomerNotificationController;
 use App\Http\Controllers\Api\V1\Customer\OrderController as CustomerOrderController;
+use App\Http\Controllers\Api\V1\Customer\PhoneOtpController as CustomerPhoneOtpController;
 use App\Http\Controllers\Api\V1\Customer\ReviewController as CustomerReviewController;
 use App\Http\Controllers\Api\V1\Customer\WishlistController as CustomerWishlistController;
 use App\Http\Controllers\Api\V1\Geo\GeoController;
@@ -100,6 +101,10 @@ Route::prefix('v1')->group(function () {
         ->group(function () {
             Route::get('me', CustomerMeController::class);
             Route::patch('me', [CustomerMeController::class, 'update']);
+            Route::post('phone/otp', [CustomerPhoneOtpController::class, 'send'])
+                ->middleware('throttle:auth.customer.phone.otp');
+            Route::post('phone/otp/verify', [CustomerPhoneOtpController::class, 'verify'])
+                ->middleware('throttle:auth.customer.phone.verify');
             Route::get('addresses', [CustomerAddressController::class, 'index']);
             Route::post('addresses', [CustomerAddressController::class, 'store']);
             Route::patch('addresses/{id}', [CustomerAddressController::class, 'update']);

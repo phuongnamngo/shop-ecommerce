@@ -42,6 +42,24 @@ export async function patchCustomerMe(body: {
   return data;
 }
 
+export async function sendCustomerPhoneOtp(): Promise<{ expires_at: string }> {
+  const { data } = await storefrontSessionFetch<{ expires_at: string }>(
+    "/api/v1/customer/phone/otp",
+    { method: "POST", json: {} },
+  );
+  return data;
+}
+
+export async function verifyCustomerPhoneOtp(
+  code: string,
+): Promise<CustomerProfile> {
+  const { data } = await storefrontSessionFetch<CustomerProfile>(
+    "/api/v1/customer/phone/otp/verify",
+    { method: "POST", json: { code } },
+  );
+  return data;
+}
+
 export async function registerCustomer(body: {
   name: string;
   email: string;

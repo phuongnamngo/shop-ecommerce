@@ -115,4 +115,14 @@ final class ErrorCode
     public const CMS_SLUG_TAKEN = 'CMS_SLUG_TAKEN';
 
     public const NOTIFICATION_NOT_FOUND = 'NOTIFICATION_NOT_FOUND';
+
+    public const SMS_UNAVAILABLE = 'SMS_UNAVAILABLE';
+
+    public const PHONE_REQUIRED = 'PHONE_REQUIRED';
+
+    public const PHONE_ALREADY_VERIFIED = 'PHONE_ALREADY_VERIFIED';
+
+    public const PHONE_OTP_INVALID = 'PHONE_OTP_INVALID';
+
+    public const PHONE_OTP_EXPIRED = 'PHONE_OTP_EXPIRED';
 }

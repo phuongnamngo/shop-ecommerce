@@ -4,6 +4,7 @@ return [
     'reservation_ttl_minutes' => (int) env('COMMERCE_RESERVATION_TTL_MINUTES', 30),
     'default_weight_grams' => (int) env('COMMERCE_DEFAULT_WEIGHT_GRAMS', 500),
     'shipping_driver' => env('COMMERCE_SHIPPING_DRIVER', 'ghn'),
+    'sms_driver' => env('COMMERCE_SMS_DRIVER', 'unavailable'),
     'ghn' => [
         'token' => env('GHN_TOKEN', ''),
         'shop_id' => env('GHN_SHOP_ID', ''),

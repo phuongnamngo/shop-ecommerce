@@ -4998,6 +4998,12 @@
                                                         },
                                                         "status": {
                                                             "type": "string"
+                                                        },
+                                                        "phone_verified_at": {
+                                                            "type": [
+                                                                "string",
+                                                                "null"
+                                                            ]
                                                         }
                                                     },
                                                     "required": [
@@ -5006,7 +5012,8 @@
                                                         "name",
                                                         "email",
                                                         "phone",
-                                                        "status"
+                                                        "status",
+                                                        "phone_verified_at"
                                                     ]
                                                 },
                                                 "meta": {
@@ -5241,6 +5248,12 @@
                                                 },
                                                 "status": {
                                                     "type": "string"
+                                                },
+                                                "phone_verified_at": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
                                                 }
                                             },
                                             "required": [
@@ -5249,7 +5262,8 @@
                                                 "name",
                                                 "email",
                                                 "phone",
-                                                "status"
+                                                "status",
+                                                "phone_verified_at"
                                             ]
                                         },
                                         "meta": {
@@ -5315,6 +5329,12 @@
                                                 },
                                                 "status": {
                                                     "type": "string"
+                                                },
+                                                "phone_verified_at": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
                                                 }
                                             },
                                             "required": [
@@ -5323,7 +5343,8 @@
                                                 "name",
                                                 "email",
                                                 "phone",
-                                                "status"
+                                                "status",
+                                                "phone_verified_at"
                                             ]
                                         },
                                         "meta": {
@@ -6757,6 +6778,135 @@
                     },
                     "401": {
                         "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/api/v1/customer/phone/otp": {
+            "post": {
+                "operationId": "phoneOtp.send",
+                "tags": [
+                    "PhoneOtp"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OTP sent.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "expires_at": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": [
+                                                "expires_at"
+                                            ]
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
+        "/api/v1/customer/phone/otp/verify": {
+            "post": {
+                "operationId": "phoneOtp.verify",
+                "tags": [
+                    "PhoneOtp"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/VerifyPhoneOtpRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Phone verified.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer"
+                                                },
+                                                "code": {
+                                                    "type": "string"
+                                                },
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "email": {
+                                                    "type": "string"
+                                                },
+                                                "phone": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "status": {
+                                                    "type": "string"
+                                                },
+                                                "phone_verified_at": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
+                                                }
+                                            },
+                                            "required": [
+                                                "id",
+                                                "code",
+                                                "name",
+                                                "email",
+                                                "phone",
+                                                "status",
+                                                "phone_verified_at"
+                                            ]
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
                     }
                 }
             }
@@ -8868,6 +9018,12 @@
                                                 },
                                                 "status": {
                                                     "type": "string"
+                                                },
+                                                "phone_verified_at": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
                                                 }
                                             },
                                             "required": [
@@ -8876,7 +9032,8 @@
                                                 "name",
                                                 "email",
                                                 "phone",
-                                                "status"
+                                                "status",
+                                                "phone_verified_at"
                                             ]
                                         },
                                         "meta": {
@@ -14084,6 +14241,19 @@
                     }
                 },
                 "title": "UpdateProductVariantRequest"
+            },
+            "VerifyPhoneOtpRequest": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "string",
+                        "pattern": "^[0-9]{6}$"
+                    }
+                },
+                "required": [
+                    "code"
+                ],
+                "title": "VerifyPhoneOtpRequest"
             },
             "WarehouseResource": {
                 "type": "object",
