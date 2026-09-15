@@ -26,17 +26,36 @@ final class MailTemplateService
     /**
      * @param  array<string, scalar|null>  $vars
      */
-    public function interpolate(string $template, string $code, array $vars): string
+    public function interpolate(string $template, string $code, array $vars, bool $escapeHtml = true): string
     {
         foreach (self::ALLOWLIST[$code] ?? [] as $key) {
             if (! array_key_exists($key, $vars)) {
                 continue;
             }
-            $value = htmlspecialchars((string) $vars[$key], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+            $raw = (string) $vars[$key];
+            $value = $escapeHtml
+                ? htmlspecialchars($raw, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')
+                : $raw;
             $template = str_replace('{{'.$key.'}}', $value, $template);
         }
 
         return $template;
+    }
+
+    /**
+     * @param  array<string, scalar|null>  $vars
+     */
+    public function inboxTitle(string $code, array $vars): string
+    {
+        $template = NotificationTemplate::query()
+            ->where('code', $code)
+            ->where('channel', self::CHANNEL_EMAIL)
+            ->first();
+        if ($template === null) {
+            return '';
+        }
+
+        return $this->interpolate((string) $template->subject, $code, $vars, false);
     }
 
     /**

@@ -4,6 +4,7 @@ export type PageMeta = {
   total: number;
   last_page: number;
   facets?: CatalogFacets;
+  unread_count?: number;
 };
 
 export type CatalogFacetOption = {
@@ -285,4 +286,13 @@ export type GuestOrder = {
   grand_total: string;
   items: GuestOrderItem[];
   shipping_address: GuestCheckoutBody["shipping_address"] | null;
+};
+
+export type CustomerNotification = {
+  id: string;
+  code: string;
+  title: string;
+  order_id: number;
+  read_at: string | null;
+  created_at: string | null;
 };

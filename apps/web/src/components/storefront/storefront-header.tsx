@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Menu, Search, ShoppingBag, Heart, UserRound, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Menu, Search, ShoppingBag, Heart, UserRound, X, Bell } from "lucide-react";
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 
 import { MiniCartDrawer } from "@/components/storefront/mini-cart-drawer";
@@ -15,8 +16,14 @@ import {
 } from "@/components/ui/sheet";
 import { fetchActiveCart } from "@/lib/api/storefront/cart";
 import { fetchCustomerMeOrNull } from "@/lib/api/storefront/customer";
+import {
+  listCustomerNotifications,
+  markCustomerNotificationRead,
+} from "@/lib/api/storefront/notifications";
+import type { CustomerNotification } from "@/lib/api/storefront/types";
 import { fetchWishlist } from "@/lib/api/storefront/wishlist";
 import { CART_CHANGED_EVENT } from "@/lib/storefront/cart-events";
+import { emitNotificationChanged, NOTIFICATION_CHANGED_EVENT } from "@/lib/storefront/notification-events";
 import { WISHLIST_CHANGED_EVENT } from "@/lib/storefront/wishlist-events";
 import { STORE_NAME } from "@/lib/storefront/ui";
 import { cn } from "@/lib/utils";
@@ -86,6 +93,45 @@ function useWishlistCount(): number {
   return count;
 }
 
+function useInboxPreview(enabled: boolean): {
+  unread: number;
+  items: CustomerNotification[];
+} {
+  const [unread, setUnread] = useState(0);
+  const [items, setItems] = useState<CustomerNotification[]>([]);
+
+  const refresh = useCallback(async () => {
+    await Promise.resolve();
+    if (!enabled) {
+      setUnread(0);
+      setItems([]);
+      return;
+    }
+    try {
+      const res = await listCustomerNotifications(1, 5);
+      setItems(res.data);
+      setUnread(res.meta.unread_count);
+    } catch {
+      setUnread(0);
+      setItems([]);
+    }
+  }, [enabled]);
+
+  useEffect(() => {
+    const onChange = () => {
+      void refresh();
+    };
+    const frame = requestAnimationFrame(onChange);
+    window.addEventListener(NOTIFICATION_CHANGED_EVENT, onChange);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener(NOTIFICATION_CHANGED_EVENT, onChange);
+    };
+  }, [refresh]);
+
+  return { unread, items };
+}
+
 export function StorefrontHeader({
   categories,
 }: {
@@ -94,6 +140,10 @@ export function StorefrontHeader({
   const cartQty = useCartQty();
   const wishlistCount = useWishlistCount();
   const [accountHref, setAccountHref] = useState("/login");
+  const loggedIn = accountHref === "/account";
+  const inbox = useInboxPreview(loggedIn);
+  const [bellOpen, setBellOpen] = useState(false);
+  const router = useRouter();
   const [searchOpen, setSearchOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const nav = categories.slice(0, 6);
@@ -160,6 +210,15 @@ export function StorefrontHeader({
                 Wishlist
                 {wishlistCount > 0 ? ` (${wishlistCount})` : ""}
               </Link>
+              {loggedIn ? (
+                <Link
+                  href="/account/notifications"
+                  className="rounded-lg px-3 py-3 hover:bg-slate-50"
+                >
+                  Thông báo
+                  {inbox.unread > 0 ? ` (${inbox.unread})` : ""}
+                </Link>
+              ) : null}
               <Link
                 href={accountHref}
                 className="rounded-lg px-3 py-3 hover:bg-slate-50"
@@ -207,6 +266,83 @@ export function StorefrontHeader({
           >
             {searchOpen ? <X /> : <Search />}
           </Button>
+          {loggedIn ? (
+            <>
+              <Button variant="ghost" size="icon" asChild className="md:hidden">
+                <Link
+                  href="/account/notifications"
+                  aria-label={`Thông báo${inbox.unread > 0 ? `, ${inbox.unread} chưa đọc` : ""}`}
+                  className="relative"
+                >
+                  <Bell />
+                  {inbox.unread > 0 ? (
+                    <span className="absolute right-1 top-1 inline-flex min-w-4 items-center justify-center rounded-full bg-blue-600 px-1 text-[10px] font-bold text-white">
+                      {inbox.unread > 99 ? "99+" : inbox.unread}
+                    </span>
+                  ) : null}
+                </Link>
+              </Button>
+              <div className="relative hidden md:block">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="relative"
+                  aria-label={`Thông báo${inbox.unread > 0 ? `, ${inbox.unread} chưa đọc` : ""}`}
+                  aria-expanded={bellOpen}
+                  onClick={() => setBellOpen((v) => !v)}
+                >
+                  <Bell />
+                  {inbox.unread > 0 ? (
+                    <span className="absolute right-1 top-1 inline-flex min-w-4 items-center justify-center rounded-full bg-blue-600 px-1 text-[10px] font-bold text-white">
+                      {inbox.unread > 99 ? "99+" : inbox.unread}
+                    </span>
+                  ) : null}
+                </Button>
+                {bellOpen ? (
+                  <div className="absolute right-0 top-full z-50 mt-1 w-80 rounded-xl border border-slate-200 bg-white p-2 shadow-lg">
+                    {inbox.items.length === 0 ? (
+                      <p className="px-3 py-6 text-center text-sm text-slate-500">
+                        Chưa có thông báo.
+                      </p>
+                    ) : (
+                      <ul className="max-h-80 overflow-y-auto">
+                        {inbox.items.map((item) => (
+                          <li key={item.id}>
+                            <button
+                              type="button"
+                              className="w-full rounded-lg px-3 py-2 text-left text-sm hover:bg-slate-50"
+                              onClick={() => {
+                                void markCustomerNotificationRead(item.id)
+                                  .then(() => {
+                                    emitNotificationChanged();
+                                    setBellOpen(false);
+                                    router.push(`/account/orders/${item.order_id}`);
+                                  })
+                                  .catch(() => {
+                                    router.push(`/account/orders/${item.order_id}`);
+                                  });
+                              }}
+                            >
+                              <span className={item.read_at ? "text-slate-600" : "font-semibold text-slate-950"}>
+                                {item.title}
+                              </span>
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    <Link
+                      href="/account/notifications"
+                      className="mt-1 block rounded-lg px-3 py-2 text-center text-sm font-medium text-blue-700 hover:bg-blue-50"
+                      onClick={() => setBellOpen(false)}
+                    >
+                      Xem tất cả
+                    </Link>
+                  </div>
+                ) : null}
+              </div>
+            </>
+          ) : null}
           <Button variant="ghost" size="icon" asChild>
             <Link
               href={wishlistHref}

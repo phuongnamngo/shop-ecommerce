@@ -113,4 +113,6 @@ final class ErrorCode
     public const CMS_BANNER_NOT_FOUND = 'CMS_BANNER_NOT_FOUND';
 
     public const CMS_SLUG_TAKEN = 'CMS_SLUG_TAKEN';
+
+    public const NOTIFICATION_NOT_FOUND = 'NOTIFICATION_NOT_FOUND';
 }

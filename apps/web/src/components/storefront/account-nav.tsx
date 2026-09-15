@@ -8,13 +8,13 @@ import {
   Package,
   UserRound,
   LayoutDashboard,
+  Heart,
+  Bell,
 } from "lucide-react";
 
 import { logoutCustomer } from "@/lib/api/storefront/customer";
 import { emitCartChanged } from "@/lib/storefront/cart-events";
 import { cn } from "@/lib/utils";
-
-import { Heart } from "lucide-react";
 
 const links = [
   { href: "/account", label: "Tổng quan", icon: LayoutDashboard },
@@ -22,6 +22,7 @@ const links = [
   { href: "/account/addresses", label: "Địa chỉ", icon: MapPin },
   { href: "/account/orders", label: "Đơn hàng", icon: Package },
   { href: "/account/wishlist", label: "Wishlist", icon: Heart },
+  { href: "/account/notifications", label: "Thông báo", icon: Bell },
 ];
 
 function isActive(pathname: string, href: string): boolean {

@@ -213,6 +213,7 @@ final class CheckoutService
             'order_number' => (string) $order->number,
             'grand_total' => (string) $order->grand_total,
             'customer_name' => (string) $customer->name,
+            'order_id' => (int) $order->id,
         ]);
     }
 

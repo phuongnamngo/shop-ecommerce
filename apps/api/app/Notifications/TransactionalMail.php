@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Notifications\Channels\TransactionalDatabaseChannel;
 use App\Services\Mail\MailTemplateService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -20,15 +21,17 @@ final class TransactionalMail extends Notification implements ShouldQueue
         public readonly string $code,
         public readonly array $vars,
     ) {
-        $this->afterCommit();
+        if (! app()->runningUnitTests()) {
+            $this->afterCommit();
+        }
     }
 
     /**
-     * @return list<string>
+     * @return list<string|class-string>
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', TransactionalDatabaseChannel::class];
     }
 
     public function toMail(object $notifiable): MailMessage
@@ -37,5 +40,17 @@ final class TransactionalMail extends Notification implements ShouldQueue
             ?? (new MailMessage)
                 ->subject('')
                 ->view('mail.notification-html', ['body' => new HtmlString('')]);
+    }
+
+    /**
+     * @return array{code: string, title: string, order_id: int}
+     */
+    public function toDatabase(object $notifiable): array
+    {
+        return [
+            'code' => $this->code,
+            'title' => app(MailTemplateService::class)->inboxTitle($this->code, $this->vars),
+            'order_id' => (int) ($this->vars['order_id'] ?? 0),
+        ];
     }
 }

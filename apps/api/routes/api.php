@@ -45,6 +45,7 @@ use App\Http\Controllers\Api\V1\Customer\Auth\LogoutController as CustomerLogout
 use App\Http\Controllers\Api\V1\Customer\Auth\RegisterController as CustomerRegisterController;
 use App\Http\Controllers\Api\V1\Customer\Auth\ResetPasswordController as CustomerResetPasswordController;
 use App\Http\Controllers\Api\V1\Customer\MeController as CustomerMeController;
+use App\Http\Controllers\Api\V1\Customer\NotificationController as CustomerNotificationController;
 use App\Http\Controllers\Api\V1\Customer\OrderController as CustomerOrderController;
 use App\Http\Controllers\Api\V1\Customer\ReviewController as CustomerReviewController;
 use App\Http\Controllers\Api\V1\Customer\WishlistController as CustomerWishlistController;
@@ -110,6 +111,9 @@ Route::prefix('v1')->group(function () {
             Route::post('cart/merge', [CartController::class, 'merge']);
             Route::get('orders', [CustomerOrderController::class, 'index']);
             Route::get('orders/{id}', [CustomerOrderController::class, 'show']);
+            Route::get('notifications', [CustomerNotificationController::class, 'index']);
+            Route::post('notifications/read-all', [CustomerNotificationController::class, 'readAll']);
+            Route::patch('notifications/{id}', [CustomerNotificationController::class, 'update']);
             Route::get('wishlist', [CustomerWishlistController::class, 'show']);
             Route::post('wishlist/items', [CustomerWishlistController::class, 'storeItem']);
             Route::delete('wishlist/items/{id}', [CustomerWishlistController::class, 'destroyItem']);

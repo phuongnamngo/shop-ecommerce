@@ -26,6 +26,16 @@ it('html-escapes replacement values', function () {
     expect($out)->toBe('<p>A &lt;b&gt;x&lt;/b&gt;</p>');
 });
 
+it('does not html-escape values when escapeHtml is false', function () {
+    $out = (new MailTemplateService)->interpolate(
+        'Hi {{customer_name}}',
+        'order.placed',
+        ['customer_name' => 'A & B', 'order_number' => '1', 'grand_total' => '1'],
+        false,
+    );
+    expect($out)->toBe('Hi A & B');
+});
+
 it('returns null and logs when the email template is missing', function () {
     Log::spy();
     $mail = (new MailTemplateService)->mailMessage('order.placed', [
