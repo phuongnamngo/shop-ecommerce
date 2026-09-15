@@ -107,4 +107,10 @@ final class ErrorCode
     public const SHIPPING_SERVICE_INVALID = 'SHIPPING_SERVICE_INVALID';
 
     public const SHIPPING_QUOTE_INVALID_GEO = 'SHIPPING_QUOTE_INVALID_GEO';
+
+    public const CMS_PAGE_NOT_FOUND = 'CMS_PAGE_NOT_FOUND';
+
+    public const CMS_BANNER_NOT_FOUND = 'CMS_BANNER_NOT_FOUND';
+
+    public const CMS_SLUG_TAKEN = 'CMS_SLUG_TAKEN';
 }

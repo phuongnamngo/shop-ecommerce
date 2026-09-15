@@ -7,6 +7,7 @@ import {
   Warehouse,
   Users,
   CreditCard,
+  FileText,
 } from "lucide-react";
 
 export type AdminNavItem = {
@@ -41,6 +42,15 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
       { href: "/admin/promotions/discounts", label: "Discounts" },
       { href: "/admin/promotions/coupons", label: "Coupons" },
       { href: "/admin/promotions/flash-sales", label: "Flash sales" },
+    ],
+  },
+  {
+    href: "/admin/cms/pages",
+    label: "Nội dung",
+    icon: FileText,
+    children: [
+      { href: "/admin/cms/pages", label: "Pages" },
+      { href: "/admin/cms/banners", label: "Banners" },
     ],
   },
 ];
@@ -85,6 +95,12 @@ export function adminBreadcrumb(pathname: string): {
   }
   if (pathname.startsWith("/admin/promotions/discounts")) {
     return { parent: "Khuyến mãi", current: "Discounts" };
+  }
+  if (pathname.startsWith("/admin/cms/banners")) {
+    return { parent: "Nội dung", current: "Banners" };
+  }
+  if (pathname.startsWith("/admin/cms/pages")) {
+    return { parent: "Nội dung", current: "Pages" };
   }
   const match = ADMIN_NAV_ITEMS.find(
     (item) => item.href !== "/admin" && isNavActive(pathname, item.href),

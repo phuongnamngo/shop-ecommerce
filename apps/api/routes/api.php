@@ -13,6 +13,8 @@ use App\Http\Controllers\Api\V1\Admin\Catalog\ProductController as AdminProductC
 use App\Http\Controllers\Api\V1\Admin\Catalog\ProductImageController as AdminProductImageController;
 use App\Http\Controllers\Api\V1\Admin\Catalog\ProductVariantController as AdminProductVariantController;
 use App\Http\Controllers\Api\V1\Admin\Catalog\ProductVariantImageController as AdminProductVariantImageController;
+use App\Http\Controllers\Api\V1\Admin\Cms\BannerController as AdminCmsBannerController;
+use App\Http\Controllers\Api\V1\Admin\Cms\PageController as AdminCmsPageController;
 use App\Http\Controllers\Api\V1\Admin\Customer\CustomerController as AdminCustomerController;
 use App\Http\Controllers\Api\V1\Admin\Dashboard\MetricsController as AdminDashboardMetricsController;
 use App\Http\Controllers\Api\V1\Admin\Engagement\ReviewController as AdminReviewController;
@@ -33,6 +35,8 @@ use App\Http\Controllers\Api\V1\Catalog\CategoryController as PublicCategoryCont
 use App\Http\Controllers\Api\V1\Catalog\ProductController as PublicProductController;
 use App\Http\Controllers\Api\V1\Catalog\ProductReviewController as PublicProductReviewController;
 use App\Http\Controllers\Api\V1\Catalog\SearchSuggestController;
+use App\Http\Controllers\Api\V1\Cms\BannerController as PublicCmsBannerController;
+use App\Http\Controllers\Api\V1\Cms\PageController as PublicCmsPageController;
 use App\Http\Controllers\Api\V1\Checkout\CheckoutController;
 use App\Http\Controllers\Api\V1\Customer\AddressController as CustomerAddressController;
 use App\Http\Controllers\Api\V1\Customer\Auth\ForgotPasswordController as CustomerForgotPasswordController;
@@ -68,6 +72,9 @@ Route::prefix('v1')->group(function () {
     Route::get('catalog/products/{slug}', [PublicProductController::class, 'show']);
     Route::get('catalog/brands', [PublicBrandController::class, 'index']);
     Route::get('catalog/categories', [PublicCategoryController::class, 'index']);
+    Route::get('cms/pages', [PublicCmsPageController::class, 'index']);
+    Route::get('cms/pages/{slug}', [PublicCmsPageController::class, 'show']);
+    Route::get('cms/banners', [PublicCmsBannerController::class, 'index']);
     Route::get('shipping/methods', [PublicShippingMethodController::class, 'index']);
     Route::post('shipping/quotes', [ShippingQuoteController::class, 'store']);
     Route::post('webhooks/ghn', [GhnWebhookController::class, 'store']);
@@ -250,6 +257,21 @@ Route::prefix('v1')->group(function () {
             });
             Route::middleware('permission:engagement.reviews.manage,admin')->group(function () {
                 Route::patch('reviews/{id}', [AdminReviewController::class, 'update']);
+            });
+
+            Route::middleware('permission:cms.view,admin')->group(function () {
+                Route::get('cms/pages', [AdminCmsPageController::class, 'index']);
+                Route::get('cms/pages/{id}', [AdminCmsPageController::class, 'show']);
+                Route::get('cms/banners', [AdminCmsBannerController::class, 'index']);
+                Route::get('cms/banners/{id}', [AdminCmsBannerController::class, 'show']);
+            });
+            Route::middleware('permission:cms.manage,admin')->group(function () {
+                Route::post('cms/pages', [AdminCmsPageController::class, 'store']);
+                Route::patch('cms/pages/{id}', [AdminCmsPageController::class, 'update']);
+                Route::delete('cms/pages/{id}', [AdminCmsPageController::class, 'destroy']);
+                Route::post('cms/banners', [AdminCmsBannerController::class, 'store']);
+                Route::patch('cms/banners/{id}', [AdminCmsBannerController::class, 'update']);
+                Route::delete('cms/banners/{id}', [AdminCmsBannerController::class, 'destroy']);
             });
         });
 });

@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 
 import { listPublicProducts } from "@/lib/api/storefront/catalog";
+import { listPublicCmsPages } from "@/lib/api/storefront/cms";
 
 function siteOrigin(): string {
   return (
@@ -14,6 +15,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${origin}/` },
     { url: `${origin}/products` },
   ];
+
+  try {
+    const pages = await listPublicCmsPages();
+    for (const page of pages) {
+      entries.push({ url: `${origin}/pages/${page.slug}` });
+    }
+  } catch {
+    /* keep static entries */
+  }
 
   try {
     let page = 1;

@@ -10,6 +10,7 @@ import {
 import { EmptyState } from "@/components/storefront/empty-state";
 import { ProductCard } from "@/components/storefront/product-card";
 import { listPublicCategories, listPublicProducts } from "@/lib/api/storefront/catalog";
+import { listPublicCmsBanners } from "@/lib/api/storefront/cms";
 import { absoluteMediaUrl } from "@/lib/api/storefront/client";
 import { leafCategories } from "@/lib/api/storefront/resolve";
 import type { PublicProductListItem } from "@/lib/api/storefront/types";
@@ -46,6 +47,8 @@ export default async function HomePage() {
   let productError = false;
   let categories: Awaited<ReturnType<typeof listPublicCategories>> = [];
   let products: Awaited<ReturnType<typeof listPublicProducts>>["data"] = [];
+  let hero: Awaited<ReturnType<typeof listPublicCmsBanners>>["homepage_hero"][number] | null =
+    null;
 
   try {
     categories = await listPublicCategories();
@@ -64,14 +67,14 @@ export default async function HomePage() {
     productError = true;
   }
 
-  const heroProduct =
-    pickProduct(products, "demo-tee") ?? products[0];
-  const heroSrc = heroProduct
-    ? absoluteMediaUrl(
-        heroProduct.primary_image?.url ??
-          heroProduct.primary_image?.thumbnail_url,
-      )
-    : null;
+  try {
+    const banners = await listPublicCmsBanners();
+    hero = banners.homepage_hero[0] ?? null;
+  } catch {
+    hero = null;
+  }
+
+  const heroSrc = hero ? absoluteMediaUrl(hero.image_url) : null;
   const look = [
     pickProduct(products, "ao-khoac-denim-classic"),
     pickProduct(products, "ao-polo-det-kim-navy"),
@@ -93,35 +96,27 @@ export default async function HomePage() {
         >
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-600">
-              Bộ sưu tập mới
+              {STORE_NAME}
             </p>
             <h1 className="mt-3 max-w-xl text-4xl font-bold leading-tight tracking-tight text-slate-950 sm:text-[44px] sm:leading-[1.15]">
-              NEW SEASON / URBAN ESSENTIALS
+              {hero?.title ?? "Watch"}
             </h1>
-            <p className="mt-4 max-w-lg text-base leading-relaxed text-slate-500">
-              Thời trang nam tối giản, dễ mặc mỗi ngày. Khám phá hàng mới — giá
-              và tồn kho luôn lấy từ hệ thống.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                href="/products"
-                className="inline-flex h-12 items-center rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white hover:bg-blue-700"
-              >
-                Xem bộ sưu tập
-              </Link>
-              <Link
-                href="/products?sort=newest"
-                className="inline-flex h-12 items-center rounded-lg border border-slate-200 bg-white px-6 text-sm font-semibold text-slate-900 hover:bg-slate-50"
-              >
-                Hàng mới
-              </Link>
-            </div>
+            {hero?.link_url ? (
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link
+                  href={hero.link_url}
+                  className="inline-flex h-12 items-center rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white hover:bg-blue-700"
+                >
+                  Mua ngay
+                </Link>
+              </div>
+            ) : null}
           </div>
           <div className="relative min-h-[320px] overflow-hidden rounded-xl bg-slate-900 lg:min-h-[480px]">
-            {heroSrc && heroProduct ? (
+            {heroSrc ? (
               <Image
                 src={heroSrc}
-                alt={heroProduct.primary_image?.alt ?? heroProduct.name}
+                alt={hero?.title ?? STORE_NAME}
                 fill
                 priority
                 sizes="(min-width: 1024px) 50vw, 100vw"
@@ -137,20 +132,6 @@ export default async function HomePage() {
                 </div>
               </div>
             )}
-            {heroProduct ? (
-              <div className="absolute bottom-4 left-4 right-4 rounded-xl bg-white/95 p-4 shadow-lg">
-                <p className="text-xs uppercase tracking-wide text-slate-500">
-                  {heroProduct.brand?.name ?? "Hàng mới"}
-                </p>
-                <p className="font-semibold">{heroProduct.name}</p>
-                <Link
-                  href={`/products/${heroProduct.slug}`}
-                  className="mt-2 inline-flex text-sm font-semibold text-blue-600"
-                >
-                  Xem chi tiết
-                </Link>
-              </div>
-            ) : null}
           </div>
         </div>
       </section>

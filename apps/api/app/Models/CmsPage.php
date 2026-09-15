@@ -14,6 +14,10 @@ class CmsPage extends Model
     /** @use HasFactory<CmsPageFactory> */
     use HasFactory, SoftDeletes;
 
+    public const STATUS_DRAFT = 'draft';
+
+    public const STATUS_PUBLISHED = 'published';
+
     protected function casts(): array
     {
         return ['published_at' => 'datetime'];

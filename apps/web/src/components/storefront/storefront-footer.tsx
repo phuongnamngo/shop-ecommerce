@@ -1,8 +1,13 @@
 import Link from "next/link";
 
+import type { PublicCmsPageListItem } from "@/lib/api/storefront/cms";
 import { STORE_NAME } from "@/lib/storefront/ui";
 
-export function StorefrontFooter() {
+export function StorefrontFooter({
+  pages,
+}: {
+  pages: PublicCmsPageListItem[];
+}) {
   const year = new Date().getFullYear();
   return (
     <footer className="mt-auto border-t border-slate-200 bg-white">
@@ -44,9 +49,19 @@ export function StorefrontFooter() {
         </div>
         <div>
           <p className="text-sm font-semibold">Về chúng tôi</p>
-          <p className="mt-3 text-sm leading-relaxed text-slate-500">
-            Giao hàng toàn quốc · Đổi trả 30 ngày · Thanh toán COD và VNPay.
-          </p>
+          {pages.length > 0 ? (
+            <nav className="mt-3 flex flex-col gap-2 text-sm text-slate-600">
+              {pages.map((page) => (
+                <Link
+                  key={page.slug}
+                  href={`/pages/${page.slug}`}
+                  className="hover:text-slate-950"
+                >
+                  {page.title}
+                </Link>
+              ))}
+            </nav>
+          ) : null}
         </div>
       </div>
       <div className="border-t border-slate-200">

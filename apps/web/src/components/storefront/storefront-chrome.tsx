@@ -7,6 +7,10 @@ import { StorefrontBottomNav } from "@/components/storefront/storefront-bottom-n
 import { StorefrontFooter } from "@/components/storefront/storefront-footer";
 import { StorefrontHeader } from "@/components/storefront/storefront-header";
 import { StorefrontPromoBar } from "@/components/storefront/storefront-promo-bar";
+import type {
+  PublicCmsBanner,
+  PublicCmsPageListItem,
+} from "@/lib/api/storefront/cms";
 
 type NavCategory = { name: string; slug: string };
 
@@ -30,9 +34,13 @@ function hideBottomNav(pathname: string): boolean {
 
 export function StorefrontChrome({
   categories,
+  promo,
+  pages,
   children,
 }: {
   categories: NavCategory[];
+  promo: PublicCmsBanner | null;
+  pages: PublicCmsPageListItem[];
   children: ReactNode;
 }) {
   const pathname = usePathname();
@@ -45,12 +53,12 @@ export function StorefrontChrome({
 
   return (
     <>
-      <StorefrontPromoBar />
+      <StorefrontPromoBar promo={promo} />
       <StorefrontHeader categories={categories} />
       <div className={compactBottom ? "flex-1" : "flex-1 pb-20 md:pb-0"}>
         {children}
       </div>
-      <StorefrontFooter />
+      <StorefrontFooter pages={pages} />
       {compactBottom ? null : <StorefrontBottomNav />}
     </>
   );

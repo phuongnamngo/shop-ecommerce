@@ -3,6 +3,12 @@ import type { Metadata } from "next";
 
 import { StorefrontChrome } from "@/components/storefront/storefront-chrome";
 import { listPublicCategories } from "@/lib/api/storefront/catalog";
+import {
+  listPublicCmsBanners,
+  listPublicCmsPages,
+  type PublicCmsBanner,
+  type PublicCmsPageListItem,
+} from "@/lib/api/storefront/cms";
 import { leafCategories } from "@/lib/api/storefront/resolve";
 
 const beVietnam = Be_Vietnam_Pro({
@@ -28,6 +34,9 @@ export default async function StorefrontLayout({
   children: React.ReactNode;
 }) {
   let categories: Array<{ name: string; slug: string }> = [];
+  let promo: PublicCmsBanner | null = null;
+  let pages: PublicCmsPageListItem[] = [];
+
   try {
     const tree = await listPublicCategories();
     categories = leafCategories(tree).map((c) => ({
@@ -38,9 +47,24 @@ export default async function StorefrontLayout({
     categories = [];
   }
 
+  try {
+    const banners = await listPublicCmsBanners();
+    promo = banners.promo_bar[0] ?? null;
+  } catch {
+    promo = null;
+  }
+
+  try {
+    pages = await listPublicCmsPages();
+  } catch {
+    pages = [];
+  }
+
   return (
     <div className={`${beVietnam.variable} storefront flex min-h-full flex-col`}>
-      <StorefrontChrome categories={categories}>{children}</StorefrontChrome>
+      <StorefrontChrome categories={categories} promo={promo} pages={pages}>
+        {children}
+      </StorefrontChrome>
     </div>
   );
 }

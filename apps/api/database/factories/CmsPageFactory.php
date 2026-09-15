@@ -21,8 +21,16 @@ class CmsPageFactory extends Factory
             'slug' => Str::slug($title).'-'.Str::lower(Str::random(4)),
             'title' => $title,
             'body' => fake()->paragraph(),
-            'status' => 'draft',
+            'status' => CmsPage::STATUS_DRAFT,
             'published_at' => null,
         ];
+    }
+
+    public function published(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => CmsPage::STATUS_PUBLISHED,
+            'published_at' => now(),
+        ]);
     }
 }

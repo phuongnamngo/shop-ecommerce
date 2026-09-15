@@ -70,3 +70,15 @@ it('seeds payment permissions for admin roles', function () {
         ->and($staff->hasPermissionTo('payments.view', 'admin'))->toBeTrue()
         ->and($staff->hasPermissionTo('payments.manage', 'admin'))->toBeFalse();
 });
+
+it('seeds cms view and manage permissions for admin roles', function () {
+    $this->seed(RolesAndPermissionsSeeder::class);
+
+    $admin = Role::findByName('admin', 'admin');
+    $staff = Role::findByName('staff', 'admin');
+
+    expect($admin->hasPermissionTo('cms.view', 'admin'))->toBeTrue()
+        ->and($admin->hasPermissionTo('cms.manage', 'admin'))->toBeTrue()
+        ->and($staff->hasPermissionTo('cms.view', 'admin'))->toBeTrue()
+        ->and($staff->hasPermissionTo('cms.manage', 'admin'))->toBeFalse();
+});
