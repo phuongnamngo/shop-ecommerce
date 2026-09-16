@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\LogsAdminCauser;
 use Database\Factories\ProductVariantFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,6 +11,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 #[Fillable([
     'code', 'product_id', 'sku', 'barcode', 'price', 'compare_at_price', 'weight_grams', 'is_default', 'status',
@@ -17,7 +20,16 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class ProductVariant extends Model
 {
     /** @use HasFactory<ProductVariantFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory, LogsActivity, LogsAdminCauser, SoftDeletes;
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('product_variant')
+            ->logFillable()
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
 
     public const STATUS_DRAFT = 'draft';
 

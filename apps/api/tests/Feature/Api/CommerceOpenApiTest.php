@@ -137,6 +137,7 @@ it('discovers every inventory cart checkout and order operation', function () {
         '/api/v1/settings' => ['get'],
         '/api/v1/admin/settings' => ['get'],
         '/api/v1/admin/settings/{key}' => ['patch'],
+        '/api/v1/admin/activity' => ['get'],
     ];
 
     foreach ($expected as $path => $methods) {

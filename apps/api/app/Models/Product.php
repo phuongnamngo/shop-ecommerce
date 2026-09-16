@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Jobs\MakeProductSearchable;
+use App\Models\Concerns\LogsAdminCauser;
 use App\Services\Catalog\CatalogProductService;
 use App\Support\CatalogSearchDocument;
 use Database\Factories\ProductFactory;
@@ -15,6 +16,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 #[Fillable([
     'code', 'brand_id', 'name', 'slug', 'status', 'published_at', 'description', 'meta_title', 'meta_description', 'created_by', 'updated_by',
@@ -22,7 +25,16 @@ use Laravel\Scout\Searchable;
 class Product extends Model
 {
     /** @use HasFactory<ProductFactory> */
-    use HasFactory, Searchable, SoftDeletes;
+    use HasFactory, LogsActivity, LogsAdminCauser, Searchable, SoftDeletes;
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('product')
+            ->logFillable()
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
 
     public const STATUS_DRAFT = 'draft';
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\Admin\Activity\ActivityController as AdminActivityController;
 use App\Http\Controllers\Api\V1\Admin\Auth\ForgotPasswordController as AdminForgotPasswordController;
 use App\Http\Controllers\Api\V1\Admin\Auth\LoginController as AdminLoginController;
 use App\Http\Controllers\Api\V1\Admin\Auth\LogoutController as AdminLogoutController;
@@ -286,6 +287,9 @@ Route::prefix('v1')->group(function () {
                 Route::post('cms/banners', [AdminCmsBannerController::class, 'store']);
                 Route::patch('cms/banners/{id}', [AdminCmsBannerController::class, 'update']);
                 Route::delete('cms/banners/{id}', [AdminCmsBannerController::class, 'destroy']);
+            });
+            Route::middleware('permission:activity.view,admin')->group(function () {
+                Route::get('activity', [AdminActivityController::class, 'index']);
             });
             Route::middleware('permission:settings.view,admin')->group(function () {
                 Route::get('settings', [AdminSettingController::class, 'index']);

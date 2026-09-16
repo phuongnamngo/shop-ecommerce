@@ -94,3 +94,13 @@ it('seeds settings view and manage permissions for admin roles', function () {
         ->and($staff->hasPermissionTo('settings.view', 'admin'))->toBeTrue()
         ->and($staff->hasPermissionTo('settings.manage', 'admin'))->toBeFalse();
 });
+
+it('seeds activity view permission for admin roles', function () {
+    $this->seed(RolesAndPermissionsSeeder::class);
+
+    $admin = Role::findByName('admin', 'admin');
+    $staff = Role::findByName('staff', 'admin');
+
+    expect($admin->hasPermissionTo('activity.view', 'admin'))->toBeTrue()
+        ->and($staff->hasPermissionTo('activity.view', 'admin'))->toBeTrue();
+});

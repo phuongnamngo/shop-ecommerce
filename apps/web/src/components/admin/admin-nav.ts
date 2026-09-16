@@ -8,6 +8,7 @@ import {
   Users,
   CreditCard,
   FileText,
+  History,
   Settings,
 } from "lucide-react";
 
@@ -55,6 +56,7 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     ],
   },
   { href: "/admin/settings", label: "Cài đặt", icon: Settings },
+  { href: "/admin/activity", label: "Nhật ký", icon: History },
 ];
 
 export function isNavActive(pathname: string, href: string): boolean {
@@ -100,6 +102,9 @@ export function adminBreadcrumb(pathname: string): {
   }
   if (pathname.startsWith("/admin/settings")) {
     return { parent: "Overview", current: "Settings" };
+  }
+  if (pathname.startsWith("/admin/activity")) {
+    return { parent: "Overview", current: "Activity" };
   }
   if (pathname.startsWith("/admin/cms/banners")) {
     return { parent: "Nội dung", current: "Banners" };
