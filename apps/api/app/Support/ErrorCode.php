@@ -114,6 +114,8 @@ final class ErrorCode
 
     public const CMS_SLUG_TAKEN = 'CMS_SLUG_TAKEN';
 
+    public const SETTINGS_NOT_FOUND = 'SETTINGS_NOT_FOUND';
+
     public const NOTIFICATION_NOT_FOUND = 'NOTIFICATION_NOT_FOUND';
 
     public const SMS_UNAVAILABLE = 'SMS_UNAVAILABLE';

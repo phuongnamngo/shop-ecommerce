@@ -13,8 +13,9 @@ import { listPublicCategories, listPublicProducts } from "@/lib/api/storefront/c
 import { listPublicCmsBanners } from "@/lib/api/storefront/cms";
 import { absoluteMediaUrl } from "@/lib/api/storefront/client";
 import { leafCategories } from "@/lib/api/storefront/resolve";
+import { getPublicSettings } from "@/lib/api/storefront/settings";
 import type { PublicProductListItem } from "@/lib/api/storefront/types";
-import { STORE_NAME, sfContainer } from "@/lib/storefront/ui";
+import { sfContainer } from "@/lib/storefront/ui";
 
 export const dynamic = "force-dynamic";
 
@@ -74,6 +75,8 @@ export default async function HomePage() {
     hero = null;
   }
 
+  const settings = await getPublicSettings();
+  const storeName = settings.site.name;
   const heroSrc = hero ? absoluteMediaUrl(hero.image_url) : null;
   const look = [
     pickProduct(products, "ao-khoac-denim-classic"),
@@ -96,10 +99,10 @@ export default async function HomePage() {
         >
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-600">
-              {STORE_NAME}
+              {storeName}
             </p>
             <h1 className="mt-3 max-w-xl text-4xl font-bold leading-tight tracking-tight text-slate-950 sm:text-[44px] sm:leading-[1.15]">
-              {hero?.title ?? "Watch"}
+              {hero?.title ?? storeName}
             </h1>
             {hero?.link_url ? (
               <div className="mt-8 flex flex-wrap gap-3">
@@ -116,7 +119,7 @@ export default async function HomePage() {
             {heroSrc ? (
               <Image
                 src={heroSrc}
-                alt={hero?.title ?? STORE_NAME}
+                alt={hero?.title ?? storeName}
                 fill
                 priority
                 sizes="(min-width: 1024px) 50vw, 100vw"
@@ -126,7 +129,7 @@ export default async function HomePage() {
               <div className="flex h-full min-h-[320px] items-end p-8 text-white lg:min-h-[480px]">
                 <div>
                   <p className="text-xs uppercase tracking-[0.2em] text-white/70">
-                    {STORE_NAME}
+                    {storeName}
                   </p>
                   <p className="mt-2 text-2xl font-semibold">Urban essentials</p>
                 </div>
@@ -318,7 +321,7 @@ export default async function HomePage() {
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
             Cam kết
           </p>
-          <h2 className="mt-2 text-2xl font-semibold">Vì sao chọn {STORE_NAME}?</h2>
+          <h2 className="mt-2 text-2xl font-semibold">Vì sao chọn {storeName}?</h2>
           <ul className="mt-8 grid gap-4 text-left sm:grid-cols-3">
             {[
               {

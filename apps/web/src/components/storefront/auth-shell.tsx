@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { ArrowLeft, ShieldCheck, Truck } from "lucide-react";
 
-import { STORE_NAME } from "@/lib/storefront/ui";
+import { useStoreName } from "@/lib/storefront/store-name-context";
 
 export function AuthShell({
   title,
@@ -13,6 +13,7 @@ export function AuthShell({
   subtitle?: string;
   children: ReactNode;
 }) {
+  const storeName = useStoreName();
   return (
     <div className="grid min-h-full lg:grid-cols-2">
       <aside className="relative hidden min-h-full overflow-hidden bg-slate-950 text-white lg:flex">
@@ -20,7 +21,7 @@ export function AuthShell({
         <div className="relative flex w-full flex-col justify-between p-12">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-300">
-              {STORE_NAME} campaign
+              {storeName} campaign
             </p>
             <p className="mt-16 text-4xl font-bold leading-tight">
               NEW SEASON
@@ -59,7 +60,7 @@ export function AuthShell({
             href="/"
             className="text-lg font-bold tracking-[0.18em] text-slate-950"
           >
-            {STORE_NAME}
+            {storeName}
           </Link>
           <h1 className="mt-6 text-3xl font-bold tracking-tight">{title}</h1>
           {subtitle ? (

@@ -44,6 +44,8 @@ class RolesAndPermissionsSeeder extends Seeder
             'payments.manage',
             'cms.view',
             'cms.manage',
+            'settings.view',
+            'settings.manage',
         ];
 
         foreach ($permissions as $name) {
@@ -84,6 +86,8 @@ class RolesAndPermissionsSeeder extends Seeder
             'payments.manage',
             'cms.view',
             'cms.manage',
+            'settings.view',
+            'settings.manage',
         ]);
 
         $staff->syncPermissions([
@@ -100,6 +104,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'engagement.reviews.view',
             'payments.view',
             'cms.view',
+            'settings.view',
         ]);
     }
 }

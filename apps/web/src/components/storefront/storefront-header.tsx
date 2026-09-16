@@ -25,7 +25,6 @@ import { fetchWishlist } from "@/lib/api/storefront/wishlist";
 import { CART_CHANGED_EVENT } from "@/lib/storefront/cart-events";
 import { emitNotificationChanged, NOTIFICATION_CHANGED_EVENT } from "@/lib/storefront/notification-events";
 import { WISHLIST_CHANGED_EVENT } from "@/lib/storefront/wishlist-events";
-import { STORE_NAME } from "@/lib/storefront/ui";
 import { cn } from "@/lib/utils";
 
 type NavCategory = { name: string; slug: string };
@@ -134,8 +133,10 @@ function useInboxPreview(enabled: boolean): {
 
 export function StorefrontHeader({
   categories,
+  storeName,
 }: {
   categories: NavCategory[];
+  storeName: string;
 }) {
   const cartQty = useCartQty();
   const wishlistCount = useWishlistCount();
@@ -179,7 +180,7 @@ export function StorefrontHeader({
             side="left"
             className="w-80 bg-white text-slate-900"
           >
-            <SheetTitle className="text-slate-900">{STORE_NAME}</SheetTitle>
+            <SheetTitle className="text-slate-900">{storeName}</SheetTitle>
             <nav className="flex flex-col gap-1 pt-4 text-sm">
               <Link
                 href="/products"
@@ -233,7 +234,7 @@ export function StorefrontHeader({
           href="/"
           className="text-lg font-bold tracking-[0.18em] text-slate-950"
         >
-          {STORE_NAME}
+          {storeName}
         </Link>
 
         <nav className="hidden items-center gap-1 text-sm font-medium md:flex">

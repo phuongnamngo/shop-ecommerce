@@ -11,6 +11,7 @@ import type {
   PublicCmsBanner,
   PublicCmsPageListItem,
 } from "@/lib/api/storefront/cms";
+import { StoreNameProvider } from "@/lib/storefront/store-name-context";
 
 type NavCategory = { name: string; slug: string };
 
@@ -36,30 +37,32 @@ export function StorefrontChrome({
   categories,
   promo,
   pages,
+  storeName,
   children,
 }: {
   categories: NavCategory[];
   promo: PublicCmsBanner | null;
   pages: PublicCmsPageListItem[];
+  storeName: string;
   children: ReactNode;
 }) {
   const pathname = usePathname();
   const auth = isAuthPath(pathname);
   const compactBottom = hideBottomNav(pathname);
 
-  if (auth) {
-    return <div className="flex min-h-full flex-col">{children}</div>;
-  }
-
-  return (
+  const inner = auth ? (
+    <div className="flex min-h-full flex-col">{children}</div>
+  ) : (
     <>
       <StorefrontPromoBar promo={promo} />
-      <StorefrontHeader categories={categories} />
+      <StorefrontHeader categories={categories} storeName={storeName} />
       <div className={compactBottom ? "flex-1" : "flex-1 pb-20 md:pb-0"}>
         {children}
       </div>
-      <StorefrontFooter pages={pages} />
+      <StorefrontFooter pages={pages} storeName={storeName} />
       {compactBottom ? null : <StorefrontBottomNav />}
     </>
   );
+
+  return <StoreNameProvider storeName={storeName}>{inner}</StoreNameProvider>;
 }

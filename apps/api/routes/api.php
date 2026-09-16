@@ -30,6 +30,7 @@ use App\Http\Controllers\Api\V1\Admin\Payment\RefundController as AdminRefundCon
 use App\Http\Controllers\Api\V1\Admin\Promotion\CouponController as AdminCouponController;
 use App\Http\Controllers\Api\V1\Admin\Promotion\DiscountController as AdminDiscountController;
 use App\Http\Controllers\Api\V1\Admin\Promotion\FlashSaleController as AdminFlashSaleController;
+use App\Http\Controllers\Api\V1\Admin\Settings\SettingController as AdminSettingController;
 use App\Http\Controllers\Api\V1\Cart\CartController;
 use App\Http\Controllers\Api\V1\Catalog\BrandController as PublicBrandController;
 use App\Http\Controllers\Api\V1\Catalog\CategoryController as PublicCategoryController;
@@ -54,6 +55,7 @@ use App\Http\Controllers\Api\V1\Customer\WishlistController as CustomerWishlistC
 use App\Http\Controllers\Api\V1\Geo\GeoController;
 use App\Http\Controllers\Api\V1\Order\GuestOrderLookupController;
 use App\Http\Controllers\Api\V1\Payment\VnPayController;
+use App\Http\Controllers\Api\V1\Settings\SettingsController as PublicSettingsController;
 use App\Http\Controllers\Api\V1\Shipping\GhnWebhookController;
 use App\Http\Controllers\Api\V1\Shipping\ShippingMethodController as PublicShippingMethodController;
 use App\Http\Controllers\Api\V1\Shipping\ShippingQuoteController;
@@ -78,6 +80,7 @@ Route::prefix('v1')->group(function () {
     Route::get('cms/pages', [PublicCmsPageController::class, 'index']);
     Route::get('cms/pages/{slug}', [PublicCmsPageController::class, 'show']);
     Route::get('cms/banners', [PublicCmsBannerController::class, 'index']);
+    Route::get('settings', PublicSettingsController::class);
     Route::get('shipping/methods', [PublicShippingMethodController::class, 'index']);
     Route::post('shipping/quotes', [ShippingQuoteController::class, 'store']);
     Route::post('webhooks/ghn', [GhnWebhookController::class, 'store']);
@@ -283,6 +286,12 @@ Route::prefix('v1')->group(function () {
                 Route::post('cms/banners', [AdminCmsBannerController::class, 'store']);
                 Route::patch('cms/banners/{id}', [AdminCmsBannerController::class, 'update']);
                 Route::delete('cms/banners/{id}', [AdminCmsBannerController::class, 'destroy']);
+            });
+            Route::middleware('permission:settings.view,admin')->group(function () {
+                Route::get('settings', [AdminSettingController::class, 'index']);
+            });
+            Route::middleware('permission:settings.manage,admin')->group(function () {
+                Route::patch('settings/{key}', [AdminSettingController::class, 'update']);
             });
         });
 });

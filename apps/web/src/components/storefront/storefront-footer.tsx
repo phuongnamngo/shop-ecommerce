@@ -1,19 +1,20 @@
 import Link from "next/link";
 
 import type { PublicCmsPageListItem } from "@/lib/api/storefront/cms";
-import { STORE_NAME } from "@/lib/storefront/ui";
 
 export function StorefrontFooter({
   pages,
+  storeName,
 }: {
   pages: PublicCmsPageListItem[];
+  storeName: string;
 }) {
   const year = new Date().getFullYear();
   return (
     <footer className="mt-auto border-t border-slate-200 bg-white">
       <div className="mx-auto grid max-w-[1320px] gap-10 px-4 py-12 sm:px-6 md:grid-cols-4">
         <div>
-          <p className="text-lg font-bold tracking-[0.18em]">{STORE_NAME}</p>
+          <p className="text-lg font-bold tracking-[0.18em]">{storeName}</p>
           <p className="mt-3 max-w-xs text-sm leading-relaxed text-slate-500">
             Thời trang nam tối giản, dễ mặc mỗi ngày. Giá, tồn kho và vận chuyển
             luôn lấy từ hệ thống.
@@ -67,7 +68,7 @@ export function StorefrontFooter({
       <div className="border-t border-slate-200">
         <div className="mx-auto flex max-w-[1320px] flex-col gap-2 px-4 py-4 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <p>
-            © {year} {STORE_NAME}. Tất cả các quyền được bảo lưu.
+            © {year} {storeName}. Tất cả các quyền được bảo lưu.
           </p>
           <p>COD · VNPay</p>
         </div>

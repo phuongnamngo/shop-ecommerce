@@ -10,6 +10,7 @@ import {
   type PublicCmsPageListItem,
 } from "@/lib/api/storefront/cms";
 import { leafCategories } from "@/lib/api/storefront/resolve";
+import { getPublicSettings } from "@/lib/api/storefront/settings";
 
 const beVietnam = Be_Vietnam_Pro({
   subsets: ["latin", "vietnamese"],
@@ -36,6 +37,8 @@ export default async function StorefrontLayout({
   let categories: Array<{ name: string; slug: string }> = [];
   let promo: PublicCmsBanner | null = null;
   let pages: PublicCmsPageListItem[] = [];
+  const settings = await getPublicSettings();
+  const storeName = settings.site.name;
 
   try {
     const tree = await listPublicCategories();
@@ -62,7 +65,12 @@ export default async function StorefrontLayout({
 
   return (
     <div className={`${beVietnam.variable} storefront flex min-h-full flex-col`}>
-      <StorefrontChrome categories={categories} promo={promo} pages={pages}>
+      <StorefrontChrome
+        categories={categories}
+        promo={promo}
+        pages={pages}
+        storeName={storeName}
+      >
         {children}
       </StorefrontChrome>
     </div>

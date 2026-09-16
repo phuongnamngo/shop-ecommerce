@@ -82,3 +82,15 @@ it('seeds cms view and manage permissions for admin roles', function () {
         ->and($staff->hasPermissionTo('cms.view', 'admin'))->toBeTrue()
         ->and($staff->hasPermissionTo('cms.manage', 'admin'))->toBeFalse();
 });
+
+it('seeds settings view and manage permissions for admin roles', function () {
+    $this->seed(RolesAndPermissionsSeeder::class);
+
+    $admin = Role::findByName('admin', 'admin');
+    $staff = Role::findByName('staff', 'admin');
+
+    expect($admin->hasPermissionTo('settings.view', 'admin'))->toBeTrue()
+        ->and($admin->hasPermissionTo('settings.manage', 'admin'))->toBeTrue()
+        ->and($staff->hasPermissionTo('settings.view', 'admin'))->toBeTrue()
+        ->and($staff->hasPermissionTo('settings.manage', 'admin'))->toBeFalse();
+});
