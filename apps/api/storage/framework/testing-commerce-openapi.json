@@ -3967,6 +3967,41 @@
                 }
             }
         },
+        "/api/v1/admin/dashboard/export": {
+            "get": {
+                "operationId": "dashboard.export",
+                "tags": [
+                    "Export"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Dashboard workbook.",
+                        "content": {
+                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            }
+                        },
+                        "headers": {
+                            "Transfer-Encoding": {
+                                "required": true,
+                                "schema": {
+                                    "type": "string",
+                                    "enum": [
+                                        "chunked"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
         "/api/v1/admin/promotions/flash-sales": {
             "get": {
                 "operationId": "flashSale.index",
@@ -5459,7 +5494,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "",
+                        "description": "Admin dashboard metrics.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -5499,25 +5534,106 @@
                                                     ]
                                                 },
                                                 "currency": {
-                                                    "type": "string",
-                                                    "const": "VND"
+                                                    "type": "string"
                                                 },
                                                 "as_of": {
-                                                    "type": [
-                                                        "string",
-                                                        "null"
-                                                    ]
+                                                    "type": "string"
+                                                },
+                                                "revenue_series": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "date": {
+                                                                "type": "string"
+                                                            },
+                                                            "order_count": {
+                                                                "type": "integer"
+                                                            },
+                                                            "revenue": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "date",
+                                                            "order_count",
+                                                            "revenue"
+                                                        ]
+                                                    }
+                                                },
+                                                "top_skus": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "sku": {
+                                                                "type": "string"
+                                                            },
+                                                            "name": {
+                                                                "type": "string"
+                                                            },
+                                                            "qty": {
+                                                                "type": "integer"
+                                                            },
+                                                            "revenue": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "sku",
+                                                            "name",
+                                                            "qty",
+                                                            "revenue"
+                                                        ]
+                                                    }
+                                                },
+                                                "low_stock": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "sku": {
+                                                                "type": "string"
+                                                            },
+                                                            "name": {
+                                                                "type": "string"
+                                                            },
+                                                            "warehouse_code": {
+                                                                "type": "string"
+                                                            },
+                                                            "warehouse_name": {
+                                                                "type": "string"
+                                                            },
+                                                            "available_qty": {
+                                                                "type": "integer"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "sku",
+                                                            "name",
+                                                            "warehouse_code",
+                                                            "warehouse_name",
+                                                            "available_qty"
+                                                        ]
+                                                    }
+                                                },
+                                                "low_stock_count": {
+                                                    "type": "integer"
                                                 }
                                             },
                                             "required": [
                                                 "today",
                                                 "month",
                                                 "currency",
-                                                "as_of"
+                                                "as_of",
+                                                "revenue_series",
+                                                "top_skus",
+                                                "low_stock",
+                                                "low_stock_count"
                                             ]
                                         },
                                         "meta": {
-                                            "type": "string"
+                                            "type": "object"
                                         }
                                     },
                                     "required": [

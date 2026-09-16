@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\V1\Admin\Catalog\ProductVariantImageController as A
 use App\Http\Controllers\Api\V1\Admin\Cms\BannerController as AdminCmsBannerController;
 use App\Http\Controllers\Api\V1\Admin\Cms\PageController as AdminCmsPageController;
 use App\Http\Controllers\Api\V1\Admin\Customer\CustomerController as AdminCustomerController;
+use App\Http\Controllers\Api\V1\Admin\Dashboard\ExportController as AdminDashboardExportController;
 use App\Http\Controllers\Api\V1\Admin\Dashboard\MetricsController as AdminDashboardMetricsController;
 use App\Http\Controllers\Api\V1\Admin\Engagement\ReviewController as AdminReviewController;
 use App\Http\Controllers\Api\V1\Admin\Inventory\StockItemController as AdminStockItemController;
@@ -35,9 +36,9 @@ use App\Http\Controllers\Api\V1\Catalog\CategoryController as PublicCategoryCont
 use App\Http\Controllers\Api\V1\Catalog\ProductController as PublicProductController;
 use App\Http\Controllers\Api\V1\Catalog\ProductReviewController as PublicProductReviewController;
 use App\Http\Controllers\Api\V1\Catalog\SearchSuggestController;
+use App\Http\Controllers\Api\V1\Checkout\CheckoutController;
 use App\Http\Controllers\Api\V1\Cms\BannerController as PublicCmsBannerController;
 use App\Http\Controllers\Api\V1\Cms\PageController as PublicCmsPageController;
-use App\Http\Controllers\Api\V1\Checkout\CheckoutController;
 use App\Http\Controllers\Api\V1\Customer\AddressController as CustomerAddressController;
 use App\Http\Controllers\Api\V1\Customer\Auth\ForgotPasswordController as CustomerForgotPasswordController;
 use App\Http\Controllers\Api\V1\Customer\Auth\LoginController as CustomerLoginController;
@@ -154,6 +155,7 @@ Route::prefix('v1')->group(function () {
             Route::post('inventory/movements', [AdminStockMovementController::class, 'store'])->middleware('permission:inventory.manage,admin');
             Route::middleware('permission:orders.view,admin')->group(function () {
                 Route::get('dashboard/metrics', AdminDashboardMetricsController::class);
+                Route::get('dashboard/export', AdminDashboardExportController::class);
                 Route::get('orders', [AdminOrderController::class, 'index']);
                 Route::get('orders/{id}', [AdminOrderController::class, 'show']);
             });

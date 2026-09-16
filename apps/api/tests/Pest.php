@@ -1,6 +1,8 @@
 <?php
 
 use App\Models\AdminUser;
+use App\Models\Order;
+use App\Models\OrderItem;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -36,6 +38,19 @@ function catalogAdmin(string $role = 'admin'): AdminUser
     $admin->assignRole($role);
 
     return $admin;
+}
+
+function dashboardPaidItem(Order $order, string $sku, string $name, int $qty, int $lineTotal): void
+{
+    OrderItem::query()->create([
+        'order_id' => $order->id,
+        'product_variant_id' => null,
+        'sku' => $sku,
+        'name' => $name,
+        'qty' => $qty,
+        'unit_price' => $lineTotal / max($qty, 1),
+        'line_total' => $lineTotal,
+    ]);
 }
 
 expect()->extend('toBeOne', function () {

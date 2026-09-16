@@ -1,14 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Banknote,
   Download,
-  Package,
   PlusCircle,
   ShoppingBag,
-  TrendingUp,
   Users,
   Warehouse,
 } from "lucide-react";
@@ -28,11 +27,13 @@ import { StatCard } from "@/components/admin/layout/stat-card";
 import { StatusBadge } from "@/components/admin/layout/status-badge";
 import { useAdminMe } from "@/hooks/use-admin-me";
 import { listCustomers } from "@/lib/api/customers/client";
-import { getDashboardMetrics } from "@/lib/api/dashboard/client";
+import {
+  downloadDashboardExport,
+  getDashboardMetrics,
+} from "@/lib/api/dashboard/client";
 import { dashboardErrorMessage } from "@/lib/api/dashboard/errors";
-import { listStockItems } from "@/lib/api/inventory/client";
 import { listOrders } from "@/lib/api/orders/client";
-import { listProducts } from "@/lib/api/catalog/products";
+import type { RevenueSeriesPoint } from "@/lib/api/dashboard/types";
 
 function formatRevenue(revenue: string, currency: string): string {
   const n = Number.parseFloat(revenue);
@@ -46,16 +47,16 @@ function firstName(name: string): string {
   return name.trim().split(/\s+/)[0] || name;
 }
 
-function Sparkline({ color }: { color: string }) {
-  const heights = [12, 16, 14, 24, 20, 28, 32];
+function Sparkline({ values, color }: { values: number[]; color: string }) {
+  const max = Math.max(...values, 0);
   return (
     <div className="mt-4 flex h-8 items-end gap-1 border-t border-[#e2e8f0]/80 pt-3">
-      {heights.map((h, i) => (
+      {values.map((value, i) => (
         <div
           key={i}
           className="flex-1 rounded-t"
           style={{
-            height: h,
+            height: max === 0 || value === 0 ? 0 : Math.max(2, (value / max) * 32),
             backgroundColor: color,
             opacity: 0.25 + i * 0.12,
           }}
@@ -65,8 +66,16 @@ function Sparkline({ color }: { color: string }) {
   );
 }
 
+function lastSeven(series: RevenueSeriesPoint[], key: "revenue" | "order_count"): number[] {
+  return series.slice(-7).map((point) =>
+    key === "revenue" ? Number.parseFloat(point.revenue) : point.order_count,
+  );
+}
+
 export function DashboardPage() {
   const me = useAdminMe();
+  const [exportError, setExportError] = useState<string | null>(null);
+  const [exporting, setExporting] = useState(false);
   const metrics = useQuery({
     queryKey: ["admin", "dashboard", "metrics"],
     queryFn: () => getDashboardMetrics(),
@@ -75,39 +84,37 @@ export function DashboardPage() {
     queryKey: ["admin", "dashboard", "recent-orders"],
     queryFn: () => listOrders({ page: 1, per_page: 6 }),
   });
-  const stock = useQuery({
-    queryKey: ["admin", "dashboard", "stock"],
-    queryFn: () => listStockItems({ page: 1, per_page: 50 }),
-  });
   const customers = useQuery({
     queryKey: ["admin", "dashboard", "customers-count"],
     queryFn: () => listCustomers({ page: 1, per_page: 1 }),
   });
-  const products = useQuery({
-    queryKey: ["admin", "dashboard", "products"],
-    queryFn: () => listProducts({ page: 1, per_page: 5 }),
-  });
 
   const data = metrics.data?.data;
-  const today = data ? Number.parseFloat(data.today.revenue) : 0;
   const month = data ? Number.parseFloat(data.month.revenue) : 0;
-  const max = Math.max(today, month, 1);
   const aov =
-    data && data.month.order_count > 0
-      ? month / data.month.order_count
-      : 0;
-  const stockRows = stock.data?.data ?? [];
-  const lowStock = stockRows.filter((item) => item.available_qty > 0 && item.available_qty <= 5);
-  const outStock = stockRows.filter((item) => item.available_qty <= 0);
-  const inStock = stockRows.filter((item) => item.available_qty > 5);
-  const stockTotal = stock.data?.meta.total ?? stockRows.length;
-  const inPct = stockRows.length
-    ? Math.round((inStock.length / stockRows.length) * 100)
-    : 0;
+    data && data.month.order_count > 0 ? month / data.month.order_count : 0;
   const greetingName = me.data ? firstName(me.data.name) : "there";
   const pendingHint = orders.data?.meta.total
     ? `${orders.data.meta.total} orders in the queue.`
     : "Here's what's happening with your store today.";
+  const seriesMax = data
+    ? Math.max(...data.revenue_series.map((point) => Number.parseFloat(point.revenue)), 0)
+    : 0;
+
+  async function onExport() {
+    if (!data) {
+      return;
+    }
+    setExportError(null);
+    setExporting(true);
+    try {
+      await downloadDashboardExport(data.as_of);
+    } catch (error) {
+      setExportError(dashboardErrorMessage(error));
+    } finally {
+      setExporting(false);
+    }
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -131,13 +138,17 @@ export function DashboardPage() {
           </div>
         </div>
         <div className="relative z-10 flex flex-wrap items-center gap-3">
-          <Link
-            href="/admin/orders"
-            className="inline-flex items-center gap-2 rounded-lg border border-[#e2e8f0] bg-white px-4 py-2 text-sm font-semibold text-[#334155] shadow-xs transition-colors duration-150 hover:bg-[#f8fafc]"
-          >
-            <Download className="size-[18px]" />
-            Orders
-          </Link>
+          {data ? (
+            <button
+              type="button"
+              onClick={() => void onExport()}
+              disabled={exporting}
+              className="inline-flex items-center gap-2 rounded-lg border border-[#e2e8f0] bg-white px-4 py-2 text-sm font-semibold text-[#334155] shadow-xs transition-colors duration-150 hover:bg-[#f8fafc] disabled:opacity-60"
+            >
+              <Download className="size-[18px]" />
+              {exporting ? "Exporting…" : "Export"}
+            </button>
+          ) : null}
           <Link
             href="/admin/catalog/products"
             className="inline-flex items-center gap-2 rounded-lg bg-[#1f53c9] px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-[#1f53c9]/25 transition-all duration-150 hover:bg-[#406de4]"
@@ -147,6 +158,10 @@ export function DashboardPage() {
           </Link>
         </div>
       </section>
+
+      {exportError ? (
+        <p className="text-sm text-[#ba1a1a]">{exportError}</p>
+      ) : null}
 
       {metrics.isPending ? (
         <LoadingState label="Loading metrics…" />
@@ -160,18 +175,28 @@ export function DashboardPage() {
             <StatCard
               label="Total Revenue"
               value={formatRevenue(data.month.revenue, data.currency)}
-              hint="Paid+ this month"
+              hint="Paid+ this month · Last 7 days"
               icon={<Banknote className="size-5" />}
               tone="primary"
-              footer={<Sparkline color="#1f53c9" />}
+              footer={
+                <Sparkline
+                  color="#1f53c9"
+                  values={lastSeven(data.revenue_series, "revenue")}
+                />
+              }
             />
             <StatCard
               label="Total Orders"
               value={data.month.order_count}
-              hint={`${data.today.order_count} today`}
+              hint={`${data.today.order_count} today · Last 7 days`}
               icon={<ShoppingBag className="size-5" />}
               tone="secondary"
-              footer={<Sparkline color="#48bdfe" />}
+              footer={
+                <Sparkline
+                  color="#48bdfe"
+                  values={lastSeven(data.revenue_series, "order_count")}
+                />
+              }
             />
             <StatCard
               label="Total Customers"
@@ -179,40 +204,13 @@ export function DashboardPage() {
               hint="Directory total"
               icon={<Users className="size-5" />}
               tone="success"
-              footer={<Sparkline color="#13deb9" />}
             />
             <StatCard
-              label="Inventory Health"
-              value={stockTotal}
-              hint={
-                <span className="flex flex-wrap items-center gap-2">
-                  <span className="rounded-full bg-[#fef5e5] px-2.5 py-0.5 text-[11px] font-semibold text-[#b45309]">
-                    {lowStock.length} Low Stock
-                  </span>
-                  <span className="text-[11px] font-medium text-[#fa896b]">
-                    {outStock.length} Out
-                  </span>
-                </span>
-              }
+              label="Low stock"
+              value={data.low_stock_count}
+              hint="Available qty 1–5"
               icon={<Warehouse className="size-5" />}
               tone="warning"
-              footer={
-                <div className="mt-4 flex h-2.5 overflow-hidden rounded-full bg-[#e2e8f0]">
-                  <div className="bg-[#13deb9]" style={{ width: `${inPct}%` }} />
-                  <div
-                    className="bg-[#f59e0b]"
-                    style={{
-                      width: `${stockRows.length ? (lowStock.length / stockRows.length) * 100 : 0}%`,
-                    }}
-                  />
-                  <div
-                    className="bg-[#fa896b]"
-                    style={{
-                      width: `${stockRows.length ? (outStock.length / stockRows.length) * 100 : 0}%`,
-                    }}
-                  />
-                </div>
-              }
             />
           </section>
 
@@ -222,10 +220,10 @@ export function DashboardPage() {
               title="Revenue Updates"
               badge={
                 <span className="rounded border border-[#e2e8f0] bg-[#f8fafc] px-2 py-0.5 text-[11px] text-[#64748b]">
-                  Live totals
+                  Last 30 days
                 </span>
               }
-              subtitle="Time-series is not provided by the metrics API. Bars compare today vs this month."
+              subtitle="Paid+ VND by order created date. Calendar month totals stay in the strip below."
             >
               <div className="mb-4 grid grid-cols-3 gap-4 border-b border-[#e2e8f0]/60 pb-4">
                 <div>
@@ -249,42 +247,46 @@ export function DashboardPage() {
                   </p>
                 </div>
               </div>
-              <div className="flex h-56 items-end justify-around gap-10 px-4 pb-2">
-                <div className="flex flex-col items-center gap-2">
-                  <div
-                    className="w-10 rounded-t-sm bg-[#1f53c9] transition-all duration-200 group-hover:brightness-110"
-                    style={{ height: `${Math.max(12, (today / max) * 180)}px` }}
-                  />
-                  <span className="text-[11px] text-[#64748b]">Today</span>
-                </div>
-                <div className="flex flex-col items-center gap-2">
-                  <div
-                    className="w-10 rounded-t-sm bg-[#48bdfe]"
-                    style={{ height: `${Math.max(12, (month / max) * 180)}px` }}
-                  />
-                  <span className="text-[11px] text-[#64748b]">This month</span>
-                </div>
+              <div className="flex h-56 items-end gap-0.5 pb-2">
+                {data.revenue_series.map((point) => {
+                  const value = Number.parseFloat(point.revenue);
+                  const height =
+                    seriesMax === 0 || value === 0 ? 0 : (value / seriesMax) * 180;
+                  return (
+                    <div
+                      key={point.date}
+                      className="flex min-w-0 flex-1 flex-col items-center justify-end"
+                      title={`${point.date}: ${formatRevenue(point.revenue, data.currency)}`}
+                    >
+                      <div
+                        className="w-full max-w-3 rounded-t-sm bg-[#1f53c9]"
+                        style={{ height: `${height}px` }}
+                      />
+                    </div>
+                  );
+                })}
               </div>
             </ChartCard>
 
             <ChartCard
               className="lg:col-span-4"
               title="Inventory Alerts"
-              subtitle="Available quantity ≤ 5 on the current stock page"
+              subtitle="Available quantity 1–5"
             >
-              {stock.isPending ? (
-                <LoadingState />
-              ) : lowStock.length === 0 && outStock.length === 0 ? (
+              {data.low_stock.length === 0 ? (
                 <EmptyState title="No low-stock rows" />
               ) : (
                 <ul className="space-y-3">
-                  {[...outStock, ...lowStock].slice(0, 6).map((item) => (
+                  {data.low_stock.map((item) => (
                     <li
-                      key={item.id}
+                      key={`${item.warehouse_code}-${item.sku}`}
                       className="flex items-center justify-between text-sm"
                     >
                       <span className="truncate pr-3 text-[#0f172a]">
-                        {item.variant.product_name ?? item.variant.sku}
+                        {item.name}
+                        <span className="ml-1 text-[11px] text-[#64748b]">
+                          {item.warehouse_code}
+                        </span>
                       </span>
                       <span className="font-semibold text-[#b45309] tabular-nums">
                         {item.available_qty}
@@ -361,51 +363,37 @@ export function DashboardPage() {
         </div>
         <div className="xl:col-span-4">
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-lg font-bold text-[#0f172a]">Top Products</h2>
-            <Link
-              href="/admin/catalog/products"
-              className="text-sm font-semibold text-[#1f53c9] hover:underline"
-            >
-              Catalog
-            </Link>
+            <h2 className="text-lg font-bold text-[#0f172a]">Top SKUs</h2>
           </div>
           <DataTableShell>
-            {products.isPending ? (
-              <LoadingState />
-            ) : (products.data?.data ?? []).length === 0 ? (
-              <EmptyState title="No products" />
+            {!data ? (
+              metrics.isPending ? <LoadingState /> : <EmptyState title="No top SKUs" />
+            ) : data.top_skus.length === 0 ? (
+              <EmptyState title="No top SKUs" />
             ) : (
-              <ul className="divide-y divide-[#e2e8f0]">
-                {(products.data?.data ?? []).map((product) => {
-                  const thumb =
-                    product.images.find((img) => img.is_primary)?.thumbnail_url ??
-                    product.images[0]?.thumbnail_url ??
-                    product.images[0]?.url;
-                  return (
-                    <li key={product.id} className="flex items-center gap-3 px-4 py-3">
-                      <div className="flex size-10 overflow-hidden rounded-lg bg-[#f8fafc]">
-                        {thumb ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
-                            src={thumb}
-                            alt=""
-                            className="size-10 object-cover transition-transform duration-200 hover:scale-110"
-                          />
-                        ) : (
-                          <Package className="m-auto size-4 text-[#64748b]" />
-                        )}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-semibold text-[#0f172a]">
-                          {product.name}
-                        </p>
-                        <p className="text-[11px] text-[#64748b]">{product.status}</p>
-                      </div>
-                      <TrendingUp className="size-4 text-[#13deb9]" />
-                    </li>
-                  );
-                })}
-              </ul>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>SKU</TableHead>
+                    <TableHead className="text-right">Qty</TableHead>
+                    <TableHead className="text-right">Revenue</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {data.top_skus.map((row) => (
+                    <TableRow key={row.sku}>
+                      <TableCell>
+                        <p className="font-medium text-[#0f172a]">{row.sku}</p>
+                        <p className="text-[11px] text-[#64748b]">{row.name}</p>
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums">{row.qty}</TableCell>
+                      <TableCell className="text-right tabular-nums">
+                        {formatRevenue(row.revenue, data.currency)}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             )}
           </DataTableShell>
         </div>

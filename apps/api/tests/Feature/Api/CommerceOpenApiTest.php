@@ -125,6 +125,8 @@ it('discovers every inventory cart checkout and order operation', function () {
         '/api/v1/admin/refunds/{id}/retry' => ['post'],
         '/api/v1/admin/payments/transactions' => ['get'],
         '/api/v1/admin/payments/transactions/{id}' => ['get'],
+        '/api/v1/admin/dashboard/metrics' => ['get'],
+        '/api/v1/admin/dashboard/export' => ['get'],
         '/api/v1/cms/pages' => ['get'],
         '/api/v1/cms/pages/{slug}' => ['get'],
         '/api/v1/cms/banners' => ['get'],
@@ -162,6 +164,20 @@ it('documents commerce response resource shapes and cardinality', function () {
 
     $me = commerceSuccessDataSchema($document, 'get', '/api/v1/customer/me');
     expect(array_keys($me['properties']))->toContain('phone_verified_at');
+
+    $dash = commerceSuccessDataSchema($document, 'get', '/api/v1/admin/dashboard/metrics');
+    expect(array_keys($dash['properties']))->toContain(
+        'today',
+        'month',
+        'currency',
+        'as_of',
+        'revenue_series',
+        'top_skus',
+        'low_stock',
+        'low_stock_count',
+    );
+    $exportContent = $document['paths']['/api/v1/admin/dashboard/export']['get']['responses']['200']['content'];
+    expect($exportContent)->toHaveKey('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 
     $checkoutCreated = commerceSuccessDataSchema($document, 'post', '/api/v1/checkout', '201');
     expect(array_keys($checkoutCreated['properties']))->toContain('lookup_token');
