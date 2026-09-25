@@ -2,6 +2,7 @@
 
 use App\Models\Product;
 use App\Models\ProductImage;
+use App\Services\Catalog\CatalogImageService;
 use App\Support\ErrorCode;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Http\UploadedFile;
@@ -18,11 +19,23 @@ it('uploads a jpeg original and thumbnail', function () {
             'file' => UploadedFile::fake()->image('a.jpg', 800, 600),
         ], ['Accept' => 'application/json'])
         ->assertCreated()
-        ->assertJsonPath('data.path', fn (string $path) => str_starts_with($path, 'catalog/'))
-        ->assertJsonPath('data.thumbnail_path', fn (string $path) => str_contains($path, '_thumb'));
+        ->assertJsonPath('data.path', fn (string $path) => str_starts_with($path, 'catalog/') && str_ends_with($path, '.webp'))
+        ->assertJsonPath('data.thumbnail_path', fn (string $path) => str_contains($path, '_thumb') && str_ends_with($path, '.webp'));
 
     Storage::disk('public')->assertExists($response->json('data.path'));
     Storage::disk('public')->assertExists($response->json('data.thumbnail_path'));
+});
+
+it('stores a review upload as webp', function () {
+    $stored = app(CatalogImageService::class)->storeUploaded(
+        UploadedFile::fake()->image('r.png', 40, 40),
+        'reviews',
+    );
+
+    expect($stored['path'])->toStartWith('reviews/')->toEndWith('.webp')
+        ->and($stored['thumbnail_path'])->toEndWith('.webp');
+    Storage::disk('public')->assertExists($stored['path']);
+    Storage::disk('public')->assertExists($stored['thumbnail_path']);
 });
 
 it('rejects attaching a path outside catalog/', function () {

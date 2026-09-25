@@ -23,19 +23,16 @@ final class CatalogImageService
     {
         $directory = $directory === 'reviews' ? 'reviews' : 'catalog';
         $ulid = (string) Str::ulid();
-        $extension = $this->extension($file);
-        $path = $directory.'/'.$ulid.'.'.$extension;
-        $thumbnailPath = $directory.'/'.$ulid.'_thumb.'.$extension;
+        $path = $directory.'/'.$ulid.'.webp';
+        $thumbnailPath = $directory.'/'.$ulid.'_thumb.webp';
         $disk = Storage::disk('public');
-
-        $contents = file_get_contents($file->getRealPath());
-        $disk->put($path, $contents === false ? '' : $contents);
 
         $manager = new ImageManager(new Driver);
         $image = $manager->decodePath($file->getRealPath());
+        $disk->put($path, (string) $image->encodeUsingFileExtension('webp'));
+
         $image->scaleDown(400, 400);
-        $encoded = $image->encodeUsingFileExtension($extension);
-        $disk->put($thumbnailPath, (string) $encoded);
+        $disk->put($thumbnailPath, (string) $image->encodeUsingFileExtension('webp'));
 
         return [
             'path' => $path,
@@ -149,15 +146,4 @@ final class CatalogImageService
         app(CatalogPublicCache::class)->bump();
     }
 
-    private function extension(UploadedFile $file): string
-    {
-        $extension = strtolower((string) ($file->extension() ?: $file->guessExtension()));
-
-        return match ($extension) {
-            'jpeg', 'jpg' => 'jpg',
-            'png' => 'png',
-            'webp' => 'webp',
-            default => 'jpg',
-        };
-    }
 }
