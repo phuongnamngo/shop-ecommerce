@@ -1,4 +1,5 @@
 # env / secrets
+backups/
 .env
 .env.*
 !.env.example

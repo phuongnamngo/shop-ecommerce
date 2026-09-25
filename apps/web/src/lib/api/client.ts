@@ -4,6 +4,7 @@ export class ApiError extends Error {
   status: number;
   code?: string;
   errors: ApiErrorItem[];
+  meta: Record<string, unknown>;
 
   constructor(status: number, body: ApiErrorBody | null, fallbackMessage?: string) {
     const errors = body?.errors ?? [];
@@ -13,6 +14,7 @@ export class ApiError extends Error {
     this.status = status;
     this.code = primary?.code;
     this.errors = errors;
+    this.meta = body?.meta ?? {};
   }
 }
 

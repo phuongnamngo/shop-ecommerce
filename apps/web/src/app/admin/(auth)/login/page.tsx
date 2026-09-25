@@ -7,7 +7,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { LayoutGrid } from "lucide-react";
 
 import { useAdminMe } from "@/hooks/use-admin-me";
-import { adminLogin, messageForAuthError } from "@/lib/api/admin-auth";
+import { adminLogin, adminTwoFactorChallenge, messageForAuthError } from "@/lib/api/admin-auth";
+import { ApiError } from "@/lib/api/client";
 import { adminMeQueryKey } from "@/lib/admin/query-keys";
 
 function LoginForm() {
@@ -17,6 +18,8 @@ function LoginForm() {
   const me = useAdminMe();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [twoFactorToken, setTwoFactorToken] = useState<string | null>(null);
+  const [code, setCode] = useState("");
   const [remember, setRemember] = useState(true);
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -38,10 +41,23 @@ function LoginForm() {
     setFormError(null);
     setSubmitting(true);
     try {
-      await adminLogin({ email, password });
+      if (twoFactorToken) {
+        await adminTwoFactorChallenge({ two_factor_token: twoFactorToken, code });
+      } else {
+        await adminLogin({ email, password });
+      }
       await queryClient.invalidateQueries({ queryKey: adminMeQueryKey });
       router.replace("/admin");
     } catch (err) {
+      if (
+        err instanceof ApiError &&
+        err.code === "AUTH_TWO_FACTOR_REQUIRED" &&
+        typeof err.meta.two_factor_token === "string"
+      ) {
+        setTwoFactorToken(err.meta.two_factor_token);
+        setFormError(null);
+        return;
+      }
       setFormError(messageForAuthError(err));
     } finally {
       setSubmitting(false);
@@ -147,6 +163,26 @@ function LoginForm() {
               className="h-11 w-full rounded-xl border border-slate-700/80 bg-[#182232] px-4 text-sm tracking-wider text-white outline-none placeholder:text-slate-500 focus:border-[#4379ee] focus:ring-2 focus:ring-[#4379ee]/20"
             />
           </div>
+          {twoFactorToken ? (
+            <div>
+              <label
+                className="mb-1.5 block text-sm font-semibold text-slate-200"
+                htmlFor="otp"
+              >
+                Authentication code
+              </label>
+              <input
+                id="otp"
+                inputMode="text"
+                autoComplete="one-time-code"
+                required
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                placeholder="123456"
+                className="h-11 w-full rounded-xl border border-slate-700/80 bg-[#182232] px-4 text-sm text-white outline-none placeholder:text-slate-500 focus:border-[#4379ee] focus:ring-2 focus:ring-[#4379ee]/20"
+              />
+            </div>
+          ) : null}
           <div className="flex items-center justify-between pt-1 text-sm">
             <label className="flex cursor-pointer items-center gap-2.5 select-none">
               <input
@@ -176,7 +212,7 @@ function LoginForm() {
             disabled={submitting}
             className="mt-4 flex h-11 w-full items-center justify-center rounded-xl bg-[#4379ee] text-sm font-semibold text-white shadow-md shadow-[#4379ee]/25 transition-all duration-150 hover:bg-[#5d87ff] active:scale-[0.99] disabled:opacity-70"
           >
-            {submitting ? "Signing in…" : "Sign in"}
+            {submitting ? "Signing in…" : twoFactorToken ? "Verify code" : "Sign in"}
           </button>
         </form>
       </div>

@@ -26,7 +26,7 @@ use Spatie\Permission\Traits\HasRoles;
     'email_verified_at',
     'last_login_at',
 ])]
-#[Hidden(['password', 'remember_token'])]
+#[Hidden(['password', 'remember_token', 'two_factor_secret'])]
 class AdminUser extends Authenticatable implements CanResetPasswordContract
 {
     /** @use HasFactory<AdminUserFactory> */
@@ -59,6 +59,8 @@ class AdminUser extends Authenticatable implements CanResetPasswordContract
             'email_verified_at' => 'datetime',
             'last_login_at' => 'datetime',
             'password' => 'hashed',
+            'two_factor_secret' => 'encrypted',
+            'two_factor_confirmed_at' => 'datetime',
         ];
     }
 }

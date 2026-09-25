@@ -17,6 +17,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAdminMe } from "@/hooks/use-admin-me";
 import { canManageSettings } from "@/lib/admin/can-manage-settings";
+import {
+  adminTwoFactorConfirm,
+  adminTwoFactorSetup,
+} from "@/lib/api/admin-auth";
 import { ApiError } from "@/lib/api/client";
 import {
   listAdminSettings,
@@ -39,6 +43,82 @@ function stringField(
   const row = rows.find((item) => item.key === key);
   const raw = row?.value && field in row.value ? row.value[field] : "";
   return typeof raw === "string" ? raw : "";
+}
+
+function TwoFactorCard() {
+  const [secret, setSecret] = useState<string | null>(null);
+  const [otpauthUri, setOtpauthUri] = useState<string | null>(null);
+  const [code, setCode] = useState("");
+  const [recoveryCodes, setRecoveryCodes] = useState<string[] | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
+
+  const setup = useMutation({
+    mutationFn: adminTwoFactorSetup,
+    onSuccess: (result) => {
+      setSecret(result.data.secret);
+      setOtpauthUri(result.data.otpauth_uri);
+      setRecoveryCodes(null);
+      setFormError(null);
+    },
+    onError: (error) => setFormError(settingErrorMessage(error)),
+  });
+
+  const confirm = useMutation({
+    mutationFn: () => adminTwoFactorConfirm({ code }),
+    onSuccess: (result) => {
+      setRecoveryCodes(result.data.recovery_codes);
+      setFormError(null);
+    },
+    onError: (error) => setFormError(settingErrorMessage(error)),
+  });
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Xác thực hai lớp</CardTitle>
+        <CardDescription>
+          Bật TOTP cho tài khoản admin đang đăng nhập. Recovery code chỉ hiện một lần.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <Button type="button" onClick={() => setup.mutate()} disabled={setup.isPending}>
+          Bật 2FA
+        </Button>
+        {secret ? (
+          <div className="space-y-2 text-sm">
+            <p>Secret: {secret}</p>
+            <p className="break-all">otpauth_uri: {otpauthUri}</p>
+            <form
+              className="space-y-2"
+              onSubmit={(event) => {
+                event.preventDefault();
+                confirm.mutate();
+              }}
+            >
+              <Label htmlFor="totp-code">Code</Label>
+              <Input
+                id="totp-code"
+                value={code}
+                onChange={(event) => setCode(event.target.value)}
+                required
+              />
+              <Button type="submit" disabled={confirm.isPending}>
+                Xác nhận
+              </Button>
+            </form>
+          </div>
+        ) : null}
+        {recoveryCodes ? (
+          <ul className="space-y-1 text-sm">
+            {recoveryCodes.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        ) : null}
+        {formError ? <p className="text-sm text-rose-600">{formError}</p> : null}
+      </CardContent>
+    </Card>
+  );
 }
 
 function SettingsForm({
@@ -155,6 +235,7 @@ export function SettingsPage() {
         title="Settings"
         description="Tên cửa hàng trên storefront và mã tiền tệ lưu trong settings."
       />
+      <TwoFactorCard />
       <Card>
         <CardHeader>
           <CardTitle>Site</CardTitle>

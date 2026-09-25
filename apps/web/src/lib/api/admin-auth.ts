@@ -21,6 +21,8 @@ export function messageForAuthError(error: unknown): string {
       return "Bạn không có quyền truy cập Admin.";
     case "AUTH_UNAUTHENTICATED":
       return "Phiên đăng nhập đã hết. Đăng nhập lại.";
+    case "AUTH_TWO_FACTOR_INVALID":
+      return "Mã xác thực không đúng.";
     default:
       return error.message || `Lỗi ${error.status}`;
   }
@@ -63,6 +65,34 @@ export function adminResetPassword(input: {
   password_confirmation: string;
 }): Promise<ApiSuccess<unknown>> {
   return apiFetch("/api/v1/admin/auth/reset-password", {
+    method: "POST",
+    json: input,
+  });
+}
+
+export function adminTwoFactorChallenge(input: {
+  two_factor_token: string;
+  code: string;
+}): Promise<ApiSuccess<AdminProfile>> {
+  return apiFetch<AdminProfile>("/api/v1/admin/auth/two-factor/challenge", {
+    method: "POST",
+    json: input,
+  });
+}
+
+export function adminTwoFactorSetup(): Promise<
+  ApiSuccess<{ secret: string; otpauth_uri: string }>
+> {
+  return apiFetch("/api/v1/admin/auth/two-factor/setup", {
+    method: "POST",
+    json: {},
+  });
+}
+
+export function adminTwoFactorConfirm(input: {
+  code: string;
+}): Promise<ApiSuccess<{ recovery_codes: string[] }>> {
+  return apiFetch("/api/v1/admin/auth/two-factor/confirm", {
     method: "POST",
     json: input,
   });

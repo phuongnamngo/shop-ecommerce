@@ -3,6 +3,9 @@
 use App\Http\Controllers\Api\V1\Admin\Activity\ActivityController as AdminActivityController;
 use App\Http\Controllers\Api\V1\Admin\Auth\ForgotPasswordController as AdminForgotPasswordController;
 use App\Http\Controllers\Api\V1\Admin\Auth\LoginController as AdminLoginController;
+use App\Http\Controllers\Api\V1\Admin\Auth\TwoFactorChallengeController as AdminTwoFactorChallengeController;
+use App\Http\Controllers\Api\V1\Admin\Auth\TwoFactorConfirmController as AdminTwoFactorConfirmController;
+use App\Http\Controllers\Api\V1\Admin\Auth\TwoFactorSetupController as AdminTwoFactorSetupController;
 use App\Http\Controllers\Api\V1\Admin\Auth\LogoutController as AdminLogoutController;
 use App\Http\Controllers\Api\V1\Admin\Auth\ResetPasswordController as AdminResetPasswordController;
 use App\Http\Controllers\Api\V1\Admin\Catalog\AttributeController as AdminAttributeController;
@@ -138,11 +141,17 @@ Route::prefix('v1')->group(function () {
     Route::prefix('admin/auth')->group(function () {
         Route::post('login', AdminLoginController::class)
             ->middleware('throttle:auth.admin.login');
+        Route::post('two-factor/challenge', AdminTwoFactorChallengeController::class)
+            ->middleware('throttle:auth.admin.login');
         Route::post('forgot-password', AdminForgotPasswordController::class)
             ->middleware('throttle:auth.admin.forgot');
         Route::post('reset-password', AdminResetPasswordController::class);
         Route::post('logout', AdminLogoutController::class)
             ->middleware(['auth:admin']);
+        Route::post('two-factor/setup', AdminTwoFactorSetupController::class)
+            ->middleware(['auth:admin', 'account.active:admin']);
+        Route::post('two-factor/confirm', AdminTwoFactorConfirmController::class)
+            ->middleware(['auth:admin', 'account.active:admin']);
     });
 
     Route::middleware([
