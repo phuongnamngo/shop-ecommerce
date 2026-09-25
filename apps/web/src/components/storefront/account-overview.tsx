@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { EmptyState } from "@/components/storefront/empty-state";
 import { storefrontErrorMessage } from "@/lib/api/storefront/browser";
 import {
+  fetchCustomerLoyalty,
   fetchCustomerMe,
   listCustomerOrders,
 } from "@/lib/api/storefront/customer";
@@ -20,15 +21,21 @@ export function AccountOverview() {
   const [me, setMe] = useState<CustomerProfile | null>(null);
   const [orders, setOrders] = useState<CustomerOrder[]>([]);
   const [total, setTotal] = useState(0);
+  const [pointsBalance, setPointsBalance] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
-      void Promise.all([fetchCustomerMe(), listCustomerOrders(1)])
-        .then(([profile, res]) => {
+      void Promise.all([
+        fetchCustomerMe(),
+        listCustomerOrders(1),
+        fetchCustomerLoyalty(),
+      ])
+        .then(([profile, res, loyalty]) => {
           setMe(profile);
           setOrders(res.data.slice(0, 5));
           setTotal(res.meta.total);
+          setPointsBalance(loyalty.points_balance);
         })
         .catch((err) => setError(storefrontErrorMessage(err)));
     });
@@ -56,6 +63,12 @@ export function AccountOverview() {
             Đơn hàng
           </p>
           <p className="mt-2 text-3xl font-bold">{total}</p>
+        </li>
+        <li className="rounded-xl border border-slate-200 bg-white p-4">
+          <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+            Điểm
+          </p>
+          <p className="mt-2 text-3xl font-bold">{pointsBalance ?? "—"}</p>
         </li>
         <li className="rounded-xl border border-slate-200 bg-white p-4">
           <p className="text-xs font-medium uppercase tracking-wide text-slate-400">

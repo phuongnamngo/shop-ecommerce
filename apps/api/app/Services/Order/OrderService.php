@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\PaymentTransaction;
 use App\Models\Refund;
 use App\Models\StockItem;
+use App\Services\Loyalty\LoyaltyService;
 use App\Services\Mail\MailTemplateService;
 use App\Support\CommerceException;
 use App\Support\ErrorCode;
@@ -24,7 +25,10 @@ final class OrderService
         'cancelled' => [],
     ];
 
-    public function __construct(private readonly MailTemplateService $mail) {}
+    public function __construct(
+        private readonly MailTemplateService $mail,
+        private readonly LoyaltyService $loyalty,
+    ) {}
 
     public function transition(Order $order, string $toStatus, AdminUser $admin, ?string $note = null): Order
     {
@@ -57,6 +61,7 @@ final class OrderService
 
             if ($toStatus === 'paid') {
                 $this->notifyOrderPaid($order);
+                $this->loyalty->creditForPaidOrder($order);
             }
 
             return $order->refresh()->load(['items.variant.product', 'statusHistories']);
@@ -80,6 +85,7 @@ final class OrderService
                 'changed_by_admin_id' => $admin->id,
                 'note' => $note,
             ]);
+            $this->loyalty->reverseForCancelledOrder($order);
 
             return $order->refresh()->load(['items.variant.product', 'statusHistories']);
         });
@@ -118,6 +124,7 @@ final class OrderService
             ]);
 
             $this->notifyOrderPaid($order);
+            $this->loyalty->creditForPaidOrder($order);
 
             return $order->refresh()->load(['items.variant.product', 'statusHistories']);
         });

@@ -20,6 +20,13 @@ export async function fetchCustomerMe(): Promise<CustomerProfile> {
   return data;
 }
 
+export async function fetchCustomerLoyalty(): Promise<{ points_balance: number }> {
+  const { data } = await storefrontSessionFetch<{ points_balance: number }>(
+    "/api/v1/customer/loyalty",
+  );
+  return data;
+}
+
 export async function fetchCustomerMeOrNull(): Promise<CustomerProfile | null> {
   try {
     return await fetchCustomerMe();

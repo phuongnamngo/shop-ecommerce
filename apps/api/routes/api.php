@@ -47,6 +47,7 @@ use App\Http\Controllers\Api\V1\Customer\Auth\LoginController as CustomerLoginCo
 use App\Http\Controllers\Api\V1\Customer\Auth\LogoutController as CustomerLogoutController;
 use App\Http\Controllers\Api\V1\Customer\Auth\RegisterController as CustomerRegisterController;
 use App\Http\Controllers\Api\V1\Customer\Auth\ResetPasswordController as CustomerResetPasswordController;
+use App\Http\Controllers\Api\V1\Customer\LoyaltyController as CustomerLoyaltyController;
 use App\Http\Controllers\Api\V1\Customer\MeController as CustomerMeController;
 use App\Http\Controllers\Api\V1\Customer\NotificationController as CustomerNotificationController;
 use App\Http\Controllers\Api\V1\Customer\OrderController as CustomerOrderController;
@@ -119,6 +120,7 @@ Route::prefix('v1')->group(function () {
             Route::patch('cart/items/{itemId}', [CartController::class, 'customerUpdateItem']);
             Route::delete('cart/items/{itemId}', [CartController::class, 'customerDestroyItem']);
             Route::post('cart/merge', [CartController::class, 'merge']);
+            Route::get('loyalty', CustomerLoyaltyController::class);
             Route::get('orders', [CustomerOrderController::class, 'index']);
             Route::get('orders/{id}', [CustomerOrderController::class, 'show']);
             Route::get('notifications', [CustomerNotificationController::class, 'index']);

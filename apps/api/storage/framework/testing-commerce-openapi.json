@@ -5344,6 +5344,80 @@
                 }
             }
         },
+        "/api/v1/customer/loyalty": {
+            "get": {
+                "operationId": "customer.loyalty",
+                "tags": [
+                    "Loyalty"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Customer loyalty balance.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "points_balance": {
+                                                    "type": "integer"
+                                                },
+                                                "entries": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "delta": {
+                                                                "type": "integer"
+                                                            },
+                                                            "reason": {
+                                                                "type": "string"
+                                                            },
+                                                            "order_id": {
+                                                                "type": "integer"
+                                                            },
+                                                            "balance_after": {
+                                                                "type": "integer"
+                                                            },
+                                                            "created_at": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "delta",
+                                                            "reason",
+                                                            "order_id",
+                                                            "balance_after",
+                                                            "created_at"
+                                                        ]
+                                                    }
+                                                }
+                                            },
+                                            "required": [
+                                                "points_balance",
+                                                "entries"
+                                            ]
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    }
+                }
+            }
+        },
         "/api/v1/customer/me": {
             "get": {
                 "operationId": "customer.me",
