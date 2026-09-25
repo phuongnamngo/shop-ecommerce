@@ -5,6 +5,7 @@ namespace App\Services\Promotion;
 use App\Models\FlashSale;
 use App\Models\FlashSaleItem;
 use App\Models\ProductVariant;
+use App\Support\CatalogPublicCache;
 use App\Support\CommerceException;
 use App\Support\ErrorCode;
 use Illuminate\Support\Facades\DB;
@@ -24,7 +25,7 @@ final class PromotionFlashSaleService
      */
     public function create(array $data): FlashSale
     {
-        return DB::transaction(function () use ($data): FlashSale {
+        $created = DB::transaction(function () use ($data): FlashSale {
             $sale = FlashSale::query()->create([
                 'code' => $data['code'] ?? (string) Str::ulid(),
                 'name' => $data['name'],
@@ -37,6 +38,9 @@ final class PromotionFlashSaleService
 
             return $sale->load('items');
         });
+        app(CatalogPublicCache::class)->bump();
+
+        return $created;
     }
 
     /**
@@ -51,7 +55,7 @@ final class PromotionFlashSaleService
      */
     public function update(FlashSale $sale, array $data): FlashSale
     {
-        return DB::transaction(function () use ($sale, $data): FlashSale {
+        $updated = DB::transaction(function () use ($sale, $data): FlashSale {
             $sale->fill([
                 'name' => $data['name'] ?? $sale->name,
                 'starts_at' => array_key_exists('starts_at', $data) ? $data['starts_at'] : $sale->starts_at,
@@ -73,11 +77,15 @@ final class PromotionFlashSaleService
 
             return $sale->refresh()->load('items');
         });
+        app(CatalogPublicCache::class)->bump();
+
+        return $updated;
     }
 
     public function delete(FlashSale $sale): void
     {
         $sale->delete();
+        app(CatalogPublicCache::class)->bump();
     }
 
     /**

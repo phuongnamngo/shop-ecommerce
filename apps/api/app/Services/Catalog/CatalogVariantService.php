@@ -6,6 +6,7 @@ use App\Models\AttributeOption;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Support\CatalogException;
+use App\Support\CatalogPublicCache;
 use App\Support\ErrorCode;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -19,7 +20,7 @@ final class CatalogVariantService
     {
         $this->assertSkuUnique($data['sku']);
 
-        return DB::transaction(function () use ($product, $data): ProductVariant {
+        $created = DB::transaction(function () use ($product, $data): ProductVariant {
             if ($data['is_default'] ?? false) {
                 $this->unsetDefault($product->id);
             }
@@ -40,6 +41,9 @@ final class CatalogVariantService
 
             return $variant->refresh()->load(['attributeOptions.attribute', 'images']);
         });
+        app(CatalogPublicCache::class)->bump();
+
+        return $created;
     }
 
     /**
@@ -51,7 +55,7 @@ final class CatalogVariantService
             $this->assertSkuUnique($data['sku'], $variant->id);
         }
 
-        return DB::transaction(function () use ($variant, $data): ProductVariant {
+        $updated = DB::transaction(function () use ($variant, $data): ProductVariant {
             $isDefault = array_key_exists('is_default', $data) ? (bool) $data['is_default'] : $variant->is_default;
 
             if ($variant->is_default && $isDefault === false) {
@@ -82,6 +86,9 @@ final class CatalogVariantService
 
             return $variant->refresh()->load(['attributeOptions.attribute', 'images']);
         });
+        app(CatalogPublicCache::class)->bump();
+
+        return $updated;
     }
 
     public function delete(ProductVariant $variant): void
@@ -96,6 +103,7 @@ final class CatalogVariantService
         }
 
         $variant->delete();
+        app(CatalogPublicCache::class)->bump();
     }
 
     public function assertSkuUnique(string $sku, ?int $ignoreId = null): void

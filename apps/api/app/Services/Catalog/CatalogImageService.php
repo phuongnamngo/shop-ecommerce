@@ -7,6 +7,7 @@ use App\Models\ProductImage;
 use App\Models\ProductVariant;
 use App\Models\ProductVariantImage;
 use App\Support\CatalogImagePath;
+use App\Support\CatalogPublicCache;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -58,13 +59,16 @@ final class CatalogImageService
             $product->images()->where('is_primary', true)->update(['is_primary' => false]);
         }
 
-        return ProductImage::query()->create([
+        $image = ProductImage::query()->create([
             'product_id' => $product->id,
             'path' => $data['path'],
             'alt' => $data['alt'] ?? null,
             'position' => $data['position'] ?? 0,
             'is_primary' => $isPrimary,
         ]);
+        app(CatalogPublicCache::class)->bump();
+
+        return $image;
     }
 
     /**
@@ -81,13 +85,16 @@ final class CatalogImageService
             $variant->images()->where('is_primary', true)->update(['is_primary' => false]);
         }
 
-        return ProductVariantImage::query()->create([
+        $image = ProductVariantImage::query()->create([
             'product_variant_id' => $variant->id,
             'path' => $data['path'],
             'alt' => $data['alt'] ?? null,
             'position' => $data['position'] ?? 0,
             'is_primary' => $isPrimary,
         ]);
+        app(CatalogPublicCache::class)->bump();
+
+        return $image;
     }
 
     /**
@@ -108,6 +115,7 @@ final class CatalogImageService
             'position' => $data['position'] ?? $image->position,
             'is_primary' => $isPrimary,
         ])->save();
+        app(CatalogPublicCache::class)->bump();
 
         return $image->refresh();
     }
@@ -130,6 +138,7 @@ final class CatalogImageService
             'position' => $data['position'] ?? $image->position,
             'is_primary' => $isPrimary,
         ])->save();
+        app(CatalogPublicCache::class)->bump();
 
         return $image->refresh();
     }
@@ -137,6 +146,7 @@ final class CatalogImageService
     public function softDeleteImage(ProductImage|ProductVariantImage $image): void
     {
         $image->delete();
+        app(CatalogPublicCache::class)->bump();
     }
 
     private function extension(UploadedFile $file): string

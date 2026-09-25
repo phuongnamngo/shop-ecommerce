@@ -4,6 +4,7 @@ namespace App\Services\Catalog;
 
 use App\Models\Category;
 use App\Support\CatalogException;
+use App\Support\CatalogPublicCache;
 use App\Support\CatalogSlug;
 use App\Support\ErrorCode;
 use Illuminate\Support\Facades\DB;
@@ -19,7 +20,7 @@ final class CatalogCategoryService
         $slug = CatalogSlug::resolve($data['name'], $data['slug'] ?? null);
         CatalogSlug::assertUnique('categories', $slug);
 
-        return Category::query()->create([
+        $category = Category::query()->create([
             'code' => (string) Str::ulid(),
             'parent_id' => $data['parent_id'] ?? null,
             'name' => $data['name'],
@@ -32,6 +33,9 @@ final class CatalogCategoryService
             'created_by' => $adminId,
             'updated_by' => $adminId,
         ]);
+        app(CatalogPublicCache::class)->bump();
+
+        return $category;
     }
 
     /**
@@ -59,6 +63,7 @@ final class CatalogCategoryService
             'meta_description' => array_key_exists('meta_description', $data) ? $data['meta_description'] : $category->meta_description,
             'updated_by' => $adminId,
         ])->save();
+        app(CatalogPublicCache::class)->bump();
 
         return $category->refresh();
     }
@@ -74,6 +79,7 @@ final class CatalogCategoryService
         }
 
         $category->delete();
+        app(CatalogPublicCache::class)->bump();
     }
 
     /**

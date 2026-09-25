@@ -5,6 +5,7 @@ namespace App\Services\Catalog;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Support\CatalogException;
+use App\Support\CatalogPublicCache;
 use App\Support\CatalogSlug;
 use App\Support\ErrorCode;
 use Illuminate\Database\Eloquent\Builder;
@@ -47,7 +48,7 @@ final class CatalogProductService
             );
         }
 
-        return DB::transaction(function () use ($data, $adminId, $slug, $variantRows): Product {
+        $created = DB::transaction(function () use ($data, $adminId, $slug, $variantRows): Product {
             $status = $data['status'] ?? Product::STATUS_DRAFT;
             $publishedAt = $data['published_at'] ?? null;
             if ($status === Product::STATUS_ACTIVE && $publishedAt === null) {
@@ -81,6 +82,9 @@ final class CatalogProductService
 
             return $product;
         });
+        app(CatalogPublicCache::class)->bump();
+
+        return $created;
     }
 
     public function applyPublicVisibility(Builder $query): Builder
@@ -129,6 +133,7 @@ final class CatalogProductService
 
         $product = $product->refresh()->load($this->adminRelations());
         $product->syncSearchIndex();
+        app(CatalogPublicCache::class)->bump();
 
         return $product;
     }
@@ -145,6 +150,7 @@ final class CatalogProductService
             }
             $product->delete();
         });
+        app(CatalogPublicCache::class)->bump();
     }
 
     /**

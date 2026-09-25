@@ -4,6 +4,7 @@ namespace App\Services\Catalog;
 
 use App\Models\Brand;
 use App\Support\CatalogException;
+use App\Support\CatalogPublicCache;
 use App\Support\CatalogSlug;
 use App\Support\ErrorCode;
 use Illuminate\Support\Str;
@@ -18,7 +19,7 @@ final class CatalogBrandService
         $slug = CatalogSlug::resolve($data['name'], $data['slug'] ?? null);
         CatalogSlug::assertUnique('brands', $slug);
 
-        return Brand::query()->create([
+        $brand = Brand::query()->create([
             'code' => (string) Str::ulid(),
             'name' => $data['name'],
             'slug' => $slug,
@@ -26,6 +27,9 @@ final class CatalogBrandService
             'created_by' => $adminId,
             'updated_by' => $adminId,
         ]);
+        app(CatalogPublicCache::class)->bump();
+
+        return $brand;
     }
 
     /**
@@ -45,6 +49,7 @@ final class CatalogBrandService
             'status' => $data['status'] ?? $brand->status,
             'updated_by' => $adminId,
         ])->save();
+        app(CatalogPublicCache::class)->bump();
 
         return $brand->refresh();
     }
@@ -60,5 +65,6 @@ final class CatalogBrandService
         }
 
         $brand->delete();
+        app(CatalogPublicCache::class)->bump();
     }
 }

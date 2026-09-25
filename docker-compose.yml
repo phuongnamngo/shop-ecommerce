@@ -41,6 +41,7 @@ services:
       DB_PASSWORD: ${POSTGRES_PASSWORD}
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      CACHE_STORE: redis
       MEILISEARCH_HOST: http://meilisearch:7700
       MEILISEARCH_KEY: ${MEILI_MASTER_KEY:-watch_meili_dev}
       SCOUT_DRIVER: meilisearch

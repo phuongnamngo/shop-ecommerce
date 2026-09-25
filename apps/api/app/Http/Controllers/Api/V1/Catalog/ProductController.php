@@ -13,6 +13,8 @@ use App\Support\ApiResponse;
 use App\Support\CatalogError;
 use App\Support\CatalogException;
 use App\Support\CatalogNotFound;
+use App\Support\CatalogPublicCache;
+use Illuminate\Support\Facades\Cache;
 use Dedoc\Scramble\Attributes\QueryParameter;
 use Dedoc\Scramble\Attributes\Response;
 use Illuminate\Http\JsonResponse;
@@ -22,6 +24,7 @@ class ProductController extends Controller
     public function __construct(
         private readonly CatalogProductService $products,
         private readonly CatalogSearchService $search,
+        private readonly CatalogPublicCache $catalogCache,
     ) {}
 
     #[QueryParameter('q', description: 'Full-text query. Empty browse returns all public products.', type: 'string')]
@@ -49,6 +52,11 @@ class ProductController extends Controller
 
     public function show(string $slug): JsonResponse
     {
+        $key = $this->catalogCache->key('product.'.$slug);
+        if (Cache::has($key)) {
+            return ApiResponse::success(Cache::get($key));
+        }
+
         $product = $this->products->applyPublicVisibility(Product::query())
             ->where('slug', $slug)
             ->withAvg('approvedReviews as rating_avg', 'rating')
@@ -68,6 +76,9 @@ class ProductController extends Controller
             return CatalogNotFound::response();
         }
 
-        return ApiResponse::success(PublicProductResource::make($product)->resolve());
+        $payload = PublicProductResource::make($product)->resolve();
+        Cache::put($key, $payload, CatalogPublicCache::TTL_SECONDS);
+
+        return ApiResponse::success($payload);
     }
 }

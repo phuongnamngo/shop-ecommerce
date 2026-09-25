@@ -5,6 +5,7 @@ namespace App\Services\Catalog;
 use App\Models\Attribute;
 use App\Models\AttributeOption;
 use App\Support\CatalogException;
+use App\Support\CatalogPublicCache;
 use App\Support\CatalogSlug;
 use App\Support\ErrorCode;
 use Illuminate\Support\Facades\DB;
@@ -20,7 +21,7 @@ final class CatalogAttributeService
         $slug = CatalogSlug::resolve($data['name'], $data['slug'] ?? null);
         CatalogSlug::assertUnique('attributes', $slug);
 
-        return DB::transaction(function () use ($data, $slug): Attribute {
+        $created = DB::transaction(function () use ($data, $slug): Attribute {
             $attribute = Attribute::query()->create([
                 'code' => (string) Str::ulid(),
                 'name' => $data['name'],
@@ -34,6 +35,9 @@ final class CatalogAttributeService
 
             return $attribute->load('options');
         });
+        app(CatalogPublicCache::class)->bump();
+
+        return $created;
     }
 
     /**
@@ -52,6 +56,7 @@ final class CatalogAttributeService
             'slug' => $slug,
             'position' => $data['position'] ?? $attribute->position,
         ])->save();
+        app(CatalogPublicCache::class)->bump();
 
         return $attribute->refresh()->load('options');
     }
@@ -67,6 +72,7 @@ final class CatalogAttributeService
         }
 
         $attribute->delete();
+        app(CatalogPublicCache::class)->bump();
     }
 
     /**
@@ -74,12 +80,15 @@ final class CatalogAttributeService
      */
     public function createOption(Attribute $attribute, array $data): AttributeOption
     {
-        return AttributeOption::query()->create([
+        $option = AttributeOption::query()->create([
             'attribute_id' => $attribute->id,
             'code' => (string) Str::ulid(),
             'label' => $data['label'],
             'position' => $data['position'] ?? 0,
         ]);
+        app(CatalogPublicCache::class)->bump();
+
+        return $option;
     }
 
     /**
@@ -91,6 +100,7 @@ final class CatalogAttributeService
             'label' => $data['label'] ?? $option->label,
             'position' => $data['position'] ?? $option->position,
         ])->save();
+        app(CatalogPublicCache::class)->bump();
 
         return $option->refresh();
     }
@@ -106,6 +116,7 @@ final class CatalogAttributeService
         }
 
         $option->delete();
+        app(CatalogPublicCache::class)->bump();
     }
 
     private function attributeInUse(int $attributeId): bool
