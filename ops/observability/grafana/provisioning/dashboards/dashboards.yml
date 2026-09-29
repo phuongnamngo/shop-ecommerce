@@ -1,0 +1,10 @@
+apiVersion: 1
+
+providers:
+  - name: watch
+    orgId: 1
+    folder: Watch
+    type: file
+    disableDeletion: true
+    options:
+      path: /var/lib/grafana/dashboards

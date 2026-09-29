@@ -1,3 +1,4 @@
+import { withSentryConfig } from "@sentry/nextjs/config";
 import type { NextConfig } from "next";
 
 function apiImagePattern(): {
@@ -63,4 +64,12 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+const sentryDsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
+
+export default sentryDsn
+  ? withSentryConfig(nextConfig, {
+      silent: true,
+      sourcemaps: { disable: true },
+      telemetry: false,
+    })
+  : nextConfig;
